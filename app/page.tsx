@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ArrowRight, Check, ChevronDown, ExternalLink, Fuel, Camera, Menu, Navigation, Search, ShieldCheck, Smartphone, Users, Video, X, Zap } from 'lucide-react'
 
 const sourceImage = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Aug%2014%2C%202026%2C%2011_03_09%20AM-bFhvU8Bf9QJVtBtKsMpARpzV40boX0.png'
-const playStoreUrl = 'https://play.google.com/store'
+const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
 const navItems = [['Features', 'features'], ['How It Works', 'how-it-works'], ['Why EO', 'why-eo'], ['Screenshots', 'screenshots'], ['FAQ', 'faq'], ['About Us', 'about-us'], ['Contact', 'contact']]
 const benefits = [{ icon: Fuel, title: '0% Ethanol', text: 'EO Petrol Only' }, { icon: ShieldCheck, title: 'Verified Stations', text: 'Team & community verified' }, { icon: Zap, title: 'Live Availability', text: 'Real-time station updates' }, { icon: Users, title: 'Community Driven', text: 'Trusted by 10K+ users' }]
 const steps = [{ icon: Search, title: 'Search', text: 'Search any city, area or petrol station.' }, { icon: Fuel, title: 'Check EO Status', text: 'View 0% ethanol availability in real-time.' }, { icon: Navigation, title: 'Navigate', text: 'Get directions to the verified EO station.' }, { icon: Users, title: 'Report & Help', text: 'Add reports and help the community.' }]
