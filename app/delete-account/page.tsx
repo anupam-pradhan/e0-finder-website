@@ -1,10 +1,90 @@
-import { Mail } from 'lucide-react'
+import { Mail, AlertTriangle, Smartphone, Trash2 } from 'lucide-react'
 import { SitePage, PolicySection, BulletList } from '@/components/site-page'
 
-export const metadata = { title: 'Delete Account | EO Finder', description: 'Request deletion of your EO Finder account and associated personal data.' }
+export const metadata = {
+  title: 'Delete Your Account — E0 Finder',
+  description: 'Instructions on how to delete your E0 Finder account and associated personal data.',
+}
 
 export default function DeleteAccountPage() {
-  return <SitePage eyebrow="Account management" title="Delete your EO Finder account" intro="You can request deletion of your EO Finder account and associated personal information by contacting support.">
-    <div className="flex flex-col gap-8"><div className="rounded-xl bg-primary/[0.06] p-5"><p className="font-semibold">Email <a className="text-primary hover:underline" href="mailto:support@eofinder.app?subject=Delete%20my%20EO%20Finder%20account">support@eofinder.app</a> with the subject “Delete my EO Finder account.”</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Please send the request from the email address associated with your account where possible so we can verify ownership.</p></div><PolicySection title="What will be deleted"><BulletList items={['Your account profile and account identifiers.', 'Saved preferences and favorites associated with your account.', 'Personal information held for operating the service.']} /></PolicySection><PolicySection title="What may be retained"><p>We may retain limited information when necessary for legal compliance, fraud prevention, security, dispute resolution, or records that have been anonymized and no longer identify you.</p></PolicySection><PolicySection title="Processing"><p>We may ask for reasonable verification before completing a deletion request. Once verified, we will process the request within a reasonable period and confirm by email. Deleting your account may not remove reports that have been made anonymous or are needed to preserve the integrity of station information.</p></PolicySection><PolicySection title="Need help?"><p>For questions about deletion or privacy, email <a className="font-semibold text-primary hover:underline" href="mailto:support@eofinder.app">support@eofinder.app</a>.</p></PolicySection><a href="mailto:support@eofinder.app?subject=Delete%20my%20EO%20Finder%20account" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground hover:opacity-90"><Mail size={17} /> Request account deletion</a></div>
-  </SitePage>
+  const steps = [
+    'Open the E0 Finder app',
+    'Go to Profile → Settings → Privacy & Security',
+    'Tap "Delete My Account"',
+    'Confirm deletion',
+  ]
+
+  const deletedItems = [
+    'Your profile information (name, email, photo)',
+    'All fuel reports you submitted',
+    'Your favourites and notification preferences',
+    'Uploaded photos',
+  ]
+
+  return (
+    <SitePage
+      eyebrow="Account management"
+      title="Delete Your Account — E0 Finder"
+      intro="Follow the steps below to permanently delete your E0 Finder account and all associated data."
+    >
+      <div className="flex flex-col gap-8">
+        {/* In-app deletion steps */}
+        <PolicySection title="To delete your account and all associated data:">
+          <div className="mt-2 grid gap-3">
+            {steps.map((step, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-3 rounded-lg border border-border/80 bg-background/50 p-3.5"
+              >
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                  {idx + 1}
+                </span>
+                <span className="font-medium text-foreground">{step}</span>
+              </div>
+            ))}
+          </div>
+        </PolicySection>
+
+        {/* What gets deleted */}
+        <PolicySection title="What gets deleted:">
+          <BulletList items={deletedItems} />
+        </PolicySection>
+
+        {/* Warning / Important note */}
+        <div className="flex gap-4 rounded-xl border border-destructive/20 bg-destructive/5 p-5 text-foreground">
+          <AlertTriangle className="size-5 shrink-0 text-destructive mt-0.5" />
+          <div className="text-sm leading-6">
+            <p className="font-semibold text-destructive">
+              Deletion is permanent and cannot be undone.
+            </p>
+            <p className="mt-1 text-muted-foreground">
+              Data is removed within 24 hours of confirmation.
+            </p>
+          </div>
+        </div>
+
+        {/* Alternative / Access issue section */}
+        <PolicySection title="Cannot access the app?">
+          <p>
+            If you cannot access the app, contact{' '}
+            <a
+              className="font-semibold text-primary hover:underline"
+              href="mailto:support@eofinder.app?subject=Delete%20My%20E0%20Finder%20Account"
+            >
+              support@eofinder.app
+            </a>{' '}
+            with the email associated with your account.
+          </p>
+          <div className="mt-4">
+            <a
+              href="mailto:support@eofinder.app?subject=Delete%20My%20E0%20Finder%20Account"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <Mail size={17} /> Contact Support for Deletion
+            </a>
+          </div>
+        </PolicySection>
+      </div>
+    </SitePage>
+  )
 }
