@@ -18,11 +18,18 @@ export function SitePage({
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border/70 bg-background/95">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-3" aria-label="E0 Finder home">
-            <img src="/app-icon.png" alt="E0 Finder Logo" className="size-10 rounded-xl object-contain shadow-sm" />
-            <span><strong className="block text-xl leading-none">Finder</strong><small className="text-xs text-muted-foreground">Find Ethanol-Free Petrol</small></span>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="E0 Finder home">
+            <img src="/app-icon.png" alt="E0 Finder Logo" className="size-9 rounded-xl object-contain shadow-xs shrink-0" />
+            <div className="flex flex-col justify-center leading-none">
+              <span className="text-xl font-black tracking-tight text-foreground flex items-center gap-1">
+                <span className="text-primary">E0</span>Finder
+              </span>
+              <span className="text-[10px] font-medium text-muted-foreground mt-1 whitespace-nowrap hidden sm:block">
+                Find 0% Ethanol Petrol
+              </span>
+            </div>
           </Link>
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"><ArrowLeft size={16} /> Back to home</Link>
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline shrink-0"><ArrowLeft size={16} /> Back to home</Link>
         </div>
       </header>
       <div className="mx-auto max-w-5xl px-5 py-12 lg:px-8 lg:py-20">

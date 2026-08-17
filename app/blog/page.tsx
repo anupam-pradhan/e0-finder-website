@@ -17,12 +17,16 @@ export default function BlogIndexPage() {
       {/* Top Header */}
       <header className="border-b border-border/70 bg-background/95 sticky top-0 z-40 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 lg:px-8">
-          <Link href="/" className="flex items-center gap-3" aria-label="E0 Finder home">
-            <img src="/app-icon.png" alt="E0 Finder Logo" className="size-10 rounded-xl object-contain shadow-sm" />
-            <span>
-              <strong className="block text-xl leading-none">Finder</strong>
-              <small className="text-xs text-muted-foreground">Find Ethanol-Free Petrol</small>
-            </span>
+          <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="E0 Finder home">
+            <img src="/app-icon.png" alt="E0 Finder Logo" className="size-9 rounded-xl object-contain shadow-xs shrink-0" />
+            <div className="flex flex-col justify-center leading-none">
+              <span className="text-xl font-black tracking-tight text-foreground flex items-center gap-1">
+                <span className="text-primary">E0</span>Finder
+              </span>
+              <span className="text-[10px] font-medium text-muted-foreground mt-1 whitespace-nowrap hidden sm:block">
+                Find 0% Ethanol Petrol
+              </span>
+            </div>
           </Link>
           <div className="flex items-center gap-4">
             <Link

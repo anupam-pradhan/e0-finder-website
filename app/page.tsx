@@ -43,18 +43,6 @@ import { blogPosts } from '@/lib/blog-data'
 
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
 
-const navItems = [
-  ['Features', 'features'],
-  ['Savings Calculator', 'calculator'],
-  ['Vehicle Database', 'vehicles'],
-  ['E0 vs E20 Guide', 'fuel-guide'],
-  ['State Index', 'state-index'],
-  ['Social Trends', 'trends'],
-  ['Reviews', 'reviews'],
-  ['Cities', 'cities'],
-  ['Blog', 'blog-section'],
-  ['FAQ', 'faq'],
-]
 
 const benefits = [
   { icon: Fuel, title: '0% Ethanol', text: 'Pure E0 Petrol Only' },
@@ -272,14 +260,29 @@ const faqs = [
   },
 ]
 
+const navItems = [
+  ['Calculator', 'calculator'],
+  ['Vehicles', 'vehicles'],
+  ['E0 vs E20', 'fuel-guide'],
+  ['State Index', 'state-index'],
+  ['Trends', 'trends'],
+  ['Reviews', 'reviews'],
+  ['Cities', 'cities'],
+  ['FAQ', 'faq'],
+]
+
 function Logo() {
   return (
-    <a href="#home" className="flex items-center gap-3" aria-label="E0 Finder home">
-      <img src="/app-icon.png" alt="E0 Finder Logo" className="size-10 rounded-xl object-contain shadow-sm" />
-      <span>
-        <strong className="block text-2xl leading-none tracking-tight">Finder</strong>
-        <small className="text-xs text-muted-foreground">Find Ethanol-Free Petrol</small>
-      </span>
+    <a href="#home" className="flex items-center gap-2.5 shrink-0" aria-label="E0 Finder home">
+      <img src="/app-icon.png" alt="E0 Finder Logo" className="size-9 sm:size-10 rounded-xl object-contain shadow-xs shrink-0" />
+      <div className="flex flex-col justify-center leading-none">
+        <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-1">
+          <span className="text-primary">E0</span>Finder
+        </span>
+        <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground mt-1 whitespace-nowrap hidden min-[400px]:block">
+          Find 0% Ethanol Petrol
+        </span>
+      </div>
     </a>
   )
 }
@@ -336,7 +339,7 @@ export default function Page() {
   }
 
   return (
-    <main id="home" className="min-h-screen bg-background text-foreground">
+    <main id="home" className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* FAQ Schema for Google SERP Rich Snippets */}
       <script
         type="application/ld+json"
@@ -345,33 +348,33 @@ export default function Page() {
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-3 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
           <Logo />
-          <nav className="hidden items-center gap-5 xl:gap-6 lg:flex">
+          <nav className="hidden items-center gap-4 xl:gap-5 lg:flex">
             {navItems.map(([label, id]) => (
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
-                className="cursor-pointer text-xs xl:text-sm font-semibold text-foreground/80 transition-colors hover:text-primary"
+                className="cursor-pointer text-xs xl:text-sm font-semibold text-foreground/80 transition-colors hover:text-primary whitespace-nowrap"
               >
                 {label}
               </button>
             ))}
             <Link
               href="/blog"
-              className="text-xs xl:text-sm font-semibold text-primary hover:underline flex items-center gap-1"
+              className="text-xs xl:text-sm font-semibold text-primary hover:underline flex items-center gap-1 whitespace-nowrap"
             >
               <BookOpen size={14} /> Blog
             </Link>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <a
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] sm:flex shadow-xs"
+              className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs xl:text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] sm:flex shadow-xs whitespace-nowrap"
             >
-              Get App on Google Play <ExternalLink size={16} />
+              Get App <ExternalLink size={15} />
             </a>
             <button
               className="rounded-lg p-2 lg:hidden"
