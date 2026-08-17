@@ -82,13 +82,66 @@ const appScreens = [
   },
 ]
 
+function GooglePlayIcon({ className = 'size-5 shrink-0' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 512 512" fill="none" aria-hidden="true">
+      <path
+        d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"
+        fill="#EA4335"
+      />
+      <path
+        d="M47 30.6c-4.4 7.6-7 16.9-7 27.4v396c0 10.5 2.6 19.8 7 27.4l246.3-246.3L47 30.6z"
+        fill="#4285F4"
+      />
+      <path
+        d="M325.3 277.7l60.1 60.1L104.6 499l220.7-221.3z"
+        fill="#34A853"
+      />
+      <path
+        d="M470.8 238.6L385.4 189.4l-60.1 44.9 60.1 44.9 85.4-49.2c16.3-9.4 16.3-25.1 0-34.4l-.1.1z"
+        fill="#FBBC04"
+      />
+    </svg>
+  )
+}
+
 const oilBrands = [
-  { name: 'Indian Oil', src: '/assets/oil_company_logo/Indian_Oil_Logo.svg' },
-  { name: 'Bharat Petroleum', src: '/assets/oil_company_logo/Bharat_Petroleum_logo.svg' },
-  { name: 'Hindustan Petroleum', src: '/assets/oil_company_logo/Hindustan_Petroleum-Logo.wine.svg' },
-  { name: 'Jio-bp', src: '/assets/oil_company_logo/Jio-bp_logo.svg' },
-  { name: 'Shell', src: '/assets/oil_company_logo/shell-logo.png' },
-  { name: 'Reliance Petroleum', src: '/assets/oil_company_logo/reliance-petroleum.png' },
+  {
+    name: 'Indian Oil',
+    alt: 'Indian Oil petrol pump locator',
+    src: '/assets/oil_company_logo/Indian_Oil_Logo.svg',
+    grade: 'XP100 & XP95',
+  },
+  {
+    name: 'Bharat Petroleum',
+    alt: 'Bharat Petroleum petrol pump locator',
+    src: '/assets/oil_company_logo/Bharat_Petroleum_logo.svg',
+    grade: 'Speed 97 & Speed',
+  },
+  {
+    name: 'Hindustan Petroleum',
+    alt: 'Hindustan Petroleum petrol pump locator',
+    src: '/assets/oil_company_logo/Hindustan_Petroleum-Logo.wine.svg',
+    grade: 'poWer100 & poWer95',
+  },
+  {
+    name: 'Jio-bp',
+    alt: 'Jio-bp petrol pump locator',
+    src: '/assets/oil_company_logo/Jio-bp_logo.svg',
+    grade: 'ACTIVE Tech Fuel',
+  },
+  {
+    name: 'Shell',
+    alt: 'Shell petrol pump locator',
+    src: '/assets/oil_company_logo/shell-logo.png',
+    grade: 'V-Power & Unleaded',
+  },
+  {
+    name: 'Reliance Petroleum',
+    alt: 'Reliance Petroleum petrol pump locator',
+    src: '/assets/oil_company_logo/reliance-petroleum.png',
+    grade: 'Pure Hydrocarbon',
+  },
 ]
 
 const comparisonData = [
@@ -385,9 +438,9 @@ export default function Page() {
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs xl:text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] sm:flex shadow-xs whitespace-nowrap"
+              className="hidden items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs xl:text-sm font-bold text-primary-foreground transition-transform hover:scale-[1.02] sm:flex shadow-xs whitespace-nowrap"
             >
-              Get App <ExternalLink size={15} />
+              <GooglePlayIcon className="size-4" /> Get App
             </a>
             <button
               className="rounded-lg p-2 lg:hidden"
@@ -473,9 +526,10 @@ export default function Page() {
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 font-semibold text-foreground hover:border-primary hover:text-primary transition-transform hover:scale-[1.02] shadow-xs"
+              className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-card px-6 py-3.5 font-bold text-foreground hover:border-primary hover:text-primary transition-transform hover:scale-[1.02] shadow-xs"
             >
-              Google Play App <ExternalLink size={17} />
+              <GooglePlayIcon className="size-5" />
+              <span>Get on Google Play</span>
             </a>
             <button
               onClick={() => scrollTo('calculator')}
@@ -496,17 +550,46 @@ export default function Page() {
       </section>
 
       {/* Supported Fuel Networks Banner */}
-      <section className="border-y border-border bg-muted/30 py-8">
-        <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <p className="text-center text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Search 0% Ethanol Pumps Across Major Indian Fuel Networks
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+      <section className="border-y border-border bg-gradient-to-b from-muted/40 via-background to-muted/20 py-10 lg:py-12">
+        <div className="mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
+              <Fuel size={14} /> Comprehensive Oil Marketing Network Coverage
+            </span>
+            <h2 className="mt-3 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
+              Search 0% Ethanol Pumps Across Major Indian Fuel Networks
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto">
+              Real-time locator coverage for unblended 0% ethanol and 100-octane fuel dispensers across all primary state and private oil retail companies.
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {oilBrands.map((brand) => (
-              <div key={brand.name} className="flex items-center gap-2.5 grayscale transition-all duration-300 hover:grayscale-0">
-                <img src={brand.src} alt={`${brand.name} petrol pump locator`} className="h-8 max-w-[100px] object-contain" />
-                <span className="text-xs font-semibold text-foreground/80">{brand.name}</span>
-              </div>
+              <Link
+                key={brand.name}
+                href={`/find?brand=${encodeURIComponent(brand.name)}`}
+                className="group flex flex-col items-center justify-between rounded-2xl border border-border bg-card p-4 text-center shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md"
+              >
+                <div className="flex h-14 w-full items-center justify-center rounded-xl bg-white p-2 shadow-2xs">
+                  <img
+                    src={brand.src}
+                    alt={brand.alt}
+                    className="max-h-10 max-w-[100px] object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mt-3 w-full">
+                  <strong className="block text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                    {brand.name}
+                  </strong>
+                  <span className="mt-0.5 block text-[10px] font-semibold text-primary">
+                    {brand.grade}
+                  </span>
+                </div>
+                <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground group-hover:text-primary group-hover:underline">
+                  Locate Bunks →
+                </span>
+              </Link>
             ))}
           </div>
         </div>
@@ -1287,8 +1370,14 @@ export default function Page() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <a href={playStoreUrl} target="_blank" rel="noreferrer" className="rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground hover:bg-primary/90">
-            Download App
+          <a
+            href={playStoreUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2.5 rounded-xl bg-primary px-6 py-3.5 font-bold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-[1.02] shadow-md"
+          >
+            <GooglePlayIcon className="size-5" />
+            <span>Download on Google Play</span>
           </a>
           <a href="mailto:support@e0-finder.app" className="rounded-lg border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary hover:text-primary-foreground">
             Contact Support
@@ -1301,9 +1390,11 @@ export default function Page() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
             <div>
-              <div className="flex items-center gap-3">
-                <img src="/app-icon.png" alt="E0 Finder" className="size-9 rounded-lg bg-white p-0.5 object-contain" />
-                <strong className="text-xl">Finder</strong>
+              <div className="flex items-center gap-2.5">
+                <img src="/app-icon.png" alt="E0 Finder" className="size-9 rounded-xl bg-white p-0.5 object-contain" />
+                <span className="text-xl font-black tracking-tight flex items-center">
+                  <span className="text-white">E0</span> Finder
+                </span>
               </div>
               <p className="mt-2 text-xs text-primary-foreground/70">Find Ethanol-Free Petrol Stations in India</p>
             </div>

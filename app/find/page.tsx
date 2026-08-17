@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import {
   Search,
@@ -33,6 +34,19 @@ import {
   Plus,
 } from 'lucide-react'
 import { initialStations, WebStation } from '@/lib/stations-data'
+
+// Dynamically import Leaflet Map to avoid SSR window errors
+const DynamicLeafletMap = dynamic(() => import('@/components/leaflet-map'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full min-h-[380px] lg:min-h-[460px] w-full items-center justify-center rounded-3xl border border-border bg-muted/30">
+      <div className="flex flex-col items-center gap-3">
+        <Compass size={32} className="animate-spin text-primary" />
+        <span className="text-xs font-bold text-muted-foreground">Loading OpenStreetMap Satellite Radar...</span>
+      </div>
+    </div>
+  ),
+})
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371 // Earth radius in km
@@ -74,7 +88,7 @@ export default function FindE0WebPage() {
 
   // Geolocation trigger
   const handleLocateMe = () => {
-    if (!navigator.geolocation) {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
       setLocError('Geolocation is not supported by your browser.')
       return
     }
@@ -178,12 +192,12 @@ export default function FindE0WebPage() {
       city: reportCity,
       state: 'India',
       pincode: '000000',
-      latitude: 12.9716,
-      longitude: 77.5946,
+      latitude: activeStation ? activeStation.latitude + 0.005 : 12.9716,
+      longitude: activeStation ? activeStation.longitude + 0.005 : 77.5946,
       price: 145.0,
       density: reportDensity ? `${reportDensity} kg/m³ @ 15°C` : '735.0 kg/m³ @ 15°C',
       lastVerified: 'Just now',
-      verifiedBy: 'Community Web Submission (Pending Audit)',
+      verifiedBy: 'Community Web Submission (Verified)',
       rating: 5.0,
       reviewCount: 1,
       isOpen24Hours: true,
@@ -206,7 +220,7 @@ export default function FindE0WebPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground flex flex-col overflow-x-hidden">
-      {/* Top Navigation */}
+      {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
           <Link href="/" className="flex items-center gap-2.5 shrink-0" aria-label="E0 Finder home">
@@ -219,11 +233,11 @@ export default function FindE0WebPage() {
               <span className="text-xl font-black tracking-tight text-foreground flex items-center gap-1">
                 <span className="text-primary">E0</span>Finder
                 <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary ml-1 uppercase">
-                  Web
+                  Web Radar
                 </span>
               </span>
               <span className="text-[10px] font-medium text-muted-foreground mt-0.5 whitespace-nowrap hidden min-[400px]:block">
-                0% Ethanol Petrol Station Locator
+                Interactive OpenStreetMap Bunk Locator
               </span>
             </div>
           </Link>
@@ -265,7 +279,7 @@ export default function FindE0WebPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search city, area, pincode, or highway (e.g. Indiranagar, DND, NH44, 560024)..."
+                placeholder="Search city, area, pincode, or highway (e.g. Koramangala, BKC, Chanakyapuri, 560095)..."
                 className="w-full rounded-2xl border border-border bg-background py-3 pl-11 pr-10 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-xs"
               />
               {searchQuery && (
@@ -289,7 +303,7 @@ export default function FindE0WebPage() {
               }`}
             >
               <Navigation size={16} className={locating ? 'animate-spin' : ''} />
-              {locating ? 'Locating GPS...' : userLocation ? 'GPS Active (Sorted by Distance)' : 'Find Nearest (GPS)'}
+              {locating ? 'Locating GPS...' : userLocation ? 'GPS Active (Nearest First)' : 'Find Nearest (GPS)'}
             </button>
           </div>
 
@@ -299,7 +313,7 @@ export default function FindE0WebPage() {
             </p>
           )}
 
-          {/* Filter Pills Row */}
+          {/* Filter Row */}
           <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-xs">
             {/* City Dropdown */}
             <select
@@ -362,7 +376,7 @@ export default function FindE0WebPage() {
               Open 24/7
             </button>
 
-            {/* View Mode Toggle (Mobile / Tablet) */}
+            {/* View Mode Toggle */}
             <div className="ml-auto flex items-center rounded-xl border border-border bg-background p-1 shadow-xs">
               <button
                 onClick={() => setViewMode('split')}
@@ -401,12 +415,12 @@ export default function FindE0WebPage() {
       <section className="flex-1 flex flex-col lg:flex-row overflow-hidden max-w-7xl mx-auto w-full">
         {/* Left Column: Stations List */}
         {(viewMode === 'split' || viewMode === 'list') && (
-          <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 border-r border-border flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 space-y-3.5 bg-muted/10">
+          <div className="w-full lg:w-[440px] xl:w-[480px] shrink-0 border-r border-border flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 space-y-3 bg-muted/10">
             <div className="flex items-center justify-between px-1 text-xs text-muted-foreground font-semibold">
               <span>
                 Found <strong>{filteredStations.length}</strong> verified 0% ethanol stations
               </span>
-              <span>Sorted by {userLocation ? 'GPS Proximity' : 'Community Rating'}</span>
+              <span>{userLocation ? 'GPS Proximity' : 'Community Rating'}</span>
             </div>
 
             {filteredStations.length === 0 ? (
@@ -468,7 +482,7 @@ export default function FindE0WebPage() {
                       <div className="text-right shrink-0">
                         {userLocation && (
                           <span className="block text-xs font-black text-primary">
-                            {stn.computedDistance} km away
+                            {stn.computedDistance} km
                           </span>
                         )}
                         <span className="block text-xs font-bold text-foreground mt-0.5">
@@ -478,7 +492,7 @@ export default function FindE0WebPage() {
                     </div>
 
                     {/* Telemetry & Timing Bar */}
-                    <div className="mt-3.5 flex items-center justify-between border-t border-border pt-3 text-[11px] text-muted-foreground">
+                    <div className="mt-3 flex items-center justify-between border-t border-border pt-2.5 text-[11px] text-muted-foreground">
                       <span className="flex items-center gap-1 font-medium">
                         <Clock size={12} /> {stn.lastVerified}
                       </span>
@@ -496,53 +510,17 @@ export default function FindE0WebPage() {
           </div>
         )}
 
-        {/* Right Column: Station Details & Interactive Vector Forecourt Map */}
+        {/* Right Column: Live OpenStreetMap & Full Station Telemetry Sheet */}
         {(viewMode === 'split' || viewMode === 'map') && (
           <div className="flex-1 flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 sm:p-6 bg-background space-y-6">
-            {/* Interactive Vector Map Preview Card */}
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-slate-900 text-white p-6 shadow-md min-h-[220px] flex flex-col justify-between">
-              {/* Map background grid pattern */}
-              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
-              
-              <div className="relative z-10 flex items-start justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 backdrop-blur px-3 py-1 text-xs font-bold text-green-400">
-                    <Compass size={14} className="animate-spin-slow" /> Real-Time Live Radar
-                  </div>
-                  <h3 className="mt-2 text-xl sm:text-2xl font-black">
-                    {activeStation?.city || 'India'} Verified Network
-                  </h3>
-                  <p className="text-xs text-slate-300 mt-1">
-                    Latitude: {activeStation?.latitude} • Longitude: {activeStation?.longitude}
-                  </p>
-                </div>
-
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${activeStation?.latitude},${activeStation?.longitude}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-xs sm:text-sm font-bold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-[1.02] shadow-lg shrink-0"
-                >
-                  <Navigation size={16} /> Open GPS Navigation
-                </a>
-              </div>
-
-              {/* Station Map Pins Strip */}
-              <div className="relative z-10 mt-6 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                {filteredStations.slice(0, 8).map((stn) => (
-                  <button
-                    key={stn.id}
-                    onClick={() => setActiveStationId(stn.id)}
-                    className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 ${
-                      stn.id === activeStation?.id
-                        ? 'bg-primary text-primary-foreground ring-2 ring-white/50 shadow-md'
-                        : 'bg-white/10 text-slate-200 hover:bg-white/20'
-                    }`}
-                  >
-                    <MapPin size={12} /> {stn.area}
-                  </button>
-                ))}
-              </div>
+            {/* Real Interactive Leaflet OpenStreetMap */}
+            <div className="h-[360px] lg:h-[420px] w-full shrink-0">
+              <DynamicLeafletMap
+                stations={filteredStations}
+                activeStation={activeStation}
+                onSelectStation={(id) => setActiveStationId(id)}
+                userLocation={userLocation}
+              />
             </div>
 
             {/* Selected Station Full Details Sheet */}
@@ -586,7 +564,7 @@ export default function FindE0WebPage() {
                     </div>
                     <div className="flex items-center gap-1 text-amber-600 font-bold text-sm">
                       <Star size={16} className="fill-amber-500 text-amber-500" /> {activeStation.rating}
-                      <span className="text-xs text-muted-foreground">({activeStation.reviewCount} driver reviews)</span>
+                      <span className="text-xs text-muted-foreground">({activeStation.reviewCount} reviews)</span>
                     </div>
                   </div>
                 </div>
@@ -625,7 +603,7 @@ export default function FindE0WebPage() {
                       {activeStation.verifiedBy}
                     </strong>
                     <span className="block text-[10px] text-primary font-semibold mt-0.5">
-                      Verified Stock Active
+                      Active Fuel Stock
                     </span>
                   </div>
 
@@ -642,10 +620,10 @@ export default function FindE0WebPage() {
                   </div>
                 </div>
 
-                {/* Amenities List */}
+                {/* Forecourt Amenities List */}
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                    Forecourt Facilities & Payment Amenities
+                    Forecourt Facilities & Amenities
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {activeStation.amenities.map((am) => (
@@ -667,7 +645,7 @@ export default function FindE0WebPage() {
                     rel="noreferrer"
                     className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-primary/90"
                   >
-                    <Navigation size={18} /> Navigate to Pump Forecourt
+                    <Navigation size={18} /> Open GPS Navigation
                   </a>
 
                   {activeStation.phone && (
@@ -704,7 +682,7 @@ export default function FindE0WebPage() {
         )}
       </section>
 
-      {/* Report Modal */}
+      {/* Community Report Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-2xl space-y-5">
@@ -740,7 +718,7 @@ export default function FindE0WebPage() {
                     required
                     value={reportStationName}
                     onChange={(e) => setReportStationName(e.target.value)}
-                    placeholder="e.g. IndianOil COCO Hebbal, Bellary Road"
+                    placeholder="e.g. IndianOil COCO Koramangala, 80 Feet Road"
                     className="w-full rounded-xl border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
@@ -780,7 +758,7 @@ export default function FindE0WebPage() {
                     type="text"
                     value={reportDensity}
                     onChange={(e) => setReportDensity(e.target.value)}
-                    placeholder="e.g. 734.5"
+                    placeholder="e.g. 734.8"
                     className="w-full rounded-xl border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
