@@ -405,12 +405,6 @@ export default function Page() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
           <Logo />
           <nav className="hidden items-center gap-4 xl:gap-5 lg:flex">
-            <Link
-              href="/find"
-              className="text-xs xl:text-sm font-bold text-primary hover:underline flex items-center gap-1 whitespace-nowrap bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20"
-            >
-              <Fuel size={15} /> Find E0 Petrol (Web)
-            </Link>
             {navItems.map(([label, id]) => (
               <button
                 key={id}
@@ -424,16 +418,10 @@ export default function Page() {
               href="/blog"
               className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
             >
-              <BookOpen size={14} /> Blog
+              <BookOpen size={14} /> Blog & Guides
             </Link>
           </nav>
           <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/find"
-              className="hidden min-[450px]:inline-flex sm:hidden items-center gap-1.5 rounded-lg bg-primary/10 border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary"
-            >
-              <Fuel size={14} /> Web Finder
-            </Link>
             <a
               href={playStoreUrl}
               target="_blank"
@@ -453,13 +441,6 @@ export default function Page() {
         </div>
         {menuOpen && (
           <nav className="flex flex-col gap-1 border-t border-border px-5 py-4 lg:hidden">
-            <Link
-              href="/find"
-              className="rounded-md px-3 py-2.5 text-left font-bold text-primary bg-primary/10 flex items-center gap-2"
-              onClick={() => setMenuOpen(false)}
-            >
-              <Fuel size={16} /> Find E0 Petrol (Web App)
-            </Link>
             {[['Home', 'home'], ...navItems].map(([label, id]) => (
               <button
                 key={id}
@@ -515,43 +496,29 @@ export default function Page() {
               </div>
             ))}
           </div>
-          <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3.5">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4">
             {/* Primary Google Play Download Button */}
             <a
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-primary px-7 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] hover:bg-primary/90"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] hover:bg-primary/90"
             >
               <GooglePlayIcon className="size-6" />
               <div className="text-left leading-none">
                 <span className="block text-[10px] font-semibold text-primary-foreground/80 uppercase tracking-wider">
-                  Get It On
+                  Download Free On
                 </span>
-                <span className="block text-base font-black mt-0.5">Google Play</span>
+                <span className="block text-base font-black mt-0.5">Google Play Store</span>
               </div>
             </a>
-
-            {/* Direct Web Finder (SEO / Browser Access) */}
-            <Link
-              href="/find"
-              className="inline-flex items-center justify-center gap-2.5 rounded-2xl border-2 border-primary/40 bg-card px-6 py-3.5 text-sm font-bold text-foreground shadow-xs transition-all hover:border-primary hover:bg-primary/[0.04] hover:text-primary hover:scale-[1.01]"
-            >
-              <Fuel size={18} className="text-primary" />
-              <div className="text-left leading-none">
-                <span className="block text-sm font-black">Launch Web Finder</span>
-                <span className="block text-[10px] font-semibold text-muted-foreground mt-0.5">
-                  Free Online Map • No App Needed
-                </span>
-              </div>
-            </Link>
 
             {/* Savings Calculator Shortcut */}
             <button
               onClick={() => scrollTo('calculator')}
-              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border bg-background/80 px-5 py-3.5 text-xs sm:text-sm font-bold text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border bg-card px-6 py-4 text-sm font-bold text-foreground hover:border-primary hover:text-primary transition-colors shadow-xs"
             >
-              Savings Calculator <ArrowRight size={16} />
+              Calculate Fuel Savings <ArrowRight size={17} />
             </button>
           </div>
         </div>
@@ -582,9 +549,11 @@ export default function Page() {
 
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {oilBrands.map((brand) => (
-              <Link
+              <a
                 key={brand.name}
-                href={`/find?brand=${encodeURIComponent(brand.name)}`}
+                href={playStoreUrl}
+                target="_blank"
+                rel="noreferrer"
                 className="group flex flex-col items-center justify-between rounded-2xl border border-border bg-card p-4 text-center shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md"
               >
                 <div className="flex h-14 w-full items-center justify-center rounded-xl bg-white p-2 shadow-2xs">
@@ -603,9 +572,9 @@ export default function Page() {
                   </span>
                 </div>
                 <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-muted-foreground group-hover:text-primary group-hover:underline">
-                  Locate Bunks →
+                  Locate in App →
                 </span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
