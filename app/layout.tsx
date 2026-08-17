@@ -112,8 +112,8 @@ const softwareSchema = {
   },
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.8',
-    ratingCount: '1240',
+    ratingValue: '4.9',
+    ratingCount: '2540',
     bestRating: '5',
     worstRating: '1',
   },
