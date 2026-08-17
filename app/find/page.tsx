@@ -744,7 +744,6 @@ export default function FindE0WebPage() {
               </div>
             )}
           </div>
-        </div>
       </section>
 
       {/* Community Report Modal */}
