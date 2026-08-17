@@ -9,6 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: [
+          'Mediapartners-Google',
           'Googlebot',
           'Bingbot',
           'Applebot',

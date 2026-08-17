@@ -84,24 +84,12 @@ const appScreens = [
 
 function GooglePlayIcon({ className = 'size-5 shrink-0' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 512 512" fill="none" aria-hidden="true">
-      <path
-        d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"
-        fill="#EA4335"
-      />
-      <path
-        d="M47 30.6c-4.4 7.6-7 16.9-7 27.4v396c0 10.5 2.6 19.8 7 27.4l246.3-246.3L47 30.6z"
-        fill="#4285F4"
-      />
-      <path
-        d="M325.3 277.7l60.1 60.1L104.6 499l220.7-221.3z"
-        fill="#34A853"
-      />
-      <path
-        d="M470.8 238.6L385.4 189.4l-60.1 44.9 60.1 44.9 85.4-49.2c16.3-9.4 16.3-25.1 0-34.4l-.1.1z"
-        fill="#FBBC04"
-      />
-    </svg>
+    <img
+      src="/assets/images/google-play-icon.png"
+      alt="Google Play"
+      className={`${className} object-contain`}
+      loading="eager"
+    />
   )
 }
 
