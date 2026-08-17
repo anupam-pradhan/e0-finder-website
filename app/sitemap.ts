@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { blogPosts } from '@/lib/blog-data'
+import { citiesData } from '@/lib/city-data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://e0-finder.app'
@@ -50,6 +51,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
+  const cityPages: MetadataRoute.Sitemap = citiesData.map((city) => ({
+    url: `${baseUrl}/city/${city.slug}`,
+    lastModified,
+    changeFrequency: 'daily',
+    priority: 0.95,
+  }))
+
   const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.publishedDate),
@@ -57,6 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }))
 
-  return [...staticPages, ...blogPages]
+  return [...staticPages, ...cityPages, ...blogPages]
 }
+
 

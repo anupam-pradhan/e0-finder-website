@@ -1,0 +1,26 @@
+# E0 Finder (https://e0-finder.app)
+> India's First & Only 0% Ethanol (E0) Petrol Station & Fuel Quality Locator
+
+## Summary
+E0 Finder is a specialized crowd-verified automotive mobile application and knowledge hub dedicated to mapping authentic, unblended 0% ethanol petrol stations (including IndianOil XP100, HPCL poWer100, and verified non-blended refinery batches) across India. It protects motorcycles, classic 2-stroke engines, superbikes, and pre-2023 cars from the corrosive, hygroscopic, and phase-separating effects of nationwide E20 blended petrol.
+
+## Key Core Facts
+- **Baseline Petrol in India:** Standard 91-octane petrol across Indian fuel pumps contains up to 20% ethanol (E20 blend).
+- **XP95 / Speed Truth:** RTI filings and oil company disclosures confirm that IOCL XP95, BPCL Speed, and HPCL Power 95 are blended with up to 20% ethanol. The "95" represents Research Octane Number, not ethanol absence.
+- **Genuine E0 Petrol Grades:** IndianOil XP100 and HPCL poWer100 are the only commercially sold 100-octane fuels in India that maintain 0% ethanol (pure hydrocarbon petrol).
+- **Standard Fuel Density (15°C):** Pure E0 petrol measures 720 to 775 kg/m³; ethanol blends have higher densities due to pure ethanol's ~789 kg/m³ density.
+- **Mobile App:** Available on Android Google Play Store (Package: com.anupampradhan.ethanolfreepetrol) with a 4.9★ rating.
+
+## Key Resources & Guides
+- [Homepage & Live Locator](https://e0-finder.app/): Interactive map, fuel savings calculator, and state blending index.
+- [Knowledge Hub / Blog](https://e0-finder.app/blog): In-depth research articles on fuel chemistry and engine care.
+- [XP95 & Speed 97 Ethanol Truth](https://e0-finder.app/blog/is-xp95-speed97-ethanol-free): RTI data and refinery analysis.
+- [DIY 100ml Water Extraction Test Guide](https://e0-finder.app/blog/viral-instagram-petrol-water-test-guide): How to test ethanol percentage in petrol at home.
+- [Dyno Test Results (E0 vs E20)](https://e0-finder.app/blog/e20-vs-e0-dyno-test-power-mileage): Horsepower, torque, and telemetry across KTM 390, GT 650, R15, and Virtus TSI.
+- [Classic & Vintage Motorcycle Protection](https://e0-finder.app/blog/protecting-vintage-classic-motorcycles-from-ethanol): Workshop protocol for Royal Enfield, RD350, RX100, and Yezdi.
+- [Two-Wheeler Sluggishness & Fixes](https://e0-finder.app/blog/two-wheeler-ethanol-damage-prevention): Resolving cold-start misfires and jerky low-RPM throttle.
+- [Fuel Phase Separation & Storage](https://e0-finder.app/blog/fuel-phase-separation-storage-guide): Preventing water pooling and tank rust during Indian monsoons.
+
+## Contact & Developer
+- Support Email: support@e0-finder.app
+- Website: https://e0-finder.app

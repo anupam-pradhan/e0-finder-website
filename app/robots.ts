@@ -7,7 +7,22 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
       },
+      {
+        userAgent: [
+          'Googlebot',
+          'Bingbot',
+          'Applebot',
+          'GPTBot',
+          'PerplexityBot',
+          'ClaudeBot',
+          'Google-Extended',
+          'Applebot-Extended',
+        ],
+        allow: '/',
+      },
     ],
     sitemap: 'https://e0-finder.app/sitemap.xml',
+    host: 'https://e0-finder.app',
   }
 }
+

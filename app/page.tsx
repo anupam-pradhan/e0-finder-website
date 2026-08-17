@@ -1152,15 +1152,19 @@ export default function Page() {
                 <div>
                   <div className="flex items-center gap-2 text-primary">
                     <MapPin size={18} />
-                    <strong className="text-base font-bold text-foreground">{city.name}</strong>
+                    <strong className="text-base font-bold text-foreground">
+                      <Link href={`/city/${city.slug}`} className="hover:underline">
+                        {city.name}
+                      </Link>
+                    </strong>
                   </div>
                   <span className="mt-1 block text-xs text-muted-foreground">{city.state}</span>
                 </div>
                 <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                   <span className="text-xs font-semibold text-primary">{city.stations}</span>
-                  <a href={playStoreUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold text-muted-foreground hover:text-primary">
-                    View in App →
-                  </a>
+                  <Link href={`/city/${city.slug}`} className="text-xs font-semibold text-primary hover:underline">
+                    View City Guide →
+                  </Link>
                 </div>
               </div>
             ))}
