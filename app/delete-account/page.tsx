@@ -69,15 +69,15 @@ export default function DeleteAccountPage() {
             If you cannot access the app, contact{' '}
             <a
               className="font-semibold text-primary hover:underline"
-              href="mailto:support@eofinder.app?subject=Delete%20My%20E0%20Finder%20Account"
+              href="mailto:support@e0-finder.app?subject=Delete%20My%20E0%20Finder%20Account"
             >
-              support@eofinder.app
+              support@e0-finder.app
             </a>{' '}
             with the email associated with your account.
           </p>
           <div className="mt-4">
             <a
-              href="mailto:support@eofinder.app?subject=Delete%20My%20E0%20Finder%20Account"
+              href="mailto:support@e0-finder.app?subject=Delete%20My%20E0%20Finder%20Account"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Mail size={17} /> Contact Support for Deletion

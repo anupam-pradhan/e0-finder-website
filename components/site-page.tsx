@@ -31,7 +31,7 @@ export function SitePage({
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{intro}</p>
         <article className="mt-10 max-w-3xl rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-10">{children}</article>
       </div>
-      <footer className="border-t border-border bg-primary py-8 text-primary-foreground"><div className="mx-auto flex max-w-5xl flex-col gap-4 px-5 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© 2026 EO Finder. All rights reserved.</span><Link href="mailto:support@eofinder.app" className="inline-flex items-center gap-2 hover:underline"><Mail size={16} /> support@eofinder.app</Link></div></footer>
+      <footer className="border-t border-border bg-primary py-8 text-primary-foreground"><div className="mx-auto flex max-w-5xl flex-col gap-4 px-5 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© 2026 EO Finder. All rights reserved.</span><Link href="mailto:support@e0-finder.app" className="inline-flex items-center gap-2 hover:underline"><Mail size={16} /> support@e0-finder.app</Link></div></footer>
     </main>
   )
 }
