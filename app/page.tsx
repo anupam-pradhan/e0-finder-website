@@ -352,6 +352,12 @@ export default function Page() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
           <Logo />
           <nav className="hidden items-center gap-4 xl:gap-5 lg:flex">
+            <Link
+              href="/find"
+              className="text-xs xl:text-sm font-bold text-primary hover:underline flex items-center gap-1 whitespace-nowrap bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20"
+            >
+              <Fuel size={15} /> Find E0 Petrol (Web)
+            </Link>
             {navItems.map(([label, id]) => (
               <button
                 key={id}
@@ -363,12 +369,18 @@ export default function Page() {
             ))}
             <Link
               href="/blog"
-              className="text-xs xl:text-sm font-semibold text-primary hover:underline flex items-center gap-1 whitespace-nowrap"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
             >
               <BookOpen size={14} /> Blog
             </Link>
           </nav>
           <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/find"
+              className="hidden min-[450px]:inline-flex sm:hidden items-center gap-1.5 rounded-lg bg-primary/10 border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary"
+            >
+              <Fuel size={14} /> Web Finder
+            </Link>
             <a
               href={playStoreUrl}
               target="_blank"
@@ -388,6 +400,13 @@ export default function Page() {
         </div>
         {menuOpen && (
           <nav className="flex flex-col gap-1 border-t border-border px-5 py-4 lg:hidden">
+            <Link
+              href="/find"
+              className="rounded-md px-3 py-2.5 text-left font-bold text-primary bg-primary/10 flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Fuel size={16} /> Find E0 Petrol (Web App)
+            </Link>
             {[['Home', 'home'], ...navItems].map(([label, id]) => (
               <button
                 key={id}
@@ -399,10 +418,10 @@ export default function Page() {
             ))}
             <Link
               href="/blog"
-              className="rounded-md px-3 py-2 text-left font-semibold text-primary hover:bg-muted"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
               onClick={() => setMenuOpen(false)}
             >
-              Blog & Knowledge Hub
+              <BookOpen size={16} /> Blog & Knowledge Hub
             </Link>
           </nav>
         )}
@@ -444,19 +463,25 @@ export default function Page() {
             ))}
           </div>
           <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/find"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 font-bold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-primary/90"
+            >
+              <Fuel size={18} /> Launch Web Finder (Free)
+            </Link>
             <a
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3.5 font-semibold text-primary-foreground shadow-sm transition-transform hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3.5 font-semibold text-foreground hover:border-primary hover:text-primary transition-transform hover:scale-[1.02] shadow-xs"
             >
-              Download on Google Play <ExternalLink size={17} />
+              Google Play App <ExternalLink size={17} />
             </a>
             <button
               onClick={() => scrollTo('calculator')}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-background px-6 py-3.5 font-semibold hover:border-primary hover:text-primary"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-background px-6 py-3.5 font-semibold hover:border-primary hover:text-primary"
             >
-              Calculate Your Savings <ArrowRight size={17} />
+              Savings Calculator <ArrowRight size={17} />
             </button>
           </div>
         </div>
