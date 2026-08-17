@@ -71,6 +71,203 @@ export async function generateMetadata({
   }
 }
 
+function parseInlineText(text: string): React.ReactNode {
+  const tokens: React.ReactNode[] = []
+  let buffer = ''
+  let i = 0
+
+  while (i < text.length) {
+    if (text.startsWith('**', i)) {
+      if (buffer) {
+        tokens.push(buffer)
+        buffer = ''
+      }
+      const closeIdx = text.indexOf('**', i + 2)
+      if (closeIdx !== -1) {
+        const boldText = text.substring(i + 2, closeIdx)
+        tokens.push(
+          <strong key={i} className="font-bold text-foreground">
+            {parseInlineText(boldText)}
+          </strong>
+        )
+        i = closeIdx + 2
+        continue
+      }
+    } else if (text.startsWith('`', i)) {
+      if (buffer) {
+        tokens.push(buffer)
+        buffer = ''
+      }
+      const closeIdx = text.indexOf('`', i + 1)
+      if (closeIdx !== -1) {
+        const codeText = text.substring(i + 1, closeIdx)
+        tokens.push(
+          <code key={i} className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs font-semibold text-primary">
+            {codeText}
+          </code>
+        )
+        i = closeIdx + 1
+        continue
+      }
+    } else if (text.startsWith('*', i) && !text.startsWith('**', i)) {
+      if (buffer) {
+        tokens.push(buffer)
+        buffer = ''
+      }
+      const closeIdx = text.indexOf('*', i + 1)
+      if (closeIdx !== -1) {
+        const italicText = text.substring(i + 1, closeIdx)
+        tokens.push(
+          <em key={i} className="italic text-foreground/90">
+            {italicText}
+          </em>
+        )
+        i = closeIdx + 1
+        continue
+      }
+    }
+    buffer += text[i]
+    i++
+  }
+
+  if (buffer) {
+    tokens.push(buffer)
+  }
+
+  return tokens.length === 1 && typeof tokens[0] === 'string' ? tokens[0] : tokens
+}
+
+function ArticleRenderer({ content }: { content: string }) {
+  const lines = content.trim().split('\n')
+  const blocks: React.ReactNode[] = []
+  let currentList: { type: 'ul' | 'ol'; items: string[] } | null = null
+
+  const flushList = (keyPrefix: number) => {
+    if (!currentList) return null
+    const listComponent =
+      currentList.type === 'ul' ? (
+        <ul key={`ul-${keyPrefix}`} className="my-4 space-y-2.5 pl-1">
+          {currentList.items.map((item, idx) => (
+            <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-7 text-foreground/90">
+              <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-primary" />
+              <div>{parseInlineText(item)}</div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ol key={`ol-${keyPrefix}`} className="my-4 space-y-2.5 list-decimal pl-6 text-sm sm:text-base leading-7 text-foreground/90">
+          {currentList.items.map((item, idx) => (
+            <li key={idx} className="pl-1">
+              {parseInlineText(item)}
+            </li>
+          ))}
+        </ol>
+      )
+    currentList = null
+    return listComponent
+  }
+
+  lines.forEach((rawLine, idx) => {
+    const line = rawLine.trim()
+
+    if (!line) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      return
+    }
+
+    if (line === '---' || line === '***' || line === '___') {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      blocks.push(<hr key={idx} className="my-8 border-border" />)
+      return
+    }
+
+    if (line.startsWith('$$') && line.endsWith('$$')) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      const mathText = line.replace(/\$\$/g, '').replace(/\\text\{([^}]+)\}/g, '$1').replace(/\\times/g, '×').replace(/\\%/g, '%')
+      blocks.push(
+        <div key={idx} className="my-6 rounded-2xl border border-primary/20 bg-primary/[0.04] p-5 text-center font-mono text-sm sm:text-base font-bold text-primary shadow-xs">
+          {mathText}
+        </div>
+      )
+      return
+    }
+
+    if (line.startsWith('#### ')) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      blocks.push(
+        <h4 key={idx} className="mt-6 mb-2 text-base sm:text-lg font-bold text-foreground tracking-tight">
+          {parseInlineText(line.replace(/^####\s+/, ''))}
+        </h4>
+      )
+      return
+    }
+
+    if (line.startsWith('### ')) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      blocks.push(
+        <h3 key={idx} className="mt-8 mb-3 text-xl sm:text-2xl font-bold text-foreground tracking-tight">
+          {parseInlineText(line.replace(/^###\s+/, ''))}
+        </h3>
+      )
+      return
+    }
+
+    if (line.startsWith('## ')) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      blocks.push(
+        <h2 key={idx} className="mt-10 mb-4 text-2xl sm:text-3xl font-black text-foreground tracking-tight border-b border-border pb-2">
+          {parseInlineText(line.replace(/^##\s+/, ''))}
+        </h2>
+      )
+      return
+    }
+
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+      const itemText = line.substring(2)
+      if (currentList && currentList.type === 'ul') {
+        currentList.items.push(itemText)
+      } else {
+        const flushed = flushList(idx)
+        if (flushed) blocks.push(flushed)
+        currentList = { type: 'ul', items: [itemText] }
+      }
+      return
+    }
+
+    const numMatch = line.match(/^(\d+)\.\s+(.*)/)
+    if (numMatch) {
+      const itemText = numMatch[2]
+      if (currentList && currentList.type === 'ol') {
+        currentList.items.push(itemText)
+      } else {
+        const flushed = flushList(idx)
+        if (flushed) blocks.push(flushed)
+        currentList = { type: 'ol', items: [itemText] }
+      }
+      return
+    }
+
+    const flushed = flushList(idx)
+    if (flushed) blocks.push(flushed)
+    blocks.push(
+      <p key={idx} className="my-3 text-base sm:text-lg leading-8 text-foreground/90">
+        {parseInlineText(line)}
+      </p>
+    )
+  })
+
+  const trailingList = flushList(lines.length)
+  if (trailingList) blocks.push(trailingList)
+
+  return <div className="article-prose space-y-1">{blocks}</div>
+}
+
 export default async function BlogPostPage({
   params,
 }: {
@@ -143,27 +340,27 @@ export default async function BlogPostPage({
       </header>
 
       {/* Article Container */}
-      <article className="mx-auto max-w-4xl px-5 py-10 lg:px-8 lg:py-14">
+      <article className="mx-auto max-w-4xl px-5 py-10 lg:px-8 lg:py-16">
         {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-2 text-xs text-muted-foreground">
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
           <Link href="/" className="hover:text-primary">Home</Link>
           <ChevronRight size={12} />
-          <Link href="/blog" className="hover:text-primary">Blog</Link>
+          <Link href="/blog" className="hover:text-primary">Blog & Research</Link>
           <ChevronRight size={12} />
-          <span className="text-foreground font-medium truncate max-w-[240px] sm:max-w-md">{post.category}</span>
+          <span className="text-foreground font-medium truncate max-w-[240px] sm:max-w-none">{post.category}</span>
         </nav>
 
-        {/* Category & Meta Header */}
-        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+        {/* Category & Date */}
+        <div className="flex flex-wrap items-center gap-3 text-xs">
           <span className="rounded-full bg-primary/10 px-3 py-1 font-bold text-primary">
             {post.category}
           </span>
-          <span>•</span>
-          <span className="inline-flex items-center gap-1 font-medium">
-            <Clock size={13} /> {post.readTime}
+          <span className="flex items-center gap-1 text-muted-foreground">
+            <Calendar size={14} /> {post.publishedDate}
           </span>
-          <span>•</span>
-          <span>{post.publishedDate}</span>
+          <span className="flex items-center gap-1 text-muted-foreground">
+            <Clock size={14} /> {post.readTime}
+          </span>
         </div>
 
         {/* Title */}
@@ -218,11 +415,9 @@ export default async function BlogPostPage({
           </div>
         )}
 
-        {/* Main Article Content */}
-        <div className="prose prose-neutral mt-10 max-w-none text-foreground/90 leading-8">
-          <div className="whitespace-pre-line font-sans text-base space-y-5">
-            {post.content}
-          </div>
+        {/* Main Article Content (Rendered Cleanly Without Raw Symbols) */}
+        <div className="mt-10 max-w-none text-foreground leading-8">
+          <ArticleRenderer content={post.content} />
         </div>
 
         {/* In-Article Screenshots & Figures */}
@@ -236,13 +431,13 @@ export default async function BlogPostPage({
                 <figure key={idx} className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
                   <div className="bg-muted/40 p-3 flex justify-center">
                     <img
-                      src={img.src}
-                      alt={img.alt}
+                      src={img.url}
+                      alt={img.caption}
                       className="max-h-[320px] rounded-xl object-contain shadow-xs"
                     />
                   </div>
                   <figcaption className="p-4 text-xs text-muted-foreground leading-5 border-t border-border">
-                    <strong className="text-foreground block mb-1">Live App Data:</strong>
+                    <strong className="text-foreground block mb-1">Live App Telemetry:</strong>
                     {img.caption}
                   </figcaption>
                 </figure>
@@ -258,64 +453,63 @@ export default async function BlogPostPage({
               <img
                 src="/app-icon.png"
                 alt="E0 Finder Official App"
-                className="size-16 rounded-2xl object-contain shadow-md shrink-0 bg-white p-1"
+                className="size-16 rounded-2xl object-contain shadow-md bg-white p-1 shrink-0"
               />
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-bold text-primary mb-2">
-                  <ShieldCheck size={13} /> India&apos;s #1 E0 Petrol App
-                </div>
-                <h3 className="text-2xl font-black text-foreground">
-                  Don&apos;t Let Blended E20 Fuel Damage Your Engine
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-xs font-bold text-primary uppercase tracking-wider">
+                  <ShieldCheck size={14} /> Official E0 Station Network
+                </span>
+                <h3 className="mt-2 text-2xl sm:text-3xl font-black text-foreground">
+                  Find 0% Ethanol Petrol Near You Instantly
                 </h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-6">
-                  Get real-time directions to verified 0% ethanol petrol pumps in Bengaluru, Delhi NCR, Mumbai, Pune, Chennai, and all Indian highways.
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-xl">
+                  Download <strong>E0 Finder</strong> for Android. Real-time verified pumps, live density logs (Form-8), turn-by-turn navigation, and crowd-verified reports across 500+ Indian cities.
                 </p>
-                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-foreground/80">
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-bold text-foreground/80">
                   <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> 100% Free Forever</span>
-                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> Live Density Logs</span>
-                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> GPS Turn-by-Turn</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> 10,000+ Active Drivers</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> Live GPS Routing</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row md:flex-col items-center gap-3 shrink-0 w-full sm:w-auto">
+            <div className="flex flex-col items-center gap-2 shrink-0 w-full sm:w-auto">
               <a
                 href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
                 target="_blank"
                 rel="noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-md transition-transform hover:scale-[1.03] hover:bg-primary/90"
+                className="flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90"
               >
-                Download on Google Play <ExternalLink size={16} />
+                <Download size={20} /> Install E0 Finder on Google Play
               </a>
-              <span className="text-[11px] text-muted-foreground text-center">
+              <span className="text-[11px] text-muted-foreground">
                 Rated 4.9★ by 2,500+ Indian Motorists
               </span>
             </div>
           </div>
         </div>
 
-        {/* Related Posts */}
+        {/* Related Guides */}
         {relatedPosts.length > 0 && (
           <div className="mt-16 border-t border-border pt-10">
-            <h3 className="text-2xl font-black text-foreground">More Automotive Fuel Guides</h3>
+            <h3 className="text-2xl font-black text-foreground">Related Guides & Research</h3>
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
               {relatedPosts.map((rel) => (
                 <Link
                   key={rel.slug}
                   href={`/blog/${rel.slug}`}
-                  className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-xs"
+                  className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/50 shadow-xs"
                 >
                   <div>
-                    <span className="text-xs font-bold text-primary">{rel.category}</span>
-                    <h4 className="mt-2 text-sm font-bold group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    <span className="text-[11px] font-bold text-primary uppercase tracking-wider">
+                      {rel.category}
+                    </span>
+                    <h4 className="mt-2 text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2">
                       {rel.title}
                     </h4>
-                    <p className="mt-2 text-xs text-muted-foreground line-clamp-2 leading-5">
-                      {rel.excerpt}
-                    </p>
                   </div>
-                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-primary">
-                    Read guide <ChevronRight size={13} />
+                  <span className="mt-4 text-xs font-semibold text-primary inline-flex items-center gap-1">
+                    Read Guide →
                   </span>
                 </Link>
               ))}
