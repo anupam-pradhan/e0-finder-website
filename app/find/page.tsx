@@ -85,6 +85,40 @@ export default function FindE0WebPage() {
   const [reportFuelGrade, setReportFuelGrade] = useState('XP100 (0% Ethanol)')
   const [reportCity, setReportCity] = useState('Bengaluru')
   const [reportNotes, setReportNotes] = useState('')
+  const [lastSyncTime, setLastSyncTime] = useState<string>('06:00 AM IST Today')
+  const [isSyncing, setIsSyncing] = useState<boolean>(false)
+
+  // Fetch live daily updated stations on mount
+  const fetchLiveStations = async () => {
+    try {
+      setIsSyncing(true)
+      const res = await fetch('/api/stations')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.stations && data.stations.length > 0) {
+          // Load any local community submissions
+          let localReports: WebStation[] = []
+          try {
+            const saved = localStorage.getItem('e0_community_reports')
+            if (saved) localReports = JSON.parse(saved)
+          } catch (e) {}
+
+          setStations([...localReports, ...data.stations])
+          if (data.omcRevisionDate) {
+            setLastSyncTime(`${data.omcRevisionDate} • ${data.omcRevisionTime}`)
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to sync live stations', err)
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchLiveStations()
+  }, [])
 
   // Geolocation trigger
   const handleLocateMe = () => {
@@ -271,6 +305,26 @@ export default function FindE0WebPage() {
       {/* Search & Filter Bar */}
       <section className="border-b border-border bg-card/60 backdrop-blur px-4 py-4 lg:px-8">
         <div className="mx-auto max-w-7xl">
+          {/* Live Daily Auto-Sync Status Badge */}
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Daily Auto-Sync
+              </span>
+              <span className="text-muted-foreground text-[11px]">
+                OMC Form-8 & Price Revision: <strong className="text-foreground">{lastSyncTime}</strong>
+              </span>
+            </div>
+            <button
+              onClick={fetchLiveStations}
+              disabled={isSyncing}
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline"
+            >
+              {isSyncing ? 'Syncing Feeds...' : '↻ Refresh Feeds'}
+            </button>
+          </div>
+
           <div className="flex flex-col md:flex-row gap-3">
             {/* Location & Keyword Search Input */}
             <div className="relative flex-1">

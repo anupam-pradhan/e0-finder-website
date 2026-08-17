@@ -515,27 +515,43 @@ export default function Page() {
               </div>
             ))}
           </div>
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link
-              href="/find"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3.5 font-bold text-primary-foreground shadow-md transition-transform hover:scale-[1.02] hover:bg-primary/90"
-            >
-              <Fuel size={18} /> Launch Web Finder (Free)
-            </Link>
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3.5">
+            {/* Primary Google Play Download Button */}
             <a
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-card px-6 py-3.5 font-bold text-foreground hover:border-primary hover:text-primary transition-transform hover:scale-[1.02] shadow-xs"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-primary px-7 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] hover:bg-primary/90"
             >
-              <GooglePlayIcon className="size-5" />
-              <span>Get on Google Play</span>
+              <GooglePlayIcon className="size-6" />
+              <div className="text-left leading-none">
+                <span className="block text-[10px] font-semibold text-primary-foreground/80 uppercase tracking-wider">
+                  Get It On
+                </span>
+                <span className="block text-base font-black mt-0.5">Google Play</span>
+              </div>
             </a>
+
+            {/* Direct Web Finder (SEO / Browser Access) */}
+            <Link
+              href="/find"
+              className="inline-flex items-center justify-center gap-2.5 rounded-2xl border-2 border-primary/40 bg-card px-6 py-3.5 text-sm font-bold text-foreground shadow-xs transition-all hover:border-primary hover:bg-primary/[0.04] hover:text-primary hover:scale-[1.01]"
+            >
+              <Fuel size={18} className="text-primary" />
+              <div className="text-left leading-none">
+                <span className="block text-sm font-black">Launch Web Finder</span>
+                <span className="block text-[10px] font-semibold text-muted-foreground mt-0.5">
+                  Free Online Map • No App Needed
+                </span>
+              </div>
+            </Link>
+
+            {/* Savings Calculator Shortcut */}
             <button
               onClick={() => scrollTo('calculator')}
-              className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-background px-6 py-3.5 font-semibold hover:border-primary hover:text-primary"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border bg-background/80 px-5 py-3.5 text-xs sm:text-sm font-bold text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
             >
-              Savings Calculator <ArrowRight size={17} />
+              Savings Calculator <ArrowRight size={16} />
             </button>
           </div>
         </div>
