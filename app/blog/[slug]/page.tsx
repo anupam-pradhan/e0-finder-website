@@ -17,6 +17,11 @@ import {
   Users,
   AlertTriangle,
   Smartphone,
+  ListOrdered,
+  Calculator,
+  Compass,
+  ArrowRight,
+  BookOpen,
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
 import type { Metadata } from 'next'
@@ -195,6 +200,26 @@ function ArticleRenderer({ content }: { content: string }) {
       return
     }
 
+    // Markdown Table Parser
+    if (line.startsWith('|') && line.endsWith('|')) {
+      const flushed = flushList(idx)
+      if (flushed) blocks.push(flushed)
+      // Check if divider line
+      if (line.includes('---')) return
+
+      const cells = line.split('|').filter((c) => c.trim().length > 0)
+      blocks.push(
+        <div key={idx} className="my-1 flex items-center justify-between gap-4 rounded-xl border border-border/80 bg-card px-4 py-2.5 text-xs sm:text-sm font-medium text-foreground">
+          {cells.map((cell, cIdx) => (
+            <span key={cIdx} className={cIdx === 0 ? 'font-bold text-foreground shrink-0' : 'text-muted-foreground'}>
+              {parseInlineText(cell.trim())}
+            </span>
+          ))}
+        </div>
+      )
+      return
+    }
+
     if (line.startsWith('#### ')) {
       const flushed = flushList(idx)
       if (flushed) blocks.push(flushed)
@@ -209,9 +234,11 @@ function ArticleRenderer({ content }: { content: string }) {
     if (line.startsWith('### ')) {
       const flushed = flushList(idx)
       if (flushed) blocks.push(flushed)
+      const headingText = line.replace(/^###\s+/, '')
+      const anchorId = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       blocks.push(
-        <h3 key={idx} className="mt-8 mb-3 text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-          {parseInlineText(line.replace(/^###\s+/, ''))}
+        <h3 id={anchorId} key={idx} className="scroll-mt-20 mt-8 mb-3 text-xl sm:text-2xl font-bold text-foreground tracking-tight">
+          {parseInlineText(headingText)}
         </h3>
       )
       return
@@ -220,9 +247,11 @@ function ArticleRenderer({ content }: { content: string }) {
     if (line.startsWith('## ')) {
       const flushed = flushList(idx)
       if (flushed) blocks.push(flushed)
+      const headingText = line.replace(/^##\s+/, '')
+      const anchorId = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       blocks.push(
-        <h2 key={idx} className="mt-10 mb-4 text-2xl sm:text-3xl font-black text-foreground tracking-tight border-b border-border pb-2">
-          {parseInlineText(line.replace(/^##\s+/, ''))}
+        <h2 id={anchorId} key={idx} className="scroll-mt-20 mt-10 mb-4 text-2xl sm:text-3xl font-black text-foreground tracking-tight border-b border-border pb-2">
+          {parseInlineText(headingText)}
         </h2>
       )
       return
@@ -256,7 +285,7 @@ function ArticleRenderer({ content }: { content: string }) {
     const flushed = flushList(idx)
     if (flushed) blocks.push(flushed)
     blocks.push(
-      <p key={idx} className="my-3 text-base sm:text-lg leading-8 text-foreground/90">
+      <p key={idx} className="my-3.5 text-base sm:text-lg leading-8 text-foreground/90">
         {parseInlineText(line)}
       </p>
     )
@@ -280,7 +309,21 @@ export default async function BlogPostPage({
     notFound()
   }
 
-  const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 3)
+  // Extract Table of Contents headers (## and ###)
+  const tocHeadings = post.content
+    .split('\n')
+    .filter((line) => line.startsWith('### ') || line.startsWith('## '))
+    .map((line) => {
+      const isH2 = line.startsWith('## ')
+      const title = line.replace(/^#{2,3}\s+/, '').replace(/\*\*/g, '').trim()
+      const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      return { title, id, isH2 }
+    })
+
+  const relatedPosts = blogPosts
+    .filter((p) => p.slug !== post.slug)
+    .sort((a, b) => (a.category === post.category ? -1 : 1))
+    .slice(0, 3)
 
   const articleSchema = {
     '@context': 'https://schema.org',
@@ -309,7 +352,7 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Schema.org Article Structured Data */}
       <script
         type="application/ld+json"
@@ -318,7 +361,7 @@ export default async function BlogPostPage({
 
       {/* Top Navigation */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3.5 lg:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 lg:px-8">
           <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
             <ArrowLeft size={16} /> All Guides & Research
           </Link>
@@ -340,12 +383,12 @@ export default async function BlogPostPage({
       </header>
 
       {/* Article Container */}
-      <article className="mx-auto max-w-4xl px-5 py-10 lg:px-8 lg:py-16">
+      <article className="mx-auto max-w-4xl px-4 py-10 lg:px-8 lg:py-16">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
           <Link href="/" className="hover:text-primary">Home</Link>
           <ChevronRight size={12} />
-          <Link href="/blog" className="hover:text-primary">Blog & Research</Link>
+          <Link href="/blog" className="hover:text-primary">Knowledge Hub</Link>
           <ChevronRight size={12} />
           <span className="text-foreground font-medium truncate max-w-[240px] sm:max-w-none">{post.category}</span>
         </nav>
@@ -369,7 +412,7 @@ export default async function BlogPostPage({
         </h1>
 
         {/* Excerpt Lead */}
-        <p className="mt-5 text-lg leading-8 text-muted-foreground border-l-4 border-primary pl-4 py-1 italic bg-muted/30 rounded-r-xl">
+        <p className="mt-5 text-base sm:text-lg leading-8 text-muted-foreground border-l-4 border-primary pl-4 py-1.5 italic bg-muted/20 rounded-r-xl">
           {post.excerpt}
         </p>
 
@@ -385,7 +428,7 @@ export default async function BlogPostPage({
             </div>
           </div>
           <div className="flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600">
-            <Star size={13} className="fill-amber-500" /> 4.9★ E0 Finder App
+            <Star size={13} className="fill-amber-500 text-amber-500" /> 4.9★ E0 Finder App
           </div>
         </div>
 
@@ -400,7 +443,7 @@ export default async function BlogPostPage({
 
         {/* Key Takeaways Box (Indian Automotive Context) */}
         {post.keyTakeaways && post.keyTakeaways.length > 0 && (
-          <div className="mt-8 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] p-6">
+          <div className="mt-8 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.07] to-primary/[0.02] p-6 shadow-xs">
             <h3 className="flex items-center gap-2 text-base font-bold text-primary">
               <Sparkles size={18} /> Key Takeaways for Indian Motorists:
             </h3>
@@ -415,9 +458,52 @@ export default async function BlogPostPage({
           </div>
         )}
 
+        {/* Table of Contents (TOC) */}
+        {tocHeadings.length > 2 && (
+          <div className="mt-8 rounded-2xl border border-border bg-muted/20 p-5">
+            <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <ListOrdered size={16} className="text-primary" /> Table of Contents
+            </h4>
+            <ul className="mt-3 space-y-1.5 text-xs sm:text-sm">
+              {tocHeadings.map((h, idx) => (
+                <li key={idx} className={h.isH2 ? 'font-bold' : 'pl-4 text-muted-foreground'}>
+                  <a href={`#${h.id}`} className="hover:text-primary hover:underline transition-colors">
+                    {h.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Main Article Content (Rendered Cleanly Without Raw Symbols) */}
         <div className="mt-10 max-w-none text-foreground leading-8">
           <ArticleRenderer content={post.content} />
+        </div>
+
+        {/* Interactive Savings Calculator Callout Widget */}
+        <div className="my-10 rounded-2xl border border-primary/30 bg-primary/[0.04] p-6 sm:p-7">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground shrink-0 shadow-xs">
+                <Calculator size={24} />
+              </div>
+              <div>
+                <h4 className="text-base sm:text-lg font-bold text-foreground">
+                  Calculate Your Fuel & Maintenance Savings
+                </h4>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  See how much fuel and preventive repair costs your bike or car saves on pure E0 petrol.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/#calculator"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
+            >
+              Open Calculator <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
 
         {/* In-Article Screenshots & Figures */}
@@ -492,7 +578,7 @@ export default async function BlogPostPage({
         {/* Related Guides */}
         {relatedPosts.length > 0 && (
           <div className="mt-16 border-t border-border pt-10">
-            <h3 className="text-2xl font-black text-foreground">Related Guides & Research</h3>
+            <h3 className="text-2xl font-black text-foreground">Related Research Guides</h3>
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
               {relatedPosts.map((rel) => (
                 <Link
