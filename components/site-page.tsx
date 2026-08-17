@@ -18,8 +18,8 @@ export function SitePage({
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border/70 bg-background/95">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-3" aria-label="EO Finder home">
-            <span className="grid size-10 place-items-center rounded-xl bg-primary font-black text-primary-foreground">E0</span>
+          <Link href="/" className="flex items-center gap-3" aria-label="E0 Finder home">
+            <img src="/app-icon.png" alt="E0 Finder Logo" className="size-10 rounded-xl object-contain shadow-sm" />
             <span><strong className="block text-xl leading-none">Finder</strong><small className="text-xs text-muted-foreground">Find Ethanol-Free Petrol</small></span>
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"><ArrowLeft size={16} /> Back to home</Link>
@@ -31,7 +31,7 @@ export function SitePage({
         <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">{intro}</p>
         <article className="mt-10 max-w-3xl rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-10">{children}</article>
       </div>
-      <footer className="border-t border-border bg-primary py-8 text-primary-foreground"><div className="mx-auto flex max-w-5xl flex-col gap-4 px-5 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© 2026 EO Finder. All rights reserved.</span><Link href="mailto:support@e0-finder.app" className="inline-flex items-center gap-2 hover:underline"><Mail size={16} /> support@e0-finder.app</Link></div></footer>
+      <footer className="border-t border-border bg-primary py-8 text-primary-foreground"><div className="mx-auto flex max-w-5xl flex-col gap-4 px-5 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© 2026 E0 Finder. All rights reserved.</span><Link href="mailto:support@e0-finder.app" className="inline-flex items-center gap-2 hover:underline"><Mail size={16} /> support@e0-finder.app</Link></div></footer>
     </main>
   )
 }
