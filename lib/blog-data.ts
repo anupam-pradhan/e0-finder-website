@@ -213,10 +213,10 @@ The science behind this test is rock solid: **Water Extraction Chromatography**.
 
 Look at the line where the bottom water layer meets the top petrol layer:
 
-- **Bottom layer stays at exactly 10ml:** 🎉 **100% Pure E0 Petrol!** (Zero ethanol extracted).
+- **Bottom layer stays at exactly 10ml:** **[CONFIRMED] 100% Pure E0 Petrol** (Zero ethanol extracted).
 - **Bottom layer reaches ~19–20ml:** **E10 Blend (~10% Ethanol)**.
-- **Bottom layer reaches ~28–30ml:** 🚨 **E20 Blend (~20% Ethanol)**.
-- **Bottom layer exceeds 32ml:** **Over-blended or Contaminated Fuel** (Immediate fuel system risk!).
+- **Bottom layer reaches ~28–30ml:** **[WARNING] E20 Blend (~20% Ethanol)**.
+- **Bottom layer exceeds 32ml:** **[CRITICAL] Over-blended or Contaminated Fuel** (Immediate fuel system risk!).
 
 #### The Exact Mathematical Formula:
 $$\\text{Ethanol \\%} = (\\text{Final Bottom Volume in ml} - 10\\text{ml}) \\times 1.11$$

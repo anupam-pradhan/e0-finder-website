@@ -38,6 +38,7 @@ import {
   CheckCircle,
   Play,
   Share2,
+  Lightbulb,
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
 
@@ -595,7 +596,9 @@ export default function Page() {
             </div>
 
             <div className="mt-6 rounded-xl bg-primary/10 p-4 text-xs leading-5 text-foreground/90">
-              <strong className="block text-primary font-bold mb-1">💡 Engineering Insight:</strong>
+              <strong className="flex items-center gap-1.5 text-primary font-bold mb-1">
+                <Lightbulb size={15} /> Engineering Insight:
+              </strong>
               E0 petrol delivers 6%–8% higher energy density per cylinder stroke. On a 12-litre motorcycle tank, you gain approximately <strong>{(calcResults.e0Range - calcResults.e20Range)} extra KM</strong> of range per tank fill.
             </div>
           </div>
