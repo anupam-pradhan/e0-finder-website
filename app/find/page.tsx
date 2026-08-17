@@ -32,17 +32,20 @@ import {
   Check,
   Send,
   Plus,
+  Loader2,
 } from 'lucide-react'
 import { initialStations, WebStation } from '@/lib/stations-data'
 
-// Dynamically import Leaflet Map to avoid SSR window errors
+import { GooglePlayIcon } from '@/components/google-play-icon'
+
+// Dynamically import Leaflet map component with ssr disabled
 const DynamicLeafletMap = dynamic(() => import('@/components/leaflet-map'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full min-h-[380px] lg:min-h-[460px] w-full items-center justify-center rounded-3xl border border-border bg-muted/30">
       <div className="flex flex-col items-center gap-3">
-        <Compass size={32} className="animate-spin text-primary" />
-        <span className="text-xs font-bold text-muted-foreground">Loading OpenStreetMap Satellite Radar...</span>
+        <Loader2 size={32} className="animate-spin text-primary" />
+        <span className="text-xs font-bold text-muted-foreground">Loading Live Petrol Pump Map...</span>
       </div>
     </div>
   ),
@@ -267,11 +270,11 @@ export default function FindE0WebPage() {
               <span className="text-xl font-black tracking-tight text-foreground flex items-center gap-1">
                 <span className="text-primary">E0</span>Finder
                 <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary ml-1 uppercase">
-                  Web Radar
+                  Live Map
                 </span>
               </span>
               <span className="text-[10px] font-medium text-muted-foreground mt-0.5 whitespace-nowrap hidden min-[400px]:block">
-                Interactive OpenStreetMap Bunk Locator
+                Find 0% Ethanol Petrol Pumps Near You
               </span>
             </div>
           </Link>
@@ -282,21 +285,21 @@ export default function FindE0WebPage() {
               onClick={() => setReportModalOpen(true)}
               className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3.5 py-2 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
             >
-              <Plus size={15} /> Submit Pump Report
+              <Plus size={15} /> Add Petrol Pump
             </button>
             <Link
               href="/blog"
               className="hidden md:inline-flex text-xs font-semibold text-foreground/80 hover:text-primary"
             >
-              Research Hub
+              Fuel Guides
             </Link>
             <a
               href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
             >
-              Get Android App
+              <GooglePlayIcon className="size-3.5" /> Get App
             </a>
           </div>
         </div>
@@ -305,15 +308,15 @@ export default function FindE0WebPage() {
       {/* Search & Filter Bar */}
       <section className="border-b border-border bg-card/60 backdrop-blur px-4 py-4 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          {/* Live Daily Auto-Sync Status Badge */}
+          {/* Live Daily Status Badge */}
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs font-semibold">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Daily Auto-Sync
+                Live Daily Updates
               </span>
               <span className="text-muted-foreground text-[11px]">
-                OMC Form-8 & Price Revision: <strong className="text-foreground">{lastSyncTime}</strong>
+                Daily Verified Prices & Petrol Purity: <strong className="text-foreground">{lastSyncTime}</strong>
               </span>
             </div>
             <button
@@ -356,7 +359,7 @@ export default function FindE0WebPage() {
                   : 'border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20'
               }`}
             >
-              <Navigation size={16} className={locating ? 'animate-spin' : ''} />
+              {locating ? <Loader2 size={16} className="animate-spin text-primary" /> : <Navigation size={16} />}
               {locating ? 'Locating GPS...' : userLocation ? 'GPS Active (Nearest First)' : 'Find Nearest (GPS)'}
             </button>
           </div>
@@ -468,114 +471,122 @@ export default function FindE0WebPage() {
       {/* Main App Workspace */}
       <section className="flex-1 flex flex-col lg:flex-row overflow-hidden max-w-7xl mx-auto w-full">
         {/* Left Column: Stations List */}
-        {(viewMode === 'split' || viewMode === 'list') && (
-          <div className="w-full lg:w-[440px] xl:w-[480px] shrink-0 border-r border-border flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 space-y-3 bg-muted/10">
-            <div className="flex items-center justify-between px-1 text-xs text-muted-foreground font-semibold">
-              <span>
-                Found <strong>{filteredStations.length}</strong> verified 0% ethanol stations
-              </span>
-              <span>{userLocation ? 'GPS Proximity' : 'Community Rating'}</span>
+        <div
+          className={`w-full lg:w-[440px] xl:w-[480px] shrink-0 border-r border-border flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 space-y-3 bg-muted/10 ${
+            viewMode === 'map' ? 'hidden lg:flex' : viewMode === 'split' ? 'order-2 lg:order-1 flex' : 'flex'
+          }`}
+        >
+          <div className="flex items-center justify-between px-1 text-xs text-muted-foreground font-semibold">
+            <span>
+              Found <strong>{filteredStations.length}</strong> verified 0% ethanol stations
+            </span>
+            <span>{userLocation ? 'GPS Proximity' : 'Community Rating'}</span>
+          </div>
+
+          {filteredStations.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center my-6">
+              <Fuel size={32} className="mx-auto text-muted-foreground opacity-50" />
+              <h3 className="mt-3 text-base font-bold text-foreground">No stations matched your filters</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Try clearing your filters or selecting "All Cities" to view pan-India verified pumps.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setSelectedCity('All Cities')
+                  setSelectedBrand('All Brands')
+                  setSelectedFuelGrade('All Grades')
+                  setCocoOnly(false)
+                  setOpen24Only(false)
+                }}
+                className="mt-4 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
+              >
+                Reset Filters
+              </button>
             </div>
-
-            {filteredStations.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center my-6">
-                <Fuel size={32} className="mx-auto text-muted-foreground opacity-50" />
-                <h3 className="mt-3 text-base font-bold text-foreground">No stations matched your filters</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Try clearing your filters or selecting "All Cities" to view pan-India verified pumps.
-                </p>
-                <button
+          ) : (
+            filteredStations.map((stn) => {
+              const isSelected = stn.id === activeStation?.id
+              return (
+                <div
+                  key={stn.id}
                   onClick={() => {
-                    setSearchQuery('')
-                    setSelectedCity('All Cities')
-                    setSelectedBrand('All Brands')
-                    setSelectedFuelGrade('All Grades')
-                    setCocoOnly(false)
-                    setOpen24Only(false)
+                    setActiveStationId(stn.id)
+                    // On mobile, if in list mode, smooth transition to show active
                   }}
-                  className="mt-4 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90"
+                  className={`group cursor-pointer rounded-2xl border p-4 transition-all duration-200 shadow-xs ${
+                    isSelected
+                      ? 'border-primary bg-primary/[0.04] ring-2 ring-primary/20 shadow-md'
+                      : 'border-border bg-card hover:border-primary/40 hover:bg-muted/30'
+                  }`}
                 >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              filteredStations.map((stn) => {
-                const isSelected = stn.id === activeStation?.id
-                return (
-                  <div
-                    key={stn.id}
-                    onClick={() => setActiveStationId(stn.id)}
-                    className={`group cursor-pointer rounded-2xl border p-4 transition-all duration-200 shadow-xs ${
-                      isSelected
-                        ? 'border-primary bg-primary/[0.04] ring-2 ring-primary/20 shadow-md'
-                        : 'border-border bg-card hover:border-primary/40 hover:bg-muted/30'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-black text-primary">
-                            <ShieldCheck size={13} /> {stn.fuelGrade}
-                          </span>
-                          {stn.isCOCO && (
-                            <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-600">
-                              COCO Flagship
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="mt-2 text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
-                          {stn.name}
-                        </h3>
-                        <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
-                          <MapPin size={13} className="text-primary shrink-0" />
-                          <span className="truncate">{stn.address}</span>
-                        </p>
-                      </div>
-
-                      {/* Distance or Price Badge */}
-                      <div className="text-right shrink-0">
-                        {userLocation && (
-                          <span className="block text-xs font-black text-primary">
-                            {stn.computedDistance} km
+                  <div className="flex items-start justify-between gap-2.5 min-w-0">
+                    <div className="min-w-0 flex-1 overflow-hidden">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-black text-primary">
+                          <ShieldCheck size={13} /> {stn.fuelGrade}
+                        </span>
+                        {stn.isCOCO && (
+                          <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-600">
+                            COCO Flagship
                           </span>
                         )}
-                        <span className="block text-xs font-bold text-foreground mt-0.5">
-                          ₹{stn.price.toFixed(1)}/L
-                        </span>
                       </div>
+                      <h3 className="mt-2 text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug break-words">
+                        {stn.name}
+                      </h3>
+                      <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1 min-w-0">
+                        <MapPin size={13} className="text-primary shrink-0" />
+                        <span className="truncate block flex-1">{stn.address}</span>
+                      </p>
                     </div>
 
-                    {/* Telemetry & Timing Bar */}
-                    <div className="mt-3 flex items-center justify-between border-t border-border pt-2.5 text-[11px] text-muted-foreground">
-                      <span className="flex items-center gap-1 font-medium">
-                        <Clock size={12} /> {stn.lastVerified}
-                      </span>
-                      <span className="font-mono font-semibold text-foreground/80">
-                        {stn.density}
-                      </span>
-                      <span className="flex items-center gap-1 text-amber-600 font-bold">
-                        <Star size={12} className="fill-amber-500 text-amber-500" /> {stn.rating}
+                    {/* Distance or Price Badge */}
+                    <div className="text-right shrink-0">
+                      {userLocation && (
+                        <span className="block text-xs font-black text-primary">
+                          {stn.computedDistance} km
+                        </span>
+                      )}
+                      <span className="block text-xs font-bold text-foreground mt-0.5">
+                        ₹{stn.price.toFixed(1)}/L
                       </span>
                     </div>
                   </div>
-                )
-              })
-            )}
-          </div>
-        )}
 
-        {/* Right Column: Live OpenStreetMap & Full Station Telemetry Sheet */}
-        {(viewMode === 'split' || viewMode === 'map') && (
-          <div className="flex-1 flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-4 sm:p-6 bg-background space-y-6">
-            {/* Real Interactive Leaflet OpenStreetMap */}
-            <div className="h-[360px] lg:h-[420px] w-full shrink-0">
-              <DynamicLeafletMap
-                stations={filteredStations}
-                activeStation={activeStation}
-                onSelectStation={(id) => setActiveStationId(id)}
-                userLocation={userLocation}
-              />
-            </div>
+                  {/* Telemetry & Timing Bar */}
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-1.5 border-t border-border pt-2.5 text-[11px] text-muted-foreground">
+                    <span className="flex items-center gap-1 font-medium truncate">
+                      <Clock size={12} className="shrink-0" /> {stn.lastVerified}
+                    </span>
+                    <span className="font-mono font-semibold text-foreground/80 truncate">
+                      {stn.density}
+                    </span>
+                    <span className="flex items-center gap-1 text-amber-600 font-bold shrink-0">
+                      <Star size={12} className="fill-amber-500 text-amber-500" /> {stn.rating}
+                    </span>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+
+        {/* Right Column: Live Map & Full Station Details Sheet */}
+        <div
+          className={`flex-1 flex flex-col h-[calc(100vh-140px)] overflow-y-auto p-3 sm:p-6 bg-background space-y-4 sm:space-y-6 ${
+            viewMode === 'list' ? 'hidden lg:flex' : viewMode === 'split' ? 'order-1 lg:order-2 flex' : 'flex'
+          }`}
+        >
+          {/* Interactive Map Canvas */}
+          <div className="h-[340px] sm:h-[380px] lg:h-[420px] w-full shrink-0">
+            <DynamicLeafletMap
+              stations={filteredStations}
+              activeStation={activeStation}
+              onSelectStation={(id) => setActiveStationId(id)}
+              userLocation={userLocation}
+            />
+          </div>
 
             {/* Selected Station Full Details Sheet */}
             {activeStation && (
@@ -839,6 +850,26 @@ export default function FindE0WebPage() {
           </div>
         </div>
       )}
+
+      {/* Mobile Floating View Mode Switcher */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex lg:hidden items-center rounded-full bg-slate-900/95 backdrop-blur p-1.5 shadow-2xl border border-slate-700/80">
+        <button
+          onClick={() => setViewMode('list')}
+          className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all ${
+            viewMode === 'list' ? 'bg-primary text-white shadow-md' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          <List size={14} /> List ({filteredStations.length})
+        </button>
+        <button
+          onClick={() => setViewMode('map')}
+          className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all ${
+            viewMode === 'map' ? 'bg-primary text-white shadow-md' : 'text-slate-300 hover:text-white'
+          }`}
+        >
+          <MapIcon size={14} /> Map View
+        </button>
+      </div>
     </main>
   )
 }

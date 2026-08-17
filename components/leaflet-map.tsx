@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { WebStation } from '@/lib/stations-data'
-import { Navigation, Plus, Minus, Layers, Compass, Crosshair, Star } from 'lucide-react'
+import { Navigation, Plus, Minus, Layers, Crosshair } from 'lucide-react'
 
 interface LeafletMapProps {
   stations: WebStation[]
@@ -12,7 +12,7 @@ interface LeafletMapProps {
   userLocation: { lat: number; lng: number } | null
 }
 
-type MapLayerType = 'streets' | 'satellite' | 'terrain'
+type MapLayerType = 'streets' | 'satellite'
 
 export default function LeafletMap({
   stations,
@@ -26,19 +26,15 @@ export default function LeafletMap({
   const markersRef = useRef<{ [id: string]: L.Marker }>({})
   const [currentLayer, setCurrentLayer] = useState<MapLayerType>('streets')
 
-  // Map Tile Layers (100% Free, High Quality Open Vectors)
+  // Map Tile Layers
   const tileUrls: Record<MapLayerType, { url: string; attr: string }> = {
     streets: {
       url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-      attr: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      attr: '&copy; CARTO &copy; Map Contributors',
     },
     satellite: {
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      attr: '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-    },
-    terrain: {
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attr: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attr: '&copy; Esri &mdash; Satellite Imagery',
     },
   }
 
@@ -48,9 +44,9 @@ export default function LeafletMap({
 
     if (!mapInstanceRef.current) {
       const map = L.map(mapContainerRef.current, {
-        center: [20.5937, 78.9629], // India Center
+        center: [20.5937, 78.9629], // Center of India
         zoom: 5,
-        zoomControl: false, // We render custom Google Maps style controls
+        zoomControl: false,
         scrollWheelZoom: true,
       })
 
@@ -62,9 +58,20 @@ export default function LeafletMap({
 
       tileLayerRef.current = baseTile
       mapInstanceRef.current = map
+
+      // Invalidate size for mobile screens after render
+      setTimeout(() => {
+        map.invalidateSize()
+      }, 250)
     }
 
+    const handleResize = () => {
+      mapInstanceRef.current?.invalidateSize()
+    }
+    window.addEventListener('resize', handleResize)
+
     return () => {
+      window.removeEventListener('resize', handleResize)
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null
@@ -72,7 +79,7 @@ export default function LeafletMap({
     }
   }, [])
 
-  // Switch Map Layer
+  // Switch Map Layer (Street / Satellite)
   const toggleMapLayer = () => {
     const next: MapLayerType = currentLayer === 'streets' ? 'satellite' : 'streets'
     setCurrentLayer(next)
@@ -82,14 +89,14 @@ export default function LeafletMap({
     }
   }
 
-  // Zoom Helpers
+  // Zoom & Recenter Helpers
   const zoomIn = () => mapInstanceRef.current?.zoomIn()
   const zoomOut = () => mapInstanceRef.current?.zoomOut()
   const recenterGPS = () => {
     if (userLocation && mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([userLocation.lat, userLocation.lng], 14, { duration: 1.2 })
+      mapInstanceRef.current.flyTo([userLocation.lat, userLocation.lng], 14, { duration: 1.0 })
     } else if (activeStation && mapInstanceRef.current) {
-      mapInstanceRef.current.flyTo([activeStation.latitude, activeStation.longitude], 14, { duration: 1.2 })
+      mapInstanceRef.current.flyTo([activeStation.latitude, activeStation.longitude], 14, { duration: 1.0 })
     }
   }
 
@@ -102,15 +109,14 @@ export default function LeafletMap({
     Object.values(markersRef.current).forEach((m) => m.remove())
     markersRef.current = {}
 
-    // Add GPS User Pulsing Location Dot
+    // Add User Current Location GPS Pulse Dot
     if (userLocation) {
       const userIcon = L.divIcon({
         className: 'custom-user-marker',
         html: `
           <div style="position:relative; width:22px; height:22px;">
-            <div style="position:absolute; inset:-10px; border-radius:50%; background:rgba(37,99,235,0.25); animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;"></div>
-            <div style="position:absolute; inset:-4px; border-radius:50%; background:rgba(37,99,235,0.4);"></div>
-            <div style="width:22px; height:22px; border-radius:50%; background:#2563EB; border:3px solid #FFFFFF; box-shadow:0 3px 8px rgba(0,0,0,0.35);"></div>
+            <div style="position:absolute; inset:-8px; border-radius:50%; background:rgba(37,99,235,0.3); animation:pulse 1.8s infinite;"></div>
+            <div style="width:22px; height:22px; border-radius:50%; background:#2563eb; border:3px solid #ffffff; box-shadow:0 3px 8px rgba(0,0,0,0.35);"></div>
           </div>
         `,
         iconSize: [22, 22],
@@ -124,15 +130,24 @@ export default function LeafletMap({
       userMarker.bindTooltip('Your Location', { permanent: false, direction: 'top' })
     }
 
-    // Add Google Maps Style Teardrop Stations
+    // Add Petrol Pump Markers
     stations.forEach((stn) => {
       const isSelected = activeStation?.id === stn.id
-      const pinColor = isSelected ? '#15803d' : '#16a34a'
-      const brandLogo = stn.brandLogo || '/app-icon.png'
-      const shortBrand = stn.brand === 'IndianOil' ? 'XP100' : stn.brand === 'HPCL' ? 'poWer100' : 'Speed 97'
+      const brandColor =
+        stn.brand === 'IndianOil'
+          ? '#ea580c' // IndianOil Orange
+          : stn.brand === 'HPCL'
+          ? '#dc2626' // HPCL Red
+          : stn.brand === 'BPCL'
+          ? '#2563eb' // BPCL Blue
+          : '#16a34a' // Emerald Green
 
+      const shortBrand =
+        stn.brand === 'IndianOil' ? 'XP100' : stn.brand === 'HPCL' ? 'poWer100' : 'Speed 97'
+
+      // Clean, unmistakable Fuel Pump Pin Icon with crisp nozzle and gas meter
       const customIcon = L.divIcon({
-        className: `custom-gmap-pin ${isSelected ? 'pin-active' : ''}`,
+        className: `custom-pump-pin ${isSelected ? 'pin-active' : ''}`,
         html: `
           <div style="
             position: relative;
@@ -140,19 +155,20 @@ export default function LeafletMap({
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            transform: ${isSelected ? 'scale(1.22)' : 'scale(1.0)'};
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+            transform: ${isSelected ? 'scale(1.25)' : 'scale(1.0)'};
+            transition: transform 0.2s ease;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
           ">
-            <!-- Price Floating Pill -->
+            <!-- Price Bubble on Top -->
             <div style="
               background: ${isSelected ? '#0f172a' : '#ffffff'};
               color: ${isSelected ? '#ffffff' : '#0f172a'};
+              font-family: system-ui, -apple-system, sans-serif;
               font-size: 11px;
               font-weight: 800;
               padding: 3px 8px;
               border-radius: 9999px;
-              border: 1.5px solid ${isSelected ? '#22c55e' : '#e2e8f0'};
+              border: 1.5px solid ${isSelected ? '#22c55e' : '#cbd5e1'};
               white-space: nowrap;
               margin-bottom: 3px;
               box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -164,41 +180,33 @@ export default function LeafletMap({
               <span>₹${stn.price.toFixed(0)} • ${shortBrand}</span>
             </div>
 
-            <!-- Teardrop Pin Container -->
+            <!-- Dedicated Petrol Pump Teardrop Pin -->
             <div style="
               position: relative;
-              width: 38px;
-              height: 38px;
-              background: ${pinColor};
+              width: 36px;
+              height: 36px;
+              background: ${isSelected ? '#15803d' : brandColor};
               border-radius: 50% 50% 50% 0;
               transform: rotate(-45deg);
               display: flex;
               align-items: center;
               justify-content: center;
-              border: 2px solid #ffffff;
-              ${isSelected ? 'box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35);' : ''}
+              border: 2.5px solid #ffffff;
+              ${isSelected ? 'box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.4);' : ''}
             ">
-              <!-- Company Brand Logo Thumbnail inside Pin -->
-              <div style="
-                transform: rotate(45deg);
-                width: 22px;
-                height: 22px;
-                background: #ffffff;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                padding: 2px;
-              ">
-                <img src="${brandLogo}" alt="${stn.brand}" style="width: 100%; height: 100%; object-fit: contain;" />
-              </div>
+              <!-- Crisp Vector Fuel Pump / Petrol Dispenser Icon -->
+              <svg
+                style="transform: rotate(45deg); width: 18px; height: 18px; fill: #ffffff;"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.22v5.72c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V6h6v4z" />
+              </svg>
             </div>
           </div>
         `,
-        iconSize: [80, 75],
-        iconAnchor: [40, 75],
-        popupAnchor: [0, -70],
+        iconSize: [80, 72],
+        iconAnchor: [40, 72],
+        popupAnchor: [0, -68],
       })
 
       const marker = L.marker([stn.latitude, stn.longitude], {
@@ -206,15 +214,15 @@ export default function LeafletMap({
         zIndexOffset: isSelected ? 1000 : 100,
       }).addTo(map)
 
-      // Google Maps-Style Rich Popup Card
+      // Clean, Plain-Language Info Popup
       const popupHtml = `
-        <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; min-width: 240px; padding: 2px;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; min-width: 230px; padding: 2px;">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px;">
             <span style="background: #dcfce7; color: #166534; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-              ${stn.fuelGrade}
+              0% Ethanol (E0)
             </span>
-            <span style="color: #d97706; font-size: 11px; font-weight: 800;">
-              ★ ${stn.rating} (${stn.reviewCount})
+            <span style="color: #15803d; font-size: 11px; font-weight: 800;">
+              ${stn.fuelGrade}
             </span>
           </div>
 
@@ -227,39 +235,28 @@ export default function LeafletMap({
           </p>
 
           <div style="background: #f8fafc; border-radius: 8px; padding: 6px 8px; margin-bottom: 8px; border: 1px solid #e2e8f0; font-size: 11px; display: flex; justify-content: space-between;">
-            <span style="color: #475569;">Density: <strong>${stn.density}</strong></span>
-            <span style="color: #166534; font-weight: 800;">₹${stn.price.toFixed(2)}/L</span>
+            <span style="color: #475569;">Price: <strong style="color: #166534;">₹${stn.price.toFixed(2)}/L</strong></span>
+            <span style="color: #15803d; font-weight: 700;">✓ Pure Petrol</span>
           </div>
 
-          <div style="display: flex; gap: 6px;">
-            <a
-              href="https://www.google.com/maps/dir/?api=1&destination=${stn.latitude},${stn.longitude}"
-              target="_blank"
-              rel="noreferrer"
-              style="
-                flex: 1;
-                text-align: center;
-                background: #16a34a;
-                color: #ffffff;
-                font-size: 11px;
-                font-weight: 700;
-                padding: 7px 10px;
-                border-radius: 8px;
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 4px;
-              "
-            >
-              Directions ↗
-            </a>
-            ${
-              stn.phone
-                ? `<a href="tel:${stn.phone}" style="background: #f1f5f9; color: #0f172a; font-size: 11px; font-weight: 700; padding: 7px 10px; border-radius: 8px; text-decoration: none; border: 1px solid #cbd5e1;">Call</a>`
-                : ''
-            }
-          </div>
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=${stn.latitude},${stn.longitude}"
+            target="_blank"
+            rel="noreferrer"
+            style="
+              display: block;
+              text-align: center;
+              background: #16a34a;
+              color: #ffffff;
+              font-size: 11px;
+              font-weight: 700;
+              padding: 7px 10px;
+              border-radius: 8px;
+              text-decoration: none;
+            "
+          >
+            Open in Google Maps ↗
+          </a>
         </div>
       `
 
@@ -272,7 +269,7 @@ export default function LeafletMap({
       markersRef.current[stn.id] = marker
     })
 
-    // Fit bounds if needed
+    // Fit bounds
     if (stations.length > 0) {
       if (activeStation) {
         map.flyTo([activeStation.latitude, activeStation.longitude], 14, {
@@ -285,7 +282,7 @@ export default function LeafletMap({
     }
   }, [stations, activeStation, onSelectStation, userLocation])
 
-  // Pan smoothly to active station
+  // Fly to active station smoothly
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map || !activeStation) return
@@ -302,10 +299,10 @@ export default function LeafletMap({
 
   return (
     <div className="relative h-full w-full rounded-3xl overflow-hidden border border-border shadow-lg group">
-      {/* Map Tile Container */}
+      {/* Map Canvas */}
       <div ref={mapContainerRef} className="h-full w-full min-h-[380px] lg:min-h-[460px] z-0" />
 
-      {/* Google Maps Style Floating Layer Switcher (Top Right) */}
+      {/* Map Style & Location Controls (Top Right) */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
         <button
           onClick={toggleMapLayer}
@@ -313,19 +310,19 @@ export default function LeafletMap({
           title="Switch Map Style"
         >
           <Layers size={15} className="text-primary" />
-          <span className="capitalize">{currentLayer === 'streets' ? 'Satellite' : 'Street Map'}</span>
+          <span className="capitalize">{currentLayer === 'streets' ? 'Satellite View' : 'Road Map'}</span>
         </button>
 
         <button
           onClick={recenterGPS}
           className="grid size-10 place-items-center rounded-2xl bg-white/95 backdrop-blur text-slate-800 shadow-md border border-slate-200/80 hover:bg-white transition-all hover:scale-[1.05]"
-          title="Recenter Map"
+          title="Center on My Location"
         >
           <Crosshair size={18} className="text-primary" />
         </button>
       </div>
 
-      {/* Google Maps Style Floating Zoom Controls (Bottom Right) */}
+      {/* Floating Zoom Controls (Bottom Right) */}
       <div className="absolute bottom-6 right-4 z-20 flex flex-col rounded-2xl overflow-hidden bg-white/95 backdrop-blur shadow-md border border-slate-200/80">
         <button
           onClick={zoomIn}
@@ -343,11 +340,11 @@ export default function LeafletMap({
         </button>
       </div>
 
-      {/* Active Station Floating Quick Strip (Bottom Left) */}
+      {/* Selected Petrol Pump Quick Strip (Bottom Left) */}
       {activeStation && (
         <div className="absolute bottom-6 left-4 z-20 hidden sm:flex items-center gap-3 rounded-2xl bg-white/95 backdrop-blur px-4 py-2.5 shadow-lg border border-slate-200/80 max-w-md">
           <div className="grid size-8 place-items-center rounded-xl bg-primary/10 text-primary shrink-0 font-black text-xs">
-            E0
+            ⛽
           </div>
           <div className="truncate">
             <h5 className="text-xs font-bold text-slate-900 truncate">{activeStation.name}</h5>
@@ -359,7 +356,7 @@ export default function LeafletMap({
             rel="noreferrer"
             className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-white hover:bg-primary/90 shadow-xs"
           >
-            <Navigation size={12} /> Go
+            <Navigation size={12} /> Maps
           </a>
         </div>
       )}

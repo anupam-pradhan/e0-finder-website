@@ -27,6 +27,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
+import { GooglePlayIcon } from '@/components/google-play-icon'
 
 const categories = [
   'All Research',
@@ -93,9 +94,9 @@ export default function BlogIndexPage() {
               href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
+              className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
             >
-              Get Android App
+              <GooglePlayIcon className="size-3.5" /> Get App
             </a>
           </div>
         </div>
@@ -380,9 +381,9 @@ export default function BlogIndexPage() {
                 href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
                 target="_blank"
                 rel="noreferrer"
-                className="flex w-full md:w-auto items-center justify-center gap-2.5 rounded-2xl bg-primary px-8 py-4 text-sm font-bold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90"
+                className="flex w-full md:w-auto items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-sm font-bold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90"
               >
-                Download on Google Play <ExternalLink size={16} />
+                <GooglePlayIcon className="size-5" /> Download on Google Play <ExternalLink size={16} />
               </a>
               <span className="text-[11px] font-medium text-muted-foreground">
                 100% Free • Rated 4.9★ by 2,500+ Motorists
