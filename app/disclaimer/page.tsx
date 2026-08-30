@@ -1,6 +1,6 @@
 import { SitePage, PolicySection } from '@/components/site-page'
 
-export const metadata = { title: 'Disclaimer — E0 Finder', description: 'Important disclaimer regarding E0 Finder petrol station listings and fuel availability reports.' }
+export const metadata = { title: 'Disclaimer — E0 Finder', description: 'Important disclaimer regarding E0 Finder petrol station listings and fuel availability reports.', alternates: { canonical: '/disclaimer' } }
 
 export default function DisclaimerPage() {
   return <SitePage eyebrow="Important information" title="Disclaimer" intro="Please read this information before using station listings, fuel details, reports, prices, or directions provided by E0 Finder.">

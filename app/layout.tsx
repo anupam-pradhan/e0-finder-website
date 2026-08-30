@@ -35,9 +35,6 @@ export const metadata: Metadata = {
   creator: 'E0 Finder',
   publisher: 'E0 Finder',
   applicationName: 'E0 Finder',
-  alternates: {
-    canonical: siteUrl,
-  },
   robots: {
     index: true,
     follow: true,
