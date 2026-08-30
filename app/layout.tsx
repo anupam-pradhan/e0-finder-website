@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { AppInstallBar } from '@/components/app-install-bar'
 
 const siteUrl = 'https://e0-finder.app'
 
@@ -158,6 +159,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <AppInstallBar />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
