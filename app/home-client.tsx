@@ -42,6 +42,7 @@ import {
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
+import { ScrollReveal } from '@/components/scroll-reveal'
 
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
 
@@ -382,7 +383,15 @@ export default function Page() {
   }
 
   return (
-    <main id="home" className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <main id="home" className="relative min-h-screen text-foreground overflow-x-hidden">
+      <ScrollReveal />
+
+      {/* Decorative hero backdrop (mesh + grid) */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
+        <div className="absolute inset-0 e0-hero-bg" />
+        <div className="absolute inset-0 e0-grid opacity-60" />
+      </div>
+
       {/* FAQ Schema for Google SERP Rich Snippets */}
       <script
         type="application/ld+json"
@@ -403,6 +412,12 @@ export default function Page() {
                 {label}
               </button>
             ))}
+            <Link
+              href="/find"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
+            >
+              <MapPin size={14} /> Live Map
+            </Link>
             <Link
               href="/blog"
               className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
@@ -440,6 +455,13 @@ export default function Page() {
               </button>
             ))}
             <Link
+              href="/find"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <MapPin size={16} /> Live Pump Map
+            </Link>
+            <Link
               href="/blog"
               className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
               onClick={() => setMenuOpen(false)}
@@ -451,7 +473,7 @@ export default function Page() {
       </header>
 
       {/* Hero Section */}
-      <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-16 lg:pt-14">
+      <section data-reveal-skip className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-16 lg:pt-14">
         <div>
           <div className="e0-fade-up mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
             <span className="inline-block size-2 rounded-full bg-primary e0-pulse-ring" /> India’s First & Only 0% Ethanol Petrol Locator
@@ -491,7 +513,7 @@ export default function Page() {
               href={playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] hover:bg-primary/90"
+              className="e0-btn-gradient e0-glow inline-flex items-center justify-center gap-3 rounded-2xl px-8 py-4 text-base font-bold"
             >
               <GooglePlayIcon className="size-6" />
               <div className="text-left leading-none">
@@ -512,12 +534,49 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="relative flex justify-center overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-primary/5 to-primary/10 p-4 lg:p-6">
-          <img
-            src="/playstore_feature_graphic.png"
-            alt="E0 Finder Mobile Application Feature Graphic"
-            className="max-h-[440px] w-full rounded-xl object-contain shadow-lg"
-          />
+        {/* App phone mockup with live glass stat cards */}
+        <div className="e0-fade-up e0-delay-3 relative mx-auto flex w-full max-w-[420px] justify-center py-4">
+          {/* ambient glow */}
+          <div className="pointer-events-none absolute inset-0 -z-10 mx-auto my-auto h-4/5 w-3/4 rounded-full bg-primary/25 blur-3xl" />
+
+          {/* phone frame */}
+          <div className="e0-float relative w-[250px] shrink-0 rounded-[2.6rem] border-[7px] border-slate-900 bg-slate-900 shadow-2xl e0-glow-lg sm:w-[280px]">
+            <div className="absolute left-1/2 top-2.5 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
+            <img
+              src="/screenshots/e0_home2.png"
+              alt="E0 Finder app showing a live map of verified 0% ethanol petrol pumps with prices"
+              className="h-[540px] w-full rounded-[2.05rem] object-cover object-top"
+              loading="eager"
+            />
+          </div>
+
+          {/* floating: verified */}
+          <div className="e0-glass e0-glow absolute left-0 top-14 hidden items-center gap-2 rounded-2xl px-3 py-2 sm:flex">
+            <span className="grid size-8 place-items-center rounded-full bg-primary/15 text-primary">
+              <ShieldCheck size={16} />
+            </span>
+            <div className="leading-none">
+              <strong className="block text-sm">0% Ethanol</strong>
+              <span className="text-[10px] text-muted-foreground">Verified today</span>
+            </div>
+          </div>
+
+          {/* floating: rating */}
+          <div className="e0-glass e0-glow absolute bottom-24 right-0 hidden items-center gap-2 rounded-2xl px-3 py-2 sm:flex">
+            <span className="grid size-8 place-items-center rounded-full bg-amber-500/15 text-amber-500">
+              <Star size={16} className="fill-amber-500" />
+            </span>
+            <div className="leading-none">
+              <strong className="block text-sm">4.9 ★</strong>
+              <span className="text-[10px] text-muted-foreground">2,500+ reviews</span>
+            </div>
+          </div>
+
+          {/* floating: live */}
+          <div className="e0-glass e0-glow absolute right-1 top-8 hidden items-center gap-2 rounded-full px-3 py-1.5 sm:flex">
+            <span className="e0-pulse-ring size-2 rounded-full bg-emerald-500" />
+            <span className="text-xs font-bold">Live updates</span>
+          </div>
         </div>
       </section>
 
@@ -1361,7 +1420,7 @@ export default function Page() {
         <div className="mt-8">
           <Link
             href="/find"
-            className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3.5 font-bold text-primary-foreground shadow-md shadow-primary/25 transition-transform hover:scale-[1.02]"
+            className="e0-btn-gradient e0-glow inline-flex items-center gap-2 rounded-2xl px-6 py-3.5 font-bold"
           >
             <MapPin size={18} /> Open the Live E0 Fuel Finder
           </Link>

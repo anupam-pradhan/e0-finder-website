@@ -151,3 +151,90 @@ details[open] .e0-faq-caret { transform: rotate(180deg); }
     opacity: 1 !important;
   }
 }
+
+/* ===== E0 Finder — modern design system layer ===== */
+
+/* Frosted glass surface */
+.e0-glass {
+  background: color-mix(in oklab, var(--card) 68%, transparent);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  border: 1px solid color-mix(in oklab, var(--border) 75%, transparent);
+}
+
+/* Soft colored elevation / glow */
+.e0-glow {
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.06),
+    0 12px 32px -12px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+.e0-glow-lg {
+  box-shadow:
+    0 2px 6px rgba(16, 24, 40, 0.08),
+    0 30px 60px -20px color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+/* Premium gradient button with moving sheen */
+.e0-btn-gradient {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+    100deg,
+    var(--primary),
+    oklch(0.5 0.17 150) 45%,
+    oklch(0.62 0.18 150) 70%,
+    var(--primary)
+  );
+  background-size: 200% auto;
+  color: var(--primary-foreground);
+  transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+.e0-btn-gradient:hover {
+  background-position: right center;
+  transform: translateY(-1px);
+}
+.e0-btn-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+}
+.e0-btn-gradient:hover::after {
+  animation: e0-sheen 0.9s ease;
+}
+@keyframes e0-sheen {
+  to { transform: translateX(120%); }
+}
+
+/* Decorative hero backdrops */
+.e0-hero-bg {
+  background:
+    radial-gradient(55% 45% at 12% -5%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 92% 0%, color-mix(in oklab, oklch(0.72 0.19 150) 16%, transparent), transparent 72%);
+}
+.e0-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 55%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(72% 60% at 50% 0%, #000, transparent 78%);
+  mask-image: radial-gradient(72% 60% at 50% 0%, #000, transparent 78%);
+}
+
+/* Scroll reveal (activated by ScrollReveal component adding .e0-js on <html>) */
+.e0-js .e0-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.e0-js .e0-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .e0-btn-gradient, .e0-btn-gradient::after { animation: none !important; }
+  .e0-js .e0-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
