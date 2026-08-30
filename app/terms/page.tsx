@@ -5,6 +5,9 @@ export const metadata = {
   title: 'Terms of Service — E0 Finder (App & Website)',
   description:
     'Terms of Service, community guidelines, and legal disclaimer for the E0 Finder mobile application and website.',
+  alternates: {
+    canonical: '/terms',
+  },
 }
 
 export default function TermsPage() {
