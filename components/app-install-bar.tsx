@@ -40,7 +40,7 @@ export function AppInstallBar() {
 
   return (
     <div className="e0-fade-up fixed inset-x-0 bottom-0 z-[60] px-3 pb-3">
-      <div className="e0-glass e0-glow-lg mx-auto flex max-w-3xl items-center gap-3 rounded-2xl px-3 py-2.5">
+      <div className="mx-auto flex max-w-3xl items-center gap-3 rounded-2xl border border-border bg-card px-3 py-2.5 shadow-lg ring-1 ring-black/5">
         <img
           src="/app-icon.png"
           alt="E0 Finder app icon"
