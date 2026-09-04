@@ -1,5 +1,8 @@
 import type { Metadata } from 'next'
 import FindE0WebPage from './find-client'
+import { getStationsServer } from '@/lib/stations-server'
+
+export const revalidate = 60 // ISR: Revalidate server-rendered station listings every 60 seconds
 
 export const metadata: Metadata = {
   title: {
@@ -45,6 +48,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function FindPage() {
-  return <FindE0WebPage />
+export default async function FindPage() {
+  const serverStations = await getStationsServer()
+  return <FindE0WebPage initialStations={serverStations} />
 }

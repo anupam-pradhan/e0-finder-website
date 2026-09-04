@@ -100,15 +100,25 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return (R * c).toFixed(1)
 }
 
-export default function FindE0WebPage() {
-  const [stations, setStations] = useState<WebStation[]>(initialStations)
+export default function FindE0WebPage({
+  initialStations: serverInitialStations,
+}: {
+  initialStations?: WebStation[]
+} = {}) {
+  const [stations, setStations] = useState<WebStation[]>(
+    serverInitialStations && serverInitialStations.length > 0
+      ? serverInitialStations
+      : initialStations
+  )
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedBrand, setSelectedBrand] = useState('All Brands')
   const [selectedFuelGrade, setSelectedFuelGrade] = useState('All Grades')
   const [cocoOnly, setCocoOnly] = useState(false)
   const [open24Only, setOpen24Only] = useState(false)
-  const [activeStationId, setActiveStationId] = useState<string>(initialStations[0]?.id || '')
+  const [activeStationId, setActiveStationId] = useState<string>(
+    serverInitialStations?.[0]?.id || initialStations[0]?.id || ''
+  )
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [locating, setLocating] = useState(false)
   const [locError, setLocError] = useState('')

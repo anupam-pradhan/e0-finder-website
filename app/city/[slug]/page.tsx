@@ -17,7 +17,10 @@ import {
   Share2,
 } from 'lucide-react'
 import { citiesData } from '@/lib/city-data'
+import { getStationsByCity } from '@/lib/stations-server'
 import type { Metadata } from 'next'
+
+export const revalidate = 60
 
 export function generateStaticParams() {
   return citiesData.map((city) => ({
@@ -85,6 +88,7 @@ export default async function CityPage({
     notFound()
   }
 
+  const liveStations = await getStationsByCity(city.name)
   const otherCities = citiesData.filter((c) => c.slug !== city.slug).slice(0, 4)
 
   const faqSchema = {
@@ -220,37 +224,70 @@ export default async function CityPage({
           </div>
 
           <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {city.featuredStations.map((stn, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-xs"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                      {stn.fuelGrade}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">{stn.verifiedDate}</span>
-                  </div>
-                  <h3 className="mt-4 text-base font-bold text-foreground">{stn.brand}</h3>
-                  <p className="mt-1 text-xs font-medium text-primary">{stn.area}</p>
-                  <p className="mt-2 text-xs text-muted-foreground leading-5">{stn.location}</p>
-                </div>
-                <div className="mt-6 border-t border-border pt-4 flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-green-600">
-                    <ShieldCheck size={14} /> Verified Stock
-                  </span>
-                  <a
-                    href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+            {liveStations.length > 0
+              ? liveStations.slice(0, 6).map((stn) => (
+                  <div
+                    key={stn.id}
+                    className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-xs hover:border-primary/40 transition-colors"
                   >
-                    Navigate <Navigation size={13} />
-                  </a>
-                </div>
-              </div>
-            ))}
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                          {stn.fuelGrade}
+                        </span>
+                        <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                          ₹{stn.price.toFixed(1)}/L
+                        </span>
+                      </div>
+                      <h3 className="mt-4 text-base font-bold text-foreground">{stn.name}</h3>
+                      <p className="mt-1 text-xs font-medium text-primary">{stn.brand} • {stn.area}</p>
+                      <p className="mt-2 text-xs text-muted-foreground leading-5">{stn.address}</p>
+                      <div className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-muted/60 px-2.5 py-1 text-[11px] font-mono text-muted-foreground">
+                        Density: <strong className="text-foreground">{stn.density}</strong>
+                      </div>
+                    </div>
+                    <div className="mt-6 border-t border-border pt-4 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600">
+                        <ShieldCheck size={14} /> E0 Confirmed
+                      </span>
+                      <Link
+                        href={`/find?city=${encodeURIComponent(city.name)}`}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                      >
+                        View on Map <Navigation size={13} />
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              : city.featuredStations.map((stn, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-xs"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                          {stn.fuelGrade}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">{stn.verifiedDate}</span>
+                      </div>
+                      <h3 className="mt-4 text-base font-bold text-foreground">{stn.brand}</h3>
+                      <p className="mt-1 text-xs font-medium text-primary">{stn.area}</p>
+                      <p className="mt-2 text-xs text-muted-foreground leading-5">{stn.location}</p>
+                    </div>
+                    <div className="mt-6 border-t border-border pt-4 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1 text-xs font-bold text-green-600">
+                        <ShieldCheck size={14} /> Verified Stock
+                      </span>
+                      <Link
+                        href={`/find?city=${encodeURIComponent(city.name)}`}
+                        className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                      >
+                        Navigate <Navigation size={13} />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
           </div>
         </div>
       </section>

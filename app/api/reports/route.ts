@@ -45,6 +45,12 @@ export async function POST(request: Request) {
       )
     }
 
+    try {
+      const { revalidateTag, revalidatePath } = await import('next/cache')
+      revalidateTag('stations')
+      revalidatePath('/find')
+    } catch (_) {}
+
     return NextResponse.json({
       status: 'success',
       message: 'Report submitted successfully. Thank you for contributing!',
