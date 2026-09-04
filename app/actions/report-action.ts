@@ -65,7 +65,7 @@ export async function submitCommunityReportAction(
 
     // Invalidate station cache so fresh data shows up
     try {
-      revalidateTag('stations')
+      revalidateTag('stations', 'max')
       revalidatePath('/find')
     } catch (_) {}
 

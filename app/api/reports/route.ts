@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     try {
       const { revalidateTag, revalidatePath } = await import('next/cache')
-      revalidateTag('stations')
+      revalidateTag('stations', 'max')
       revalidatePath('/find')
     } catch (_) {}
 

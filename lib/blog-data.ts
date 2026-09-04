@@ -1,14 +1,16 @@
 export interface BlogImage {
-  src: string
-  alt: string
+  src?: string
+  url?: string
+  alt?: string
   caption: string
 }
 
 export interface BlogPost {
   slug: string
   title: string
-  metaTitle: string
-  metaDescription: string
+  subtitle?: string
+  metaTitle?: string
+  metaDescription?: string
   excerpt: string
   coverImage: string
   articleImages: BlogImage[]

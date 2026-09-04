@@ -517,7 +517,7 @@ export default async function BlogPostPage({
                 <figure key={idx} className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
                   <div className="bg-muted/40 p-3 flex justify-center">
                     <img
-                      src={img.url}
+                      src={img.url || img.src}
                       alt={img.caption}
                       className="max-h-[320px] rounded-xl object-contain shadow-xs"
                     />
