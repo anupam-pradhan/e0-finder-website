@@ -1,22 +1,16 @@
-'use client'
-
-import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import {
   ArrowRight,
   Check,
-  ChevronDown,
   ExternalLink,
   Fuel,
   Camera,
-  Menu,
   Navigation,
   Search,
   ShieldCheck,
   Smartphone,
   Users,
   Video,
-  X,
   Zap,
   CheckCircle2,
   AlertCircle,
@@ -38,12 +32,16 @@ import {
   CheckCircle,
   Play,
   Share2,
-  Lightbulb,
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
+import { InteractiveHeader } from '@/components/home/interactive-header'
+import { FuelCalculator } from '@/components/home/fuel-calculator'
+import { VehicleCompatibilityTabs } from '@/components/home/vehicle-tabs'
+import { AppScreensShowcase } from '@/components/home/app-screens'
+import { FaqAccordion } from '@/components/home/faq-accordion'
+import { ScrollToCalculatorButton } from '@/components/home/scroll-button'
 
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
-
 
 const benefits = [
   { icon: Fuel, title: '0% Ethanol', text: 'Pure E0 Petrol Only' },
@@ -57,29 +55,6 @@ const steps = [
   { icon: Fuel, title: 'Check E0 Status', text: 'Verify 0% ethanol availability, pump facilities, and user verification timestamps.' },
   { icon: Navigation, title: 'Navigate Directly', text: 'Open Google Maps or Apple Maps with one tap to reach the verified station.' },
   { icon: Users, title: 'Submit Live Reports', text: 'Help fellow motorists by submitting fuel bills, pump status, and price updates.' },
-]
-
-const appScreens = [
-  {
-    title: 'Interactive Map & Pump List',
-    description: 'Instantly view verified 0% ethanol petrol pumps near you with real-time distance, live ratings, and navigation shortcuts.',
-    img: '/screenshots/e0_home.png',
-  },
-  {
-    title: 'Detailed Station Insights',
-    description: 'Check fuel availability, brand information, pump facilities, payment methods, and user verification scores.',
-    img: '/screenshots/e0_details_final.png',
-  },
-  {
-    title: 'Community Fuel Reports',
-    description: 'Contribute and verify fuel updates with receipts and live reports to keep the community informed.',
-    img: '/screenshots/e0_report_final.png',
-  },
-  {
-    title: 'Clean & Easy Onboarding',
-    description: 'Simple setup without tedious signups, built for quick access when you are on the road.',
-    img: '/screenshots/e0_onboarding_clean.png',
-  },
 ]
 
 function GooglePlayIcon({ className = 'size-5 shrink-0' }: { className?: string }) {
@@ -141,36 +116,6 @@ const comparisonData = [
   { feature: 'Fuel Shelf Life in Tank', e0: '6 - 12 Months', e10: '2 - 3 Months', e20: 'Under 1 - 2 Months' },
 ]
 
-const vehicleCategories = [
-  {
-    category: 'Royal Enfield Motorcycles',
-    models: [
-      { name: 'Bullet 350 / 500 (Cast Iron / AVL / UCE)', year: 'Pre-2023', risk: 'High Risk', fuel: 'E0 Required', note: 'Carburettor jets & rubber petcock degrade on E20.' },
-      { name: 'Interceptor 650 / Continental GT 650', year: 'All Years', risk: 'Moderate Risk', fuel: 'E0 Recommended', note: 'Smoother idle, +1.8 WHP power gain, zero injector knock.' },
-      { name: 'Himalayan 411 / Scram 411', year: '2016-2022', risk: 'High Risk', fuel: 'E0 Required', note: 'Prone to morning cold-start misfires with water absorption.' },
-      { name: 'Himalayan 450 / Hunter 350', year: '2023+', risk: 'Safe (E20 Ready)', fuel: 'E0 Optimal', note: 'E20 compliant; E0 gives 7% better highway range.' },
-    ],
-  },
-  {
-    category: 'Yamaha, KTM & Sport Bikes',
-    models: [
-      { name: 'Yamaha RD350 & RX100 (2-Stroke)', year: 'Vintage', risk: 'Critical Danger', fuel: 'E0 Mandatory', note: '2T oil falls out of suspension on E20, causing engine seizure.' },
-      { name: 'KTM Duke 390 / RC 390 (Gen 1 & 2)', year: '2013-2022', risk: 'High Risk', fuel: 'E0 Required', note: '12.6:1 compression engine suffers throttle lag on E20.' },
-      { name: 'Yamaha R15 V3 / V4 & MT-15', year: 'All Years', risk: 'Moderate Risk', fuel: 'E0 Recommended', note: 'E0 delivers snappier VVA cam engagement.' },
-      { name: 'Ducati, Kawasaki Ninja & BMW Superbikes', year: 'All Years', risk: 'Critical', fuel: 'E0 Mandatory (100 RON)', note: 'Strict fuel stability requirements; prevents O2 sensor tripping.' },
-    ],
-  },
-  {
-    category: 'Cars, SUVs & Turbo Petrols',
-    models: [
-      { name: 'VW / Skoda 1.0 TSI & 1.5 TSI', year: 'Pre-2023', risk: 'High Risk', fuel: 'E0 Recommended', note: 'Direct injection high-pressure pump sensitive to ethanol varnish.' },
-      { name: 'Hyundai / Kia 1.0 & 1.4 Turbo GDi', year: 'Pre-2023', risk: 'High Risk', fuel: 'E0 Recommended', note: 'Fuel injector gumming reported on prolonged E20 usage.' },
-      { name: 'Honda City / Civic i-VTEC', year: 'Pre-2022', risk: 'Moderate Risk', fuel: 'E0 Recommended', note: 'Rubber fuel lines & intake valves benefit from pure fuel.' },
-      { name: 'Classic Cars (Premier Padmini, Ambassador, Maruti 800)', year: 'Vintage', risk: 'Critical Danger', fuel: 'E0 Mandatory', note: 'Mechanical fuel pumps & brass carburettors corrode rapidly.' },
-    ],
-  },
-]
-
 const stateEthanolIndex = [
   { state: 'Delhi NCR', blend: '20.0%', density: '748 kg/m³', stations: '64 Verified Bunks', status: 'Highest E20 Penetration' },
   { state: 'Maharashtra (Mumbai/Pune)', blend: '19.8%', density: '745 kg/m³', stations: '58 Verified Bunks', status: 'Active Community' },
@@ -182,15 +127,6 @@ const stateEthanolIndex = [
   { state: 'Kerala (Kochi/Trivandrum)', blend: '18.7%', density: '739 kg/m³', stations: '25 Verified Bunks', status: 'High Humidity Moisture Alert' },
   { state: 'Punjab & Chandigarh', blend: '20.0%', density: '747 kg/m³', stations: '31 Verified Bunks', status: 'High E20 Rollout' },
   { state: 'West Bengal (Kolkata)', blend: '18.5%', density: '738 kg/m³', stations: '24 Verified Bunks', status: 'Expanding Network' },
-]
-
-const calculatorVehicles = [
-  { label: 'Superbike / Twin (600cc+)', e0Kmpl: 20, e20Kmpl: 17.5, maintSaved: 15000 },
-  { label: 'Performance Bike (200-400cc)', e0Kmpl: 32, e20Kmpl: 28.5, maintSaved: 8000 },
-  { label: 'Classic / 2-Stroke Motorcycle', e0Kmpl: 35, e20Kmpl: 29.5, maintSaved: 18000 },
-  { label: 'Daily Commuter Bike (100-160cc)', e0Kmpl: 52, e20Kmpl: 47.0, maintSaved: 4500 },
-  { label: 'Turbo Petrol Car (1.0L / 1.5L TSI/GDi)', e0Kmpl: 15, e20Kmpl: 13.2, maintSaved: 22000 },
-  { label: 'Hatchback / Sedan (1.2L Petrol)', e0Kmpl: 18, e20Kmpl: 16.1, maintSaved: 9000 },
 ]
 
 const userReviews = [
@@ -302,84 +238,21 @@ const faqs = [
   },
 ]
 
-const navItems = [
-  ['Calculator', 'calculator'],
-  ['Vehicles', 'vehicles'],
-  ['E0 vs E20', 'fuel-guide'],
-  ['State Index', 'state-index'],
-  ['Trends', 'trends'],
-  ['Reviews', 'reviews'],
-  ['Cities', 'cities'],
-  ['FAQ', 'faq'],
-]
-
-function Logo() {
-  return (
-    <a href="#home" className="flex items-center gap-2.5 shrink-0" aria-label="E0 Finder home">
-      <img src="/app-icon.png" alt="E0 Finder Logo" className="size-9 sm:size-10 rounded-xl object-contain shadow-xs shrink-0" />
-      <div className="flex flex-col justify-center leading-none">
-        <span className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-1">
-          <span className="text-primary">E0</span>Finder
-        </span>
-        <span className="text-[10px] sm:text-[11px] font-medium text-muted-foreground mt-1 whitespace-nowrap hidden min-[400px]:block">
-          Find 0% Ethanol Petrol
-        </span>
-      </div>
-    </a>
-  )
+// FAQ schema for Google SERP Rich Snippets — built server-side
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
 }
 
 export default function Page() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [openFaq, setOpenFaq] = useState<number | null>(0)
-  const [activeScreen, setActiveScreen] = useState(0)
-
-  // Interactive Calculator State
-  const [monthlyKm, setMonthlyKm] = useState<number>(1200)
-  const [selectedVehicleIdx, setSelectedVehicleIdx] = useState<number>(0)
-  const [fuelPrice, setFuelPrice] = useState<number>(102)
-
-  // Vehicle Database Category Tab
-  const [selectedCategoryTab, setSelectedCategoryTab] = useState<number>(0)
-
-  const calcResults = useMemo(() => {
-    const veh = calculatorVehicles[selectedVehicleIdx]
-    const litersE0PerMonth = monthlyKm / veh.e0Kmpl
-    const litersE20PerMonth = monthlyKm / veh.e20Kmpl
-    const extraLitersYearly = (litersE20PerMonth - litersE0PerMonth) * 12
-    const fuelSavingsYearly = extraLitersYearly * fuelPrice
-    const totalYearlySavings = fuelSavingsYearly + veh.maintSaved
-
-    return {
-      litersE0PerMonth: litersE0PerMonth.toFixed(1),
-      litersE20PerMonth: litersE20PerMonth.toFixed(1),
-      extraLitersYearly: Math.round(extraLitersYearly),
-      fuelSavingsYearly: Math.round(fuelSavingsYearly),
-      maintSaved: veh.maintSaved,
-      totalYearlySavings: Math.round(totalYearlySavings),
-      e0Range: Math.round(veh.e0Kmpl * 12),
-      e20Range: Math.round(veh.e20Kmpl * 12),
-    }
-  }, [monthlyKm, selectedVehicleIdx, fuelPrice])
-
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-    setMenuOpen(false)
-  }
-
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.a,
-      },
-    })),
-  }
-
   return (
     <main id="home" className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* FAQ Schema for Google SERP Rich Snippets */}
@@ -388,72 +261,14 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
-          <Logo />
-          <nav className="hidden items-center gap-4 xl:gap-5 lg:flex">
-            {navItems.map(([label, id]) => (
-              <button
-                key={id}
-                onClick={() => scrollTo(id)}
-                className="cursor-pointer text-xs xl:text-sm font-semibold text-foreground/80 transition-colors hover:text-primary whitespace-nowrap"
-              >
-                {label}
-              </button>
-            ))}
-            <Link
-              href="/blog"
-              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
-            >
-              <BookOpen size={14} /> Blog & Guides
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3 shrink-0">
-            <a
-              href={playStoreUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="hidden items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs xl:text-sm font-bold text-primary-foreground transition-transform hover:scale-[1.02] sm:flex shadow-xs whitespace-nowrap"
-            >
-              <GooglePlayIcon className="size-4" /> Get App
-            </a>
-            <button
-              className="rounded-lg p-2 lg:hidden"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {menuOpen ? <X /> : <Menu />}
-            </button>
-          </div>
-        </div>
-        {menuOpen && (
-          <nav className="flex flex-col gap-1 border-t border-border px-5 py-4 lg:hidden">
-            {[['Home', 'home'], ...navItems].map(([label, id]) => (
-              <button
-                key={id}
-                className="rounded-md px-3 py-2 text-left font-semibold hover:bg-muted"
-                onClick={() => scrollTo(id)}
-              >
-                {label}
-              </button>
-            ))}
-            <Link
-              href="/blog"
-              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
-              onClick={() => setMenuOpen(false)}
-            >
-              <BookOpen size={16} /> Blog & Knowledge Hub
-            </Link>
-          </nav>
-        )}
-      </header>
+      {/* Header — client component (mobile menu toggle) */}
+      <InteractiveHeader />
 
       {/* Hero Section */}
       <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-16 lg:pt-14">
         <div>
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-            <Fuel size={14} /> India’s First & Only 0% Ethanol Petrol Locator
+            <Fuel size={14} /> India&apos;s First &amp; Only 0% Ethanol Petrol Locator
           </div>
           <h1 className="max-w-2xl text-4xl font-black leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
             Find <span className="text-primary">0% Ethanol (E0)</span> Petrol Stations Near You
@@ -484,6 +299,7 @@ export default function Page() {
               </div>
             ))}
           </div>
+
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4">
             {/* Primary Google Play Download Button */}
             <a
@@ -501,13 +317,8 @@ export default function Page() {
               </div>
             </a>
 
-            {/* Savings Calculator Shortcut */}
-            <button
-              onClick={() => scrollTo('calculator')}
-              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border bg-card px-6 py-4 text-sm font-bold text-foreground hover:border-primary hover:text-primary transition-colors shadow-xs"
-            >
-              Calculate Fuel Savings <ArrowRight size={17} />
-            </button>
+            {/* Savings Calculator Shortcut — client component */}
+            <ScrollToCalculatorButton />
           </div>
         </div>
 
@@ -572,118 +383,18 @@ export default function Page() {
       <section id="calculator" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-            <Calculator size={14} /> Interactive Cost & Mileage Calculator
+            <Calculator size={14} /> Interactive Cost &amp; Mileage Calculator
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-            See How Much <span className="text-primary">E0 Petrol</span> Saves Your Engine & Wallet
+            See How Much <span className="text-primary">E0 Petrol</span> Saves Your Engine &amp; Wallet
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">
             Calculate your annual fuel efficiency recovery, extra fuel saved, and preventive maintenance savings by avoiding corrosive E20 blends.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-          {/* Controls Box */}
-          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
-            <h3 className="text-lg font-bold text-foreground">Select Your Vehicle & Driving Profile</h3>
-
-            {/* Vehicle Type */}
-            <div className="mt-6">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Vehicle Type
-              </label>
-              <select
-                value={selectedVehicleIdx}
-                onChange={(e) => setSelectedVehicleIdx(Number(e.target.value))}
-                className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground focus:border-primary focus:outline-none"
-              >
-                {calculatorVehicles.map((v, i) => (
-                  <option key={v.label} value={i}>
-                    {v.label} (E0: {v.e0Kmpl} km/L vs E20: {v.e20Kmpl} km/L)
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Monthly Distance Slider */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Monthly Driving Distance
-                </label>
-                <span className="text-sm font-black text-primary">{monthlyKm.toLocaleString()} KM / Month</span>
-              </div>
-              <input
-                type="range"
-                min={300}
-                max={4000}
-                step={100}
-                value={monthlyKm}
-                onChange={(e) => setMonthlyKm(Number(e.target.value))}
-                className="mt-3 w-full accent-primary"
-              />
-              <div className="flex justify-between text-[11px] text-muted-foreground">
-                <span>300 km (Weekend)</span>
-                <span>2,000 km (Regular)</span>
-                <span>4,000 km (Highway)</span>
-              </div>
-            </div>
-
-            {/* Fuel Price Input */}
-            <div className="mt-6">
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Current Petrol Price in Your City (₹ / Litre)
-              </label>
-              <div className="mt-2 flex items-center gap-3">
-                <input
-                  type="number"
-                  min={80}
-                  max={160}
-                  value={fuelPrice}
-                  onChange={(e) => setFuelPrice(Number(e.target.value))}
-                  className="w-32 rounded-xl border border-border bg-background px-4 py-2.5 text-sm font-semibold text-foreground focus:border-primary focus:outline-none"
-                />
-                <span className="text-xs text-muted-foreground">Standard benchmark across Indian metros: ~₹102/L</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Results Display */}
-          <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/[0.06] to-primary/[0.02] p-6 sm:p-8 shadow-sm">
-            <div className="flex items-center justify-between border-b border-primary/20 pb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Annual Estimated Value</span>
-              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-black text-primary">Pure E0 ROI</span>
-            </div>
-
-            <div className="mt-6">
-              <span className="block text-xs text-muted-foreground uppercase font-bold">Total Estimated Annual Benefit</span>
-              <div className="mt-1 text-4xl sm:text-5xl font-black text-primary">
-                ₹{calcResults.totalYearlySavings.toLocaleString()}
-                <span className="text-sm font-normal text-muted-foreground"> / year</span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-border/80 pt-5">
-              <div className="rounded-xl border border-border/70 bg-card p-3.5">
-                <span className="block text-xs text-muted-foreground font-semibold">Fuel Saved Annually</span>
-                <strong className="text-base text-foreground font-black">{calcResults.extraLitersYearly} Litres</strong>
-                <span className="block text-[11px] text-primary mt-0.5">(₹{calcResults.fuelSavingsYearly.toLocaleString()} saved)</span>
-              </div>
-              <div className="rounded-xl border border-border/70 bg-card p-3.5">
-                <span className="block text-xs text-muted-foreground font-semibold">Maintenance Protection</span>
-                <strong className="text-base text-foreground font-black">₹{calcResults.maintSaved.toLocaleString()}</strong>
-                <span className="block text-[11px] text-muted-foreground mt-0.5">Jets, hoses, injector cleaning</span>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-xl bg-primary/10 p-4 text-xs leading-5 text-foreground/90">
-              <strong className="flex items-center gap-1.5 text-primary font-bold mb-1">
-                <Lightbulb size={15} /> Engineering Insight:
-              </strong>
-              E0 petrol delivers 6%–8% higher energy density per cylinder stroke. On a 12-litre motorcycle tank, you gain approximately <strong>{(calcResults.e0Range - calcResults.e20Range)} extra KM</strong> of range per tank fill.
-            </div>
-          </div>
-        </div>
+        {/* Client component — interactive sliders & live calculations */}
+        <FuelCalculator />
       </section>
 
       {/* Vehicle Compatibility & Risk Database */}
@@ -701,62 +412,8 @@ export default function Page() {
             </p>
           </div>
 
-          {/* Category Tabs */}
-          <div className="mt-10 flex flex-wrap justify-center gap-2 sm:gap-3">
-            {vehicleCategories.map((cat, idx) => (
-              <button
-                key={cat.category}
-                onClick={() => setSelectedCategoryTab(idx)}
-                className={`cursor-pointer rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold transition-all ${
-                  selectedCategoryTab === idx
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'border border-border bg-card text-foreground hover:border-primary/40'
-                }`}
-              >
-                {cat.category}
-              </button>
-            ))}
-          </div>
-
-          {/* Table of Models */}
-          <div className="mt-8 overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-6 py-4 font-bold">Vehicle Model</th>
-                  <th className="px-6 py-4 font-bold">Manufacturing Era</th>
-                  <th className="px-6 py-4 font-bold">E20 Risk Profile</th>
-                  <th className="px-6 py-4 font-bold">Recommended Fuel</th>
-                  <th className="px-6 py-4 font-bold">Engineering Note</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {vehicleCategories[selectedCategoryTab].models.map((model) => (
-                  <tr key={model.name} className="hover:bg-muted/30">
-                    <td className="px-6 py-4 font-bold text-foreground">{model.name}</td>
-                    <td className="px-6 py-4 text-muted-foreground">{model.year}</td>
-                    <td className="px-6 py-4 font-semibold">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
-                          model.risk.includes('Critical')
-                            ? 'bg-destructive/15 text-destructive'
-                            : model.risk.includes('High')
-                            ? 'bg-amber-500/15 text-amber-600'
-                            : model.risk.includes('Moderate')
-                            ? 'bg-blue-500/15 text-blue-600'
-                            : 'bg-green-500/15 text-green-600'
-                        }`}
-                      >
-                        {model.risk}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-primary">{model.fuel}</td>
-                    <td className="px-6 py-4 text-xs text-muted-foreground max-w-xs">{model.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Client component — tab switcher */}
+          <VehicleCompatibilityTabs />
         </div>
       </section>
 
@@ -767,7 +424,7 @@ export default function Page() {
             <Camera size={14} /> Viral Enthusiast Movement
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-            Trending on <span className="text-pink-600">Instagram & YouTube</span>: The Pure Petrol Revolution
+            Trending on <span className="text-pink-600">Instagram &amp; YouTube</span>: The Pure Petrol Revolution
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">
             Over 50 Million views across reels and shorts documenting DIY 100ml water extraction tests, dynamometer runs, and classic bike revivals.
@@ -819,7 +476,7 @@ export default function Page() {
                 <span>Vintage Preservation</span>
                 <span>21.2M Views</span>
               </div>
-              <h3 className="mt-3 text-lg font-bold text-foreground">Two-Stroke & Classic Bullet Restoration</h3>
+              <h3 className="mt-3 text-lg font-bold text-foreground">Two-Stroke &amp; Classic Bullet Restoration</h3>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
                 Mechanics warning against 2T oil separation and brass carburettor jet clogging, pointing classic owners exclusively to E0 stations.
               </p>
@@ -842,7 +499,7 @@ export default function Page() {
               <BarChart3 size={14} /> Pan-India Data Matrix
             </div>
             <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-              State-Wise Ethanol Blending & Density Index (2026)
+              State-Wise Ethanol Blending &amp; Density Index (2026)
             </h2>
             <p className="mt-4 text-base leading-7 text-muted-foreground">
               Official refinery blend averages, standard fuel density ranges, and verified E0 stations across major states.
@@ -960,7 +617,7 @@ export default function Page() {
       {/* Deep-Dive SEO Section: Why E0 Fuel is Critical */}
       <section id="fuel-guide" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-primary">Engine Health & Performance Guide</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-primary">Engine Health &amp; Performance Guide</p>
           <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
             Why Switching to <span className="text-primary">0% Ethanol (E0)</span> Saves Your Engine
           </h2>
@@ -984,7 +641,7 @@ export default function Page() {
             <div className="mb-4 grid size-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <Wrench size={26} />
             </div>
-            <h3 className="text-lg font-bold">Protects Fuel Lines & Seals</h3>
+            <h3 className="text-lg font-bold">Protects Fuel Lines &amp; Seals</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Blended ethanol degrades standard rubber hoses, O-rings, and plastic floats. Pure E0 petrol eliminates rubber swelling and dry rot, preventing dangerous fuel leaks and expensive repairs.
             </p>
@@ -994,7 +651,7 @@ export default function Page() {
             <div className="mb-4 grid size-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <Gauge size={26} />
             </div>
-            <h3 className="text-lg font-bold">Maximum Mileage & Power</h3>
+            <h3 className="text-lg font-bold">Maximum Mileage &amp; Power</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Ethanol contains ~33% less thermal energy per gallon than pure petrol. Running pure E0 fuel delivers up to 6–8% higher mileage, snappier throttle response, and smoother idle RPMs.
             </p>
@@ -1004,7 +661,7 @@ export default function Page() {
             <div className="mb-4 grid size-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <Flame size={26} />
             </div>
-            <h3 className="text-lg font-bold">Ideal for Classic & Superbikes</h3>
+            <h3 className="text-lg font-bold">Ideal for Classic &amp; Superbikes</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Carburetted engines (Royal Enfield Cast Iron/UCE, Yamaha RD350, RX100) and high-compression superbikes (Ducati, KTM, Kawasaki) suffer severe jet clogging with E20 fuel. E0 keeps jets pristine.
             </p>
@@ -1024,7 +681,7 @@ export default function Page() {
             <div className="mb-4 grid size-12 place-items-center rounded-xl bg-primary/10 text-primary">
               <Zap size={26} />
             </div>
-            <h3 className="text-lg font-bold">Prevents Valve & Injector Gumming</h3>
+            <h3 className="text-lg font-bold">Prevents Valve &amp; Injector Gumming</h3>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Combustion of pure hydrocarbon fuel burns cleaner with less carbon residue and sticky deposits on intake valves and fuel injectors compared to blended alcohol fuels.
             </p>
@@ -1073,7 +730,7 @@ export default function Page() {
             <Star size={14} className="fill-amber-500" /> Rated 4.9 / 5.0 by 2,500+ Drivers
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-            Loved by Bikers, Classic Collectors & Drivers Across India
+            Loved by Bikers, Classic Collectors &amp; Drivers Across India
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
             See how E0 Finder is protecting engines and giving motorists peace of mind every time they refuel.
@@ -1127,39 +784,8 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
-            <div className="flex flex-col gap-3">
-              {appScreens.map((screen, idx) => (
-                <button
-                  key={screen.title}
-                  onClick={() => setActiveScreen(idx)}
-                  className={`cursor-pointer rounded-xl border p-5 text-left transition-all ${
-                    activeScreen === idx
-                      ? 'border-primary bg-primary/[0.06] shadow-sm'
-                      : 'border-border hover:border-primary/40 hover:bg-card'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <strong className={`text-base ${activeScreen === idx ? 'text-primary' : 'text-foreground'}`}>
-                      {idx + 1}. {screen.title}
-                    </strong>
-                    {activeScreen === idx && <span className="size-2 rounded-full bg-primary" />}
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{screen.description}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="flex justify-center rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <div className="max-w-[340px] overflow-hidden rounded-xl border border-border/80 shadow-md">
-                <img
-                  src={appScreens[activeScreen].img}
-                  alt={appScreens[activeScreen].title}
-                  className="w-full object-cover transition-opacity duration-300"
-                />
-              </div>
-            </div>
-          </div>
+          {/* Client component — screenshot tab switcher */}
+          <AppScreensShowcase />
         </div>
       </section>
 
@@ -1168,10 +794,10 @@ export default function Page() {
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              <BookOpen size={14} /> Knowledge Hub & Research
+              <BookOpen size={14} /> Knowledge Hub &amp; Research
             </div>
             <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-              Latest Fuel Insights & Maintenance Guides
+              Latest Fuel Insights &amp; Maintenance Guides
             </h2>
             <p className="mt-2 text-muted-foreground">
               Deep dives into fuel chemistry, ethanol blending policies, and motorcycle preservation.
@@ -1305,21 +931,8 @@ export default function Page() {
       <section id="faq" className="mx-auto max-w-3xl px-5 py-16">
         <p className="text-center text-sm font-bold uppercase tracking-widest text-primary">Questions answered</p>
         <h2 className="mt-2 text-center text-3xl font-black">Frequently Asked Questions</h2>
-        <div className="mt-8 flex flex-col gap-3">
-          {faqs.map((faq, i) => (
-            <div key={faq.q} className="rounded-xl border border-border bg-card">
-              <button
-                className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left font-bold"
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                aria-expanded={openFaq === i}
-              >
-                {faq.q}
-                <ChevronDown className={openFaq === i ? 'rotate-180 text-primary transition-transform' : 'transition-transform'} />
-              </button>
-              {openFaq === i && <p className="px-5 pb-5 leading-7 text-muted-foreground">{faq.a}</p>}
-            </div>
-          ))}
-        </div>
+        {/* Client component — accordion open/close */}
+        <FaqAccordion />
       </section>
 
       {/* About Us */}
@@ -1372,7 +985,7 @@ export default function Page() {
               <p className="mt-2 text-xs text-primary-foreground/70">Find Ethanol-Free Petrol Stations in India</p>
             </div>
             <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-primary-foreground/85">
-              <a href="/blog" className="hover:underline">Blog & Guides</a>
+              <a href="/blog" className="hover:underline">Blog &amp; Guides</a>
               <a href="/privacy" className="hover:underline">Privacy Policy</a>
               <a href="/terms" className="hover:underline">Terms of Use</a>
               <a href="/disclaimer" className="hover:underline">Disclaimer</a>
@@ -1393,5 +1006,3 @@ export default function Page() {
     </main>
   )
 }
-
-

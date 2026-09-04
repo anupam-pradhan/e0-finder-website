@@ -88,10 +88,12 @@ export default function FindE0WebPage() {
   const [reportFuelGrade, setReportFuelGrade] = useState('XP100 (0% Ethanol)')
   const [reportCity, setReportCity] = useState('Bengaluru')
   const [reportNotes, setReportNotes] = useState('')
+  const [reportError, setReportError] = useState('')
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false)
   const [lastSyncTime, setLastSyncTime] = useState<string>('06:00 AM IST Today')
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
 
-  // Fetch live daily updated stations on mount
+  // Fetch live stations from Supabase via API
   const fetchLiveStations = async () => {
     try {
       setIsSyncing(true)
@@ -99,14 +101,7 @@ export default function FindE0WebPage() {
       if (res.ok) {
         const data = await res.json()
         if (data.stations && data.stations.length > 0) {
-          // Load any local community submissions
-          let localReports: WebStation[] = []
-          try {
-            const saved = localStorage.getItem('e0_community_reports')
-            if (saved) localReports = JSON.parse(saved)
-          } catch (e) {}
-
-          setStations([...localReports, ...data.stations])
+          setStations(data.stations)
           if (data.omcRevisionDate) {
             setLastSyncTime(`${data.omcRevisionDate} • ${data.omcRevisionTime}`)
           }
@@ -212,47 +207,80 @@ export default function FindE0WebPage() {
     }
   }
 
-  const handleReportSubmit = (e: React.FormEvent) => {
+  const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!reportStationName) return
+    setReportError('')
+    setIsSubmittingReport(true)
 
-    const newStation: WebStation = {
-      id: `community-${Date.now()}`,
-      name: reportStationName,
-      brand: 'IndianOil',
-      brandLogo: '/assets/oil_company_logo/indian-oil-logo.svg',
-      fuelGrade: reportFuelGrade as any,
-      isE0Confirmed: true,
-      isCOCO: false,
-      address: `${reportStationName}, ${reportCity}`,
-      area: reportCity,
-      city: reportCity,
-      state: 'India',
-      pincode: '000000',
-      latitude: activeStation ? activeStation.latitude + 0.005 : 12.9716,
-      longitude: activeStation ? activeStation.longitude + 0.005 : 77.5946,
-      price: 145.0,
-      density: reportDensity ? `${reportDensity} kg/m³ @ 15°C` : '735.0 kg/m³ @ 15°C',
-      lastVerified: 'Just now',
-      verifiedBy: 'Community Web Submission (Verified)',
-      rating: 5.0,
-      reviewCount: 1,
-      isOpen24Hours: true,
-      timing: 'Open 24 Hours',
-      phone: '',
-      amenities: ['0% Ethanol Dispenser', 'UPI / Card'],
+    try {
+      const res = await fetch('/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stationName: reportStationName,
+          city: reportCity,
+          fuelGrade: reportFuelGrade,
+          density: reportDensity,
+          notes: reportNotes,
+          latitude: activeStation?.latitude ?? null,
+          longitude: activeStation?.longitude ?? null,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || data.status === 'error') {
+        setReportError(data.message || 'Failed to submit report. Please try again.')
+        setIsSubmittingReport(false)
+        return
+      }
+
+      // Optimistically add to local station list so user sees it immediately
+      const optimisticStation: WebStation = {
+        id: `community-${Date.now()}`,
+        name: reportStationName,
+        brand: 'IndianOil',
+        brandLogo: '/assets/oil_company_logo/Indian_Oil_Logo.svg',
+        fuelGrade: reportFuelGrade as any,
+        isE0Confirmed: true,
+        isCOCO: false,
+        address: `${reportStationName}, ${reportCity}`,
+        area: reportCity,
+        city: reportCity,
+        state: 'India',
+        pincode: '000000',
+        latitude: activeStation ? activeStation.latitude + 0.005 : 12.9716,
+        longitude: activeStation ? activeStation.longitude + 0.005 : 77.5946,
+        price: 145.0,
+        density: reportDensity ? `${reportDensity} kg/m³ @ 15°C` : '735.0 kg/m³ @ 15°C',
+        lastVerified: 'Just now (Pending Verification)',
+        verifiedBy: 'Community Web Submission',
+        rating: 5.0,
+        reviewCount: 1,
+        isOpen24Hours: true,
+        timing: 'Open 24 Hours',
+        phone: '',
+        amenities: ['0% Ethanol Dispenser', 'UPI / Card'],
+      }
+
+      setStations((prev) => [optimisticStation, ...prev])
+      setActiveStationId(optimisticStation.id)
+      setReportSuccess(true)
+
+      setTimeout(() => {
+        setReportSuccess(false)
+        setReportModalOpen(false)
+        setReportStationName('')
+        setReportDensity('')
+        setReportNotes('')
+        setReportError('')
+      }, 2500)
+    } catch (err) {
+      setReportError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmittingReport(false)
     }
-
-    setStations([newStation, ...stations])
-    setActiveStationId(newStation.id)
-    setReportSuccess(true)
-    setTimeout(() => {
-      setReportSuccess(false)
-      setReportModalOpen(false)
-      setReportStationName('')
-      setReportDensity('')
-      setReportNotes('')
-    }, 2000)
   }
 
   return (
@@ -838,11 +866,22 @@ export default function FindE0WebPage() {
                   />
                 </div>
 
+                {reportError && (
+                  <p className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-xs font-semibold text-destructive">
+                    {reportError}
+                  </p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-primary py-3.5 font-bold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-[1.01] shadow-md text-sm flex items-center justify-center gap-2"
+                  disabled={isSubmittingReport}
+                  className="w-full rounded-xl bg-primary py-3.5 font-bold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-[1.01] shadow-md text-sm flex items-center justify-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
                 >
-                  <Send size={16} /> Submit Community Report
+                  {isSubmittingReport ? (
+                    <><Loader2 size={16} className="animate-spin" /> Submitting to E0 Finder...</>
+                  ) : (
+                    <><Send size={16} /> Submit Community Report</>
+                  )}
                 </button>
               </form>
             )}
