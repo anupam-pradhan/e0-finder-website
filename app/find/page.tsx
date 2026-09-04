@@ -50,5 +50,6 @@ export const metadata: Metadata = {
 
 export default async function FindPage() {
   const serverStations = await getStationsServer()
-  return <FindE0WebPage initialStations={serverStations} />
+  const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+  return <FindE0WebPage initialStations={serverStations} googleMapsApiKey={googleMapsApiKey} />
 }

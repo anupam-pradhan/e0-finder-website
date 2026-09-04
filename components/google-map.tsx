@@ -10,6 +10,20 @@ interface GoogleMapProps {
   activeStation: WebStation | null
   onSelectStation: (id: string) => void
   userLocation: { lat: number; lng: number } | null
+  apiKey?: string
+}
+
+let hasConfiguredLoader = false
+
+function configureGoogleMapsLoader(apiKey: string) {
+  if (hasConfiguredLoader || !apiKey) return
+  try {
+    setOptions({
+      key: apiKey,
+      v: 'weekly',
+    })
+    hasConfiguredLoader = true
+  } catch (_) {}
 }
 
 export default function GoogleMapComponent({
@@ -17,6 +31,7 @@ export default function GoogleMapComponent({
   activeStation,
   onSelectStation,
   userLocation,
+  apiKey: propApiKey,
 }: GoogleMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<google.maps.Map | null>(null)
@@ -30,7 +45,7 @@ export default function GoogleMapComponent({
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+  const apiKey = propApiKey || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
   // Initialize Google Maps API
   useEffect(() => {
@@ -40,13 +55,13 @@ export default function GoogleMapComponent({
 
     const initMap = async () => {
       try {
-        setIsLoading(true)
-        setLoadError(null)
+        if (!apiKey) {
+          setIsLoading(false)
+          setLoadError('Google Maps API key is missing. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to .env.local.')
+          return
+        }
 
-        setOptions({
-          key: apiKey,
-          v: 'weekly',
-        })
+        configureGoogleMapsLoader(apiKey)
 
         const { Map, TrafficLayer, InfoWindow } = await importLibrary('maps')
         await importLibrary('marker')
@@ -65,7 +80,7 @@ export default function GoogleMapComponent({
         const map = new Map(mapContainerRef.current, {
           center: defaultCenter,
           zoom: defaultZoom,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeId: 'roadmap',
           disableDefaultUI: true, // We provide custom controls matching the theme
           clickableIcons: false,
           gestureHandling: 'greedy',
@@ -115,9 +130,7 @@ export default function GoogleMapComponent({
     if (!mapInstanceRef.current) return
     const nextType = mapType === 'roadmap' ? 'hybrid' : 'roadmap'
     setMapType(nextType)
-    mapInstanceRef.current.setMapTypeId(
-      nextType === 'roadmap' ? google.maps.MapTypeId.ROADMAP : google.maps.MapTypeId.HYBRID
-    )
+    mapInstanceRef.current.setMapTypeId(nextType)
   }
 
   // Toggle Live Traffic Layer

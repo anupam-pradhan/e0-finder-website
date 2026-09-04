@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import {
   Search,
@@ -73,18 +72,7 @@ const findFaqSchema = {
   })),
 }
 
-// Dynamically import Google Maps component with ssr disabled
-const DynamicGoogleMap = dynamic(() => import('@/components/google-map'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full min-h-[380px] lg:min-h-[460px] w-full items-center justify-center rounded-3xl border border-border bg-muted/30">
-      <div className="flex flex-col items-center gap-3">
-        <Loader2 size={32} className="animate-spin text-primary" />
-        <span className="text-xs font-bold text-muted-foreground">Loading Live Google Petrol Pump Map...</span>
-      </div>
-    </div>
-  ),
-})
+import GoogleMap from '@/components/google-map'
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371 // Earth radius in km
@@ -102,8 +90,10 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export default function FindE0WebPage({
   initialStations: serverInitialStations,
+  googleMapsApiKey,
 }: {
   initialStations?: WebStation[]
+  googleMapsApiKey?: string
 } = {}) {
   const [stations, setStations] = useState<WebStation[]>(
     serverInitialStations && serverInitialStations.length > 0
@@ -674,11 +664,12 @@ export default function FindE0WebPage({
         >
           {/* Interactive Google Map Canvas */}
           <div className="h-[340px] sm:h-[380px] lg:h-[420px] w-full shrink-0">
-            <DynamicGoogleMap
+            <GoogleMap
               stations={filteredStations}
               activeStation={activeStation}
               onSelectStation={(id) => setActiveStationId(id)}
               userLocation={userLocation}
+              apiKey={googleMapsApiKey}
             />
           </div>
 
