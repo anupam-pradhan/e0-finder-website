@@ -4,6 +4,9 @@ import { SitePage, PolicySection, BulletList } from '@/components/site-page'
 export const metadata = {
   title: 'Delete Your Account — E0 Finder',
   description: 'Instructions on how to delete your E0 Finder account and associated personal data.',
+  alternates: {
+    canonical: '/delete-account',
+  },
 }
 
 export default function DeleteAccountPage() {

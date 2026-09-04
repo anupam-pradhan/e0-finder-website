@@ -1,6 +1,21 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Inter, Sora } from 'next/font/google'
 import './globals.css'
+import { AppInstallBar } from '@/components/app-install-bar'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
+
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-sora',
+  display: 'swap',
+})
 
 const siteUrl = 'https://e0-finder.app'
 
@@ -35,9 +50,6 @@ export const metadata: Metadata = {
   creator: 'E0 Finder',
   publisher: 'E0 Finder',
   applicationName: 'E0 Finder',
-  alternates: {
-    canonical: siteUrl,
-  },
   robots: {
     index: true,
     follow: true,
@@ -143,7 +155,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${sora.variable}`}>
       <head>
         <script
           async
@@ -161,6 +173,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <AppInstallBar />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

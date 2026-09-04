@@ -5,6 +5,9 @@ export const metadata = {
   title: 'Privacy Policy — E0 Finder (App & Website)',
   description:
     'Comprehensive Privacy Policy and Data Safety disclosures for the E0 Finder Android application (com.anupampradhan.ethanolfreepetrol) and website.',
+  alternates: {
+    canonical: '/privacy',
+  },
 }
 
 export default function PrivacyPage() {
