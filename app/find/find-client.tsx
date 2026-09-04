@@ -73,14 +73,14 @@ const findFaqSchema = {
   })),
 }
 
-// Dynamically import Leaflet map component with ssr disabled
-const DynamicLeafletMap = dynamic(() => import('@/components/leaflet-map'), {
+// Dynamically import Google Maps component with ssr disabled
+const DynamicGoogleMap = dynamic(() => import('@/components/google-map'), {
   ssr: false,
   loading: () => (
     <div className="flex h-full min-h-[380px] lg:min-h-[460px] w-full items-center justify-center rounded-3xl border border-border bg-muted/30">
       <div className="flex flex-col items-center gap-3">
         <Loader2 size={32} className="animate-spin text-primary" />
-        <span className="text-xs font-bold text-muted-foreground">Loading Live Petrol Pump Map...</span>
+        <span className="text-xs font-bold text-muted-foreground">Loading Live Google Petrol Pump Map...</span>
       </div>
     </div>
   ),
@@ -672,9 +672,9 @@ export default function FindE0WebPage({
             viewMode === 'list' ? 'hidden lg:flex' : viewMode === 'split' ? 'order-1 lg:order-2 flex' : 'flex'
           }`}
         >
-          {/* Interactive Map Canvas */}
+          {/* Interactive Google Map Canvas */}
           <div className="h-[340px] sm:h-[380px] lg:h-[420px] w-full shrink-0">
-            <DynamicLeafletMap
+            <DynamicGoogleMap
               stations={filteredStations}
               activeStation={activeStation}
               onSelectStation={(id) => setActiveStationId(id)}
