@@ -1,3 +1,5 @@
+import { researchedGuides } from './researched-guides'
+
 export interface BlogImage {
   src: string
   alt: string
@@ -15,6 +17,9 @@ export interface BlogPost {
   category: string
   readTime: string
   publishedDate: string
+  updatedDate?: string
+  sources?: { title: string; url: string }[]
+  relatedSlugs?: string[]
   author: {
     name: string
     role: string
@@ -25,112 +30,69 @@ export interface BlogPost {
   content: string
 }
 
-export const blogPosts: BlogPost[] = [
+export type BlogSummary = Pick<BlogPost,
+  'slug' | 'title' | 'excerpt' | 'coverImage' | 'category' | 'readTime' | 'publishedDate' | 'author' | 'keywords'
+>
+
+export function toBlogSummary(post: BlogPost): BlogSummary {
+  const { slug, title, excerpt, coverImage, category, readTime, publishedDate, author, keywords } = post
+  return { slug, title, excerpt, coverImage, category, readTime, publishedDate, author, keywords }
+}
+
+type LegacyBlogPost = Omit<BlogPost, 'metaTitle' | 'metaDescription' | 'articleImages'> & {
+  metaTitle?: string
+  metaDescription?: string
+  subtitle?: string
+  articleImages: (BlogImage | { url: string; caption: string })[]
+}
+
+const legacyPosts: LegacyBlogPost[] = [
   {
-    slug: 'is-xp95-speed97-ethanol-free',
-    title: 'Is XP95, Power 95, or Speed 97 Ethanol-Free? The Shocking Truth About Premium Petrol in India',
-    metaTitle: 'Is XP95 or Speed 97 Ethanol-Free (E0)? Premium Fuel Truth in India',
-    metaDescription: 'Think paying ₹108/L for IndianOil XP95 or BPCL Speed gives you ethanol-free petrol? Official RTI filings and refinery data reveal up to 20% ethanol (E20). Discover which fuels are truly E0.',
-    excerpt: 'Lakhs of Indian motorcyclists and car owners pay a premium for XP95 and Speed thinking it protects their engines from alcohol blending. Here is the refinery reality, RTI proof, and how to locate genuine 0% ethanol fuel.',
-    coverImage: '/playstore_feature_graphic.png',
-    articleImages: [
-      {
-        src: '/screenshots/e0_home.png',
-        alt: 'E0 Finder interactive map showing verified pure petrol pumps',
-        caption: 'Figure 1: E0 Finder Live Map tracking verified XP100 and unblended E0 pumps across Bengaluru and Mumbai.',
-      },
-      {
-        src: '/screenshots/e0_details_final.png',
-        alt: 'Station details in E0 Finder displaying verified density test',
-        caption: 'Figure 2: Verified fuel batch density log and user receipts in the E0 Finder Android app.',
-      },
-    ],
-    category: 'Fuel Forensics',
-    readTime: '6 min read',
-    publishedDate: 'August 16, 2026',
-    author: {
-      name: 'Anupam Pradhan',
-      role: 'Automotive Systems Lead, E0 Finder',
+    "slug": "is-xp95-speed97-ethanol-free",
+    "title": "Is XP95 or Speed 97 Ethanol-Free? What to Check",
+    "metaTitle": "Is XP95 or Speed 97 Ethanol-Free? What to Check",
+    "metaDescription": "Premium petrol is not automatically E0. Check the supplier's fuel specification and separate XP95 or Speed 97 octane ratings from ethanol content.",
+    "excerpt": "Premium petrol is not automatically E0. Check the supplier's fuel specification and separate XP95 or Speed 97 octane ratings from ethanol content.",
+    "coverImage": "/playstore_feature_graphic.png",
+    "articleImages": [],
+    "category": "Fuel Grades",
+    "readTime": "2 min read",
+    "publishedDate": "August 16, 2026",
+    "updatedDate": "September 7, 2026",
+    "author": {
+      "name": "E0 Finder Editorial Team",
+      "role": "Fuel guides and product documentation"
     },
-    keyTakeaways: [
-      'XP95 (IndianOil), Power 95 (HPCL), and Speed 95 (BPCL) contain up to 20% Ethanol (E20).',
-      'The "95" indicates Research Octane Number (RON), boosted using ethanol (108.5 RON base), not pure petrol.',
-      'Only 100-Octane fuels (IOCL XP100, HPCL poWer100) and select unblended bulk batches remain true 0% Ethanol (E0).',
-      'Use the E0 Finder app to avoid wasting money on 95-octane blends when your vehicle needs pure unblended fuel.',
+    "keywords": [
+      "XP95 ethanol content",
+      "Speed 97 ethanol free",
+      "premium petrol E0"
     ],
-    keywords: [
-      'is XP95 ethanol free',
-      'XP95 ethanol percentage India',
-      'Speed 97 ethanol content BPCL',
-      'Power 99 ethanol blend HPCL',
-      'XP100 0 percent ethanol',
-      'find E0 petrol pump India',
-      'E0 Finder app download',
+    "keyTakeaways": [
+      "Check the exact fuel grade and current supplier information.",
+      "Keep octane, ethanol content and availability as separate questions.",
+      "Confirm local information before travelling to an outlet."
     ],
-    content: `
-### The Great Indian Petrol Bunk Confusion
-
-Pull into any Indian Oil, BPCL, or HPCL petrol bunk in Delhi, Bengaluru, Mumbai, or Pune on a Sunday morning, and you will see dozens of riders queuing up for **XP95 (IOCL)**, **Power 95 (HPCL)**, or **Speed (BPCL)**. 
-
-Ask any of them why they pay ₹7 to ₹10 extra per litre, and the answer is almost always the same: *"Bhaiya, isme ethanol nahi hota, engine safe rehta hai."* (Bro, this doesn't have ethanol, it saves the engine).
-
-**Unfortunately, this is 100% false.**
-
----
-
-### What Does the '95' in XP95 Actually Mean?
-
-Let's break down the petroleum chemistry:
-
-1. **RON (Research Octane Number):** 95 RON measures anti-knock detonation resistance under cylinder compression. It has **nothing to do with whether fuel is blended with grain alcohol or not**.
-2. **Ethanol as an Octane Booster:** Pure bio-ethanol has an inherent octane rating of **108.5 RON**. Refineries in Panipat, Mathura, and BPCL Mumbai mix 88-91 RON base gasoline with 20% ethanol to cheaply elevate the batch to 95 RON.
-3. **Additive Packs:** While XP95 contains friction reducers and detergent additives to clean carbon deposits, its base liquid is still an **E20 (20% ethanol) blend**.
-
----
-
-### The RTI Reality: What Public Disclosures Confirm
-
-Right to Information (RTI) responses filed with Indian Oil Corporation Limited (IOCL) and Bharat Petroleum Corporation Limited (BPCL) have officially confirmed:
-
-- **Regular Petrol (91 Octane):** Blended up to 20% Ethanol (E20).
-- **XP95 / Speed 95 / Power 95:** Blended up to 20% Ethanol (E20).
-- **Speed 97 / Power 99:** Blended with 10%–20% Ethanol depending on refinery stock and depot dispatches.
-
----
-
-### Which Fuels in India Are Actually 100% Ethanol-Free (E0)?
-
-As of August 2026, the only fuel grades consistently guaranteed to have **0% Ethanol (Pure E0 Hydrocarbon Petrol)** across India are:
-
-1. **IndianOil XP100 (100 RON):** Retailing at select flagship Company-Owned, Company-Operated (COCO) outlets.
-2. **HPCL poWer100 (100 RON):** Available at select metro bunks.
-3. **Specialized Non-Blended batches:** Dispensed at specific industrial depot pumps mapped by the E0 Finder community.
-
-#### Why Do Oil Companies Keep 100-Octane Fuel at 0% Ethanol?
-Because 100-octane fuel caters to imported superbikes (Ducati, Kawasaki Ninja H2/ZX-10R, BMW S1000RR) and supercars (Porsche, Ferrari, Lamborghini). These engines feature high-precision piezo injectors calibrated strictly for water-free, non-hygroscopic fuels. Storing low-turnover 100-octane fuel with ethanol in underground tanks would cause catastrophic phase separation and water pooling.
-
----
-
-### Comparison of Petrol Grades in India
-
-| Fuel Variant | Typical RON | Ethanol Blending | Best Suited For | Real Price (Approx) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Regular Petrol** | 91 RON | **Up to 20% (E20)** | Commuter bikes, post-April 2023 cars | ~₹101 - ₹105 / L |
-| **IOCL XP95 / HPCL Power 95** | 95 RON | **Up to 20% (E20)** | Modern turbo cars (E20 compliant) | ~₹108 - ₹112 / L |
-| **BPCL Speed 97** | 97 RON | **10% - 20% Ethanol** | Tuned European cars | ~₹125 - ₹135 / L |
-| **IOCL XP100 / HPCL poWer100** | 100 RON | **0% (Pure E0 Petrol)** | Superbikes, classic 2-strokes, vintage cars | ~₹150 - ₹160 / L |
-
----
-
-### How to Stop Wasting Money and Find Real E0 Petrol
-
-If you drive a classic Royal Enfield Bullet, a 2-stroke Yamaha RX100/RD350, or a high-compression motorcycle, paying ₹110/L for XP95 will **not** prevent ethanol corrosion.
-
-Instead:
-1. **Download the E0 Finder Android App.**
-2. Check the live GPS map for verified **XP100 and unblended 0% ethanol bunks** near your location.
-3. Check the morning **density test logs** (pure E0 sits at 720–775 kg/m³) submitted by fellow riders before you leave home.
-    `,
+    "sources": [
+      {
+        "title": "IndianOil: XP95 product information",
+        "url": "https://iocl.com/pages/XP95"
+      },
+      {
+        "title": "BPCL: fuels and services",
+        "url": "https://www.bharatpetroleum.in/our-businesses/fuels-and-services/about-fuels-and-services.aspx"
+      },
+      {
+        "title": "Shell India: fuels and ethanol-blending disclosure",
+        "url": "https://www.shell.in/fuels-oils-and-coolants/shell-fuels.html"
+      }
+    ],
+    "relatedSlugs": [
+      "octane-vs-ethanol-ron-e0-e20",
+      "shell-v-power-ethanol-content-india",
+      "xp100-petrol-price-ethanol-content-pump-locator"
+    ],
+    "content": "## Does premium mean ethanol-free?\n\nNo. Do not identify a fuel as E0 merely because it is premium, has a higher octane rating or costs more. The ethanol content is a separate specification. Check it for the exact grade you intend to purchase.\n\n[IndianOil describes XP95 as 95 RON petrol](https://iocl.com/pages/XP95). [BPCL's fuels overview](https://www.bharatpetroleum.in/our-businesses/fuels-and-services/about-fuels-and-services.aspx) describes Speed and Speed 97 as premium products. Neither of those descriptions alone establishes a zero-ethanol blend for a current purchase.\n\n## Why does the distinction matter?\n\nA motorist may be trying to meet an octane requirement, an ethanol limit, or both. The product name can help with one enquiry without resolving the other. An outlet saying \"this is premium petrol\" has not necessarily answered your question about ethanol.\n\nThere is a clear example of this distinction in [Shell India's disclosure](https://www.shell.in/fuels-oils-and-coolants/shell-fuels.html): its regular petrol and V-Power are both ethanol-blended. Premium positioning is therefore not an E0 guarantee.\n\n## What should I check before refuelling?\n\n1. Identify the complete grade, rather than only the oil-company brand.\n2. Read the dispenser label and ask for current blend information.\n3. Establish whether the answer is from a product specification, a batch record or a staff statement.\n4. Check the required octane and allowed ethanol blend in your vehicle documentation.\n5. Confirm price and stock before making a detour.\n\nIf the ethanol information is not available, record it as unconfirmed. A density reading or receipt without a composition statement cannot supply the missing answer.\n\n## Should I switch to XP100 or poWer100?\n\nInvestigate the specific product and outlet using the [XP100 guide](/blog/xp100-petrol-price-ethanol-content-pump-locator) or [poWer100 guide](/blog/power100-petrol-hpcl-guide). A 100-octane product name still needs a separate blend check. Avoid universal promises that a particular grade will always be E0 at every station.\n\nOnce suitable options are confirmed, compare current prices and measured mileage in the [fuel-cost calculator](/fuel-cost-calculator). A more expensive fill does not automatically produce a lower running cost.\n\n## Where can I look for outlets?\n\nSearch the [E0 Finder map](/find) by area and use the entry as a lead to confirm. Keep dated notes and the receipt, separating what you purchased from what was said about the blend. This helps future readers understand the strength of the report."
   },
   {
     slug: 'viral-instagram-petrol-water-test-guide',
@@ -219,7 +181,7 @@ Look at the line where the bottom water layer meets the top petrol layer:
 - **Bottom layer exceeds 32ml:** **[CRITICAL] Over-blended or Contaminated Fuel** (Immediate fuel system risk!).
 
 #### The Exact Mathematical Formula:
-$$\\text{Ethanol \\%} = (\\text{Final Bottom Volume in ml} - 10\\text{ml}) \\times 1.11$$
+**Estimated ethanol percentage = (final bottom volume in ml - 10 ml) x 1.11.**
 
 ---
 
@@ -1192,224 +1154,113 @@ Use the **E0 Finder app** to locate verified 0% ethanol stations across your cit
     `,
   },
   {
-    slug: 'how-to-find-e0-petrol-pumps-in-india-step-by-step',
-    title: 'How to Find 0% Ethanol (E0) Petrol Stations in India: Complete Step-by-Step Locator Guide',
-    subtitle: 'From IndianOil XP100 to HPCL poWer100: How to locate verified pumps, check live density logs & get GPS navigation.',
-    excerpt: 'Step-by-step guide to finding authentic 0% ethanol (E0) petrol stations near you anywhere in India. Learn how to use the E0 Finder app, filter by oil company, inspect Form-8 logs, and report new stations.',
-    coverImage: '/playstore_feature_graphic.png',
-    publishedDate: 'August 17, 2026',
-    author: {
-      name: 'Anupam Pradhan',
-      role: 'Founder & Lead Developer, E0 Finder',
-      avatar: '/app-icon.png',
+    "slug": "how-to-find-e0-petrol-pumps-in-india-step-by-step",
+    "title": "How to Find E0 Petrol Pumps in India",
+    "metaTitle": "How to Find E0 Petrol Pumps in India",
+    "metaDescription": "Search for E0 petrol outlets, check station reports and confirm fuel grade, ethanol information, stock and directions before making a trip.",
+    "excerpt": "Search for E0 petrol outlets, check station reports and confirm fuel grade, ethanol information, stock and directions before making a trip.",
+    "coverImage": "/playstore_feature_graphic.png",
+    "articleImages": [],
+    "category": "Using E0 Finder",
+    "readTime": "3 min read",
+    "publishedDate": "August 17, 2026",
+    "updatedDate": "September 7, 2026",
+    "author": {
+      "name": "E0 Finder Editorial Team",
+      "role": "Fuel guides and product documentation"
     },
-    category: 'DIY Testing',
-    readTime: '6 min read',
-    articleImages: [
+    "keywords": [
+      "find E0 petrol India",
+      "E0 Finder online",
+      "EO Finder app"
+    ],
+    "keyTakeaways": [
+      "Check the exact fuel grade and current supplier information.",
+      "Keep octane, ethanol content and availability as separate questions.",
+      "Confirm local information before travelling to an outlet."
+    ],
+    "sources": [
       {
-        url: '/e0_home.png',
-        caption: 'Figure 1: E0 Finder live interactive map interface showing verified station pins, distance badges, and fuel grades.',
-      },
-      {
-        url: '/e0_details_final.png',
-        caption: 'Figure 2: Comprehensive station details modal with community verification timestamps, amenities, and turn-by-turn directions.',
-      },
+        "title": "IndianOil: XP100 product information and outlet directory",
+        "url": "https://iocl.com/xp100"
+      }
     ],
-    keyTakeaways: [
-      'Standard map apps (Google Maps, Apple Maps) do not track ethanol blending percentages or fuel quality standards.',
-      'E0 Finder is India\'s first and only dedicated crowd-verified platform mapping authentic 0% ethanol petrol stations in real-time.',
-      'Filter stations by grade (XP100, poWer100, Speed 97) and oil company (IndianOil, HPCL, BPCL, Shell).',
-      'Community motorists can upload fuel bills and Form-8 density photos to verify new pumps in their local area.',
+    "relatedSlugs": [
+      "reading-e0-station-reports",
+      "planning-fuel-stops-india",
+      "e10-petrol-availability-india"
     ],
-    keywords: [
-      'how to find E0 petrol pump India',
-      'E0 petrol station locator app',
-      'find XP100 petrol near me',
-      'find ethanol free petrol pump Bangalore',
-      'find ethanol free petrol pump Delhi',
-      'find ethanol free petrol pump Mumbai',
-      'E0 Finder app guide',
-    ],
-    content: `
-### Why Generic Mapping Apps Fail Motorists
-
-If you open Google Maps and search for *"petrol pump near me"*, you will find hundreds of red pins. But none of these platforms can tell you:
-- Does this petrol bunk sell **0% Ethanol Petrol** or standard **20% Ethanol (E20)**?
-- Does this outlet have dedicated **XP100 or poWer100** dispensers in stock today?
-- When was the last time a real motorist verified the morning fuel density?
-
-**E0 Finder** was created to bridge this national information gap as an independent, crowd-verified platform built specifically for Indian motorists and automotive enthusiasts.
-
----
-
-### Step-by-Step: How to Locate Pure E0 Petrol in Your City
-
-#### Step 1: Download and Open E0 Finder
-Download the official **E0 Finder Android app** from the Google Play Store (Package: \`com.anupampradhan.ethanolfreepetrol\`). The app is 100% free with no login walls.
-
-#### Step 2: Grant GPS Location Permission
-Upon opening, the app automatically locates your vehicle and displays a high-contrast map with verified green station markers in your immediate vicinity.
-
-#### Step 3: Filter by Fuel Grade and Brand
-Tap the **Filter icon** to customize your search:
-- **IndianOil XP100:** 100-octane, 0% ethanol pure hydrocarbon fuel.
-- **HPCL poWer100:** Ultra-premium 100-octane unblended petrol.
-- **Company-Owned (COCO) Outlets:** Filter for verified flagship company-operated pumps for guaranteed quantity and quality.
-
-#### Step 4: Inspect Live Community Verification Data
-Tap on any station marker to view:
-- **Station Name & Exact Address:** With landmark details.
-- **Last Verification Timestamp:** See when another driver last fueled there.
-- **Observed Fuel Density:** Real Form-8 density numbers (720–775 kg/m³).
-- **Driver Reviews & Photos:** View photos of the fuel dispenser and receipts.
-
-#### Step 5: Start Turn-by-Turn Navigation
-Tap the **"Navigate"** button to instantly launch Google Maps or Apple Maps with direct coordinates to the fuel pump forecourt.
-
----
-
-### How to Contribute and Report New E0 Pumps
-
-Our community of over **10,000 active Indian riders and drivers** keeps the map fresh every day:
-1. Whenever you spot a station dispensing XP100 or verified unblended fuel, tap **"Add Station / Report"** in the app.
-2. Enter the pump location and observed density from the dispenser.
-3. Snap a quick photo of your fuel bill.
-4. Our moderation system validates the report, and the station goes live for all nearby motorists within minutes!
-
-Download **E0 Finder** today and join India's fastest-growing driver community!
-    `,
+    "content": "## Start with your location and fuel requirement\n\nOpen the [E0 Finder map](/find) and search for a city, area or postcode. Location permission is useful for nearby results, but you can use text search if you do not want to share your location.\n\nKeep the required octane and ethanol specification available while searching. E0 is a composition description, so selecting a brand or a premium grade is not enough to establish it.\n\n## Open the full station entry\n\nCheck the address and complete product name. Look for the date and basis of a report, contact details and directions. If a label says verified, review what evidence is actually available rather than treating the label as an independent laboratory certificate.\n\nA report of a successful fill may establish that a product was sold at that time. It does not promise today's stock or identify the composition of a later delivery.\n\n## Cross-check the supplier information\n\nFor XP100, use [IndianOil's product and outlet page](https://iocl.com/xp100) to investigate the listing. For other grades, consult the relevant supplier and ask the outlet about the current product. Oil-company branding alone does not mean every grade is sold at that location.\n\nCall with a specific enquiry: \"Do you have this exact grade today? What is its current price? Where can I confirm its ethanol specification?\" Make a note of the date and source.\n\n## Plan the journey\n\n1. Check road access, opening hours and the practical detour.\n2. Choose a backup that is within a conservative fuel range.\n3. Reconfirm the main outlet before a long trip.\n4. Use the listed directions only after checking the correct station address.\n\nThe [road-trip guide](/blog/planning-fuel-stops-india) expands this checklist. The [cost calculator](/fuel-cost-calculator) can include the detour in your fuel budget.\n\n## What if I find conflicting information?\n\nTreat a conflict as unresolved until the relevant supplier or outlet clarifies it. Keep a screenshot of the listing and a dated record of the new observation. A discrepancy can concern the address, product, stock, price or blend; identify which one is wrong.\n\nUse the [contact page](/contact) to flag a correction. The website's current report form creates a session listing; it is not an independent fuel-certification process.\n\n## What makes a useful contribution?\n\nShare the exact outlet, grade, date and supporting observation. Avoid publishing personal details from receipts. The [report-reading guide](/blog/reading-e0-station-reports) explains how to distinguish a transaction, a staff statement and composition evidence. A clear uncertainty is more useful than an unsupported guarantee."
   },
   {
-    slug: 'ethanol-free-petrol-india-complete-guide-e0-xp100-power100',
-    title: 'Ethanol-Free Petrol (E0) in India: The Ultimate Master Guide to Pure 0% Ethanol Fuel',
-    subtitle: 'From XP100 to poWer100: Chemical purity, engine protection, mileage benchmarks & verified pump locator across Indian cities.',
-    excerpt: 'Everything Indian motorists need to know about Ethanol-Free Petrol (E0). Discover which fuel bunks sell 0% ethanol in India, chemical differences from E20, dyno telemetry, and how to verify fuel purity at the dispenser.',
-    coverImage: '/playstore_feature_graphic.png',
-    publishedDate: 'August 17, 2026',
-    author: {
-      name: 'Dr. Vikramaditya Sen',
-      role: 'Senior Automotive Powertrain Engineer & Petrochemical Auditor',
-      avatar: '/app-icon.png',
+    "slug": "ethanol-free-petrol-india-complete-guide-e0-xp100-power100",
+    "title": "Ethanol-Free Petrol in India: An E0 Buyer's Guide",
+    "metaTitle": "Ethanol-Free Petrol in India: An E0 Buyer's Guide",
+    "metaDescription": "Understand E0 petrol, investigate available grades, check vehicle compatibility and compare refuelling costs using supplier information and dated reports.",
+    "excerpt": "Understand E0 petrol, investigate available grades, check vehicle compatibility and compare refuelling costs using supplier information and dated reports.",
+    "coverImage": "/playstore_feature_graphic.png",
+    "articleImages": [],
+    "category": "Fuel Basics",
+    "readTime": "2 min read",
+    "publishedDate": "August 17, 2026",
+    "updatedDate": "September 7, 2026",
+    "author": {
+      "name": "E0 Finder Editorial Team",
+      "role": "Fuel guides and product documentation"
     },
-    category: 'Fuel Investigation',
-    readTime: '10 min read',
-    articleImages: [
+    "keywords": [
+      "ethanol free petrol India",
+      "E0 petrol India",
+      "E Zero Finder"
+    ],
+    "keyTakeaways": [
+      "Check the exact fuel grade and current supplier information.",
+      "Keep octane, ethanol content and availability as separate questions.",
+      "Confirm local information before travelling to an outlet."
+    ],
+    "sources": [
       {
-        url: '/screenshots/e0_home.png',
-        caption: 'Figure 1: E0 Finder nationwide live radar mapping authentic 0% ethanol petrol stations across 500+ Indian cities.',
+        "title": "US DOE Alternative Fuels Data Center: ethanol fuel basics",
+        "url": "https://afdc.energy.gov/fuels/ethanol-fuel-basics"
       },
       {
-        url: '/screenshots/e0_details_final.png',
-        caption: 'Figure 2: Verified fuel station telemetry sheet showing live Form-8 density logs, prices, and driver audits.',
+        "title": "HPCL: poWer100 product information",
+        "url": "https://www.hindustanpetroleum.com/pages/power100"
       },
+      {
+        "title": "IndianOil: XP100 product information and outlet directory",
+        "url": "https://iocl.com/xp100"
+      },
+      {
+        "title": "US DOE Alternative Fuels Data Center: fuel properties comparison",
+        "url": "https://afdc.energy.gov/fuels/properties"
+      }
     ],
-    keyTakeaways: [
-      'Ethanol-Free Petrol (E0) contains 100% pure petroleum hydrocarbons with zero ethyl alcohol, zero moisture attraction, and maximum thermal energy density (34.2 MJ/L).',
-      'Standard Indian petrol (E20) contains 20% ethanol, which causes water phase separation, corrosive acetic acid formation, and a 7–9% drop in tank range.',
-      'In India, 100-octane fuels like IndianOil XP100 and HPCL poWer100 are formulated without ethanol blending to guarantee stability for high-performance engines.',
-      'Checking the morning Form-8 Density Register (720–740 kg/m³ @ 15°C) is the most reliable scientific method to verify unblended E0 fuel at the pump.',
-      'The E0 Finder Android app is India\'s dedicated crowd-verified platform to locate authentic 0% ethanol pumps in real-time.',
+    "relatedSlugs": [
+      "octane-vs-ethanol-ron-e0-e20",
+      "e20-vehicle-compatibility-checklist",
+      "xp100-petrol-price-ethanol-content-pump-locator"
     ],
-    keywords: [
-      'ethanol free petrol India',
-      'E0 petrol pump near me',
-      'what is E0 petrol India',
-      'IndianOil XP100 ethanol free',
-      'HPCL poWer100 0% ethanol',
-      'BPCL Speed 97 unblended petrol',
-      '0 percent ethanol petrol price India',
-      'E0 Finder app pure petrol',
-    ],
-    content: `
-### What Is Ethanol-Free Petrol (E0)?
-
-**Ethanol-Free Petrol**, universally referred to in the automotive engineering industry as **E0**, is pure motor spirit consisting of **100% petroleum hydrocarbons** derived directly from crude oil fractional distillation and catalytic reforming.
-
-Unlike standard blended petrol in India:
-- **E0 Petrol contains ZERO ethyl alcohol (0% C₂H₅OH).**
-- **E0 Petrol is completely hydrophobic (does not absorb atmospheric humidity).**
-- **E0 Petrol delivers the highest volumetric energy density of any pump fuel (34.2 Megajoules per Litre).**
-
-As India mandated **20% Ethanol Blended Petrol (E20)** across all standard fuel stations under the National Biofuel Policy, finding pure E0 petrol has become the single most critical priority for superbike riders, vintage vehicle collectors, sports car owners, and performance enthusiasts.
-
----
-
-### Chemical Breakdown: Pure E0 Petrol vs E20 Blended Petrol
-
-| Metric / Chemical Property | Pure Ethanol-Free Petrol (E0) | Standard Indian Blended Petrol (E20) |
-| :--- | :--- | :--- |
-| **Ethanol Blending %** | **0.0% (Zero Alcohol)** | **20.0% (200ml per Litre)** |
-| **Volumetric Energy Density** | **34.2 MJ/L (Maximum)** | **32.6 MJ/L (-7.8% lower energy)** |
-| **Water Absorption Risk** | **Zero (Hydrophobic)** | **Extreme (Phase Separation at >0.5% H₂O)** |
-| **Corrosion Tendency** | **Non-Corrosive to brass, zinc & rubber** | **Forms Acetic Acid (pH drops to <4.5)** |
-| **Carburettor White Powder Crust** | **Never Occurs** | **Severe clogging in brass jets** |
-| **Fuel Shelf Life in Tank** | **6 to 12 Months** | **Under 30 to 45 Days** |
-| **Chassis Dyno Power Output** | **100% Rated Wheel Horsepower** | **3% to 6% lower torque roll-on** |
-
----
-
-### Why Indian Engines Need Pure E0 Petrol
-
-#### 1. Carburetted Two-Wheelers & Classic Motorcycles
-Classic motorcycles—such as the **Royal Enfield Bullet (Cast Iron / UCE)**, **Yamaha RX100 / RD350**, **Yezdi Roadking**, and **Bajaj Chetak**—use carburettors cast from zinc-aluminium alloys with brass pilot jets and nitrile rubber float valves.
-When E20 fuel sits inside the float bowl, the alcohol reacts with humidity to form **acetic acid**, corroding the brass jets into a powdery white crust and dissolving the rubber float needle.
-
-#### 2. Superbikes & High-Compression Performance Engines
-Modern superbikes (**Kawasaki Ninja ZX-10R**, **Ducati Panigale V4**, **BMW S1000RR**, **KTM Duke 390**) operate at compression ratios exceeding **12.5:1 to 13.5:1**.
-Because ethanol burns slower with erratic flame propagation at low RPMs, E20 causes harsh low-speed throttle snatchiness, 2nd-gear stalling, and high exhaust gas temperatures (**EGTs > 860°C**) that cause radiator fans to scream non-stop.
-
-#### 3. Turbo Petrol Cars (TSI, Turbo-GDi, Boosterjet, EcoBoost)
-Direct-injection turbo engines pump fuel at extreme pressures (**150 to 350 bar**). Ethanol lacks natural petroleum lubricity, causing premature abrasive wear on the high-pressure fuel pump (HPFP) plunger and carbon baking on intake valves.
-
----
-
-### Which Petrol Pumps in India Sell Pure 0% Ethanol (E0)?
-
-While regular 91-octane petrol and branded fuels like standard XP95 and poWer95 contain up to 20% ethanol, **100-Octane ultra-premium fuels in India are formulated without ethanol blending**:
-
-#### 1. IndianOil XP100 (Octane Rating: 100)
-- **Status:** **100% Verified 0% Ethanol (E0)**.
-- **Refinery Source:** Produced at IndianOil's Mathura and Panipat refineries using high-octane alkylate and isomerate streams.
-- **Availability:** Selected flagship and COCO (Company-Owned Company-Operated) bunks in 50+ tier-1 and tier-2 Indian cities.
-- **Price:** Typically ₹144 to ₹146 per litre.
-
-#### 2. Hindustan Petroleum poWer100 (Octane Rating: 100)
-- **Status:** **100% Verified 0% Ethanol (E0)**.
-- **Refinery Source:** Formulated with pure synthetic reformate streams designed for supercars and racing superbikes.
-- **Availability:** Major metro hubs (Mumbai, Delhi NCR, Bengaluru, Hyderabad, Pune).
-- **Price:** Typically ₹146 to ₹148 per litre.
-
-#### 3. Bharat Petroleum Speed 97 (Selected Unblended Batches)
-- **Status:** **0% Ethanol in Certified COCO Flagship Outlets**.
-- **Availability:** Mumbai (Bandra Reclamation Sea Link), Bengaluru, Chennai.
-- **Price:** Typically ₹138 to ₹140 per litre.
-
----
-
-### How to Verify Pure E0 Petrol at the Fuel Pump
-
-Under Ministry of Petroleum statutory regulations, every motorist has the right to inspect fuel quality before fueling:
-
-1. **Ask for the Daily Form-8 Density Register:**
-   - Pure Petrol (E0) has a density between **720.0 and 740.0 kg/m³ at 15°C**.
-   - E20 blended petrol has a density between **742.0 and 755.0 kg/m³** (due to heavy alcohol mass).
-2. **Perform the 100ml Water Extraction Test:**
-   - Mix 100ml petrol with 10ml tinted water in a graduated cylinder.
-   - If the water layer stays exactly at 10ml, the fuel is **100% Pure E0**. If it grows to 30ml, it is E20.
-
----
-
-### How to Find E0 Petrol Near You with E0 Finder
-
-Instead of guessing which bunk carries pure petrol, Indian motorists rely on **E0 Finder**:
-1. Download the **E0 Finder App** from Google Play.
-2. View real-time green station pins with verified XP100 and poWer100 availability.
-3. Check live Form-8 morning density logs and driver community verification receipts.
-4. Launch one-click Google Maps navigation directly to the dispenser forecourt.
-
-Protect your vehicle's engine, restore peak throttle response, and enjoy maximum tank range by fueling with verified **0% Ethanol Petrol** today!
-    `,
+    "content": "## What does E0 mean?\n\nE0 means petrol with zero ethanol. It does not by itself establish an octane grade, additive package or absence of every possible contaminant. The [DOE's ethanol reference](https://afdc.energy.gov/fuels/ethanol-fuel-basics) explains ethanol as a blending component; checking that component is only one part of identifying a fuel.\n\nUse the [octane and ethanol explainer](/blog/octane-vs-ethanol-ron-e0-e20) if the labels are unfamiliar.\n\n## Which Indian products should I investigate?\n\nStart with a specific product and current supplier information. [IndianOil's XP100 page](https://iocl.com/xp100) and [HPCL's poWer100 page](https://www.hindustanpetroleum.com/pages/power100) identify their 100-octane products. A product description of octane is not an outlet-specific zero-ethanol certificate.\n\nAsk for the current ethanol specification separately, then confirm that it applies to the grade and dispenser you will use. If the evidence is incomplete, treat the blend as unconfirmed. This guide does not guarantee nationwide E0 availability for a brand.\n\n## What should I check for my vehicle?\n\nIdentify the exact engine, variant and applicable owner documentation. Check the required octane and permitted ethanol blend. Resolve conflicting information with the manufacturer or authorised service centre before relying on a generic recommendation.\n\nA vehicle's price, performance category or registration year is not a complete compatibility test. Use the [vehicle checklist](/blog/e20-vehicle-compatibility-checklist) to organise the enquiry.\n\n## Will E0 always save money?\n\nNo fixed saving should be assumed. The [DOE fuel-properties comparison](https://afdc.energy.gov/fuels/properties) describes differences in energy content, but those values are not a measured mileage result for your car or bike.\n\nCompare actual fuel prices and mileage using the [fuel-cost calculator](/fuel-cost-calculator). Include the distance to reach a particular outlet. Keep maintenance costs separate unless you have evidence for them.\n\n## How do I find and evaluate a station?\n\nSearch the [E0 Finder map](/find), open the entry, and check its address, product and report context. Confirm availability by phone before making a long trip. Compare a current observation with current supplier information, not an undated social-media claim.\n\nThe [station-report guide](/blog/reading-e0-station-reports) distinguishes what receipts, photographs and staff statements can show. A receipt can establish a purchase without measuring ethanol. Density alone cannot establish E0.\n\n## What should I do next?\n\nBegin with the fuel specification your vehicle needs, then investigate local supply and compare costs. Keep a dated record of what is confirmed and what remains unknown. This process is more useful than selecting petrol by a premium label or assuming that every map badge is a laboratory result."
   },
+]
+
+export const blogPosts: BlogPost[] = [
+  ...researchedGuides,
+  ...legacyPosts.map((post) => ({
+    ...post,
+    metaTitle: post.metaTitle || post.title,
+    metaDescription: post.metaDescription || post.excerpt,
+    articleImages: post.articleImages.map((image) =>
+      'src' in image
+        ? image
+        : {
+            src: image.url.startsWith('/screenshots/') ? image.url : `/screenshots${image.url}`,
+            alt: 'E0 Finder app screen',
+            caption: image.caption,
+          },
+    ),
+  })),
 ]
 
 

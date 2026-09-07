@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import HomeClient from './home-client'
+import { blogPosts, toBlogSummary } from '@/lib/blog-data'
 
 export const metadata: Metadata = {
   title: {
     absolute: 'E0 Finder App - Official 0% Ethanol Petrol Station Locator India',
   },
   description:
-    'E0 Finder (E Zero Finder) is the official app and website for finding verified 0% ethanol petrol stations across India. Search XP100, poWer100 and Speed 97 pumps with live availability and directions.',
+    'E0 Finder, also searched as EO Finder and E Zero Finder, helps locate petrol stations across India. Check fuel reports, compare grades and open the map.',
   alternates: {
     canonical: '/',
   },
@@ -42,7 +43,7 @@ const websiteSchema = {
   '@id': 'https://e0-finder.app/#website',
   url: 'https://e0-finder.app/',
   name: 'E0 Finder',
-  alternateName: ['E Zero Finder', 'e0-finder.app'],
+  alternateName: ['EO Finder', 'E Zero Finder', 'eofinder', 'e0-finder.app'],
   publisher: { '@id': 'https://e0-finder.app/#organization' },
 }
 
@@ -53,7 +54,7 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
-      <HomeClient />
+      <HomeClient posts={blogPosts.slice(0, 6).map(toBlogSummary)} totalPosts={blogPosts.length} />
     </>
   )
 }

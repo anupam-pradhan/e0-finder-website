@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import BlogIndexPage from './blog-client'
+import { blogPosts, toBlogSummary } from '@/lib/blog-data'
 
 export const metadata: Metadata = {
-  title: 'E0 Finder Blog — Ethanol-Free Fuel Guides & Research',
+  title: { absolute: 'E0 Finder Guides - Petrol Grades, E20 and Fuel Costs' },
   description:
-    'In-depth guides and research on ethanol-free petrol in India: XP100 & poWer100, E20 engine damage, dyno tests, classic bike protection, density testing, and fuel storage.',
+    'Read E0 Finder guides on XP100, poWer100, Shell V-Power, ethanol blends, vehicle compatibility and fuel costs, with supplier references and practical checks.',
   keywords: [
     'ethanol free petrol blog',
     'E20 petrol disadvantages',
@@ -18,10 +19,12 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
+    siteName: 'E0 Finder',
+    locale: 'en_IN',
     url: '/blog',
-    title: 'E0 Finder Blog — Ethanol-Free Fuel Guides & Research',
+    title: 'E0 Finder Guides - Petrol Grades, E20 and Fuel Costs',
     description:
-      'Research-backed guides on ethanol-free petrol, E20 engine damage, dyno tests, and fuel quality in India.',
+      'Petrol-grade explainers, supplier references, compatibility checklists and fuel-cost calculations for Indian motorists.',
     images: [
       {
         url: '/playstore_feature_graphic.png',
@@ -33,13 +36,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 Finder Blog — Ethanol-Free Fuel Guides & Research',
+    title: 'E0 Finder Guides - Petrol Grades, E20 and Fuel Costs',
     description:
-      'Research-backed guides on ethanol-free petrol, E20 engine damage, dyno tests, and fuel quality in India.',
+      'Petrol-grade explainers, supplier references, compatibility checklists and fuel-cost calculations for Indian motorists.',
     images: ['/playstore_feature_graphic.png'],
   },
 }
 
 export default function BlogPage() {
-  return <BlogIndexPage />
+  return <BlogIndexPage posts={blogPosts.map(toBlogSummary)} />
 }

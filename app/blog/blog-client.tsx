@@ -26,23 +26,11 @@ import {
   Compass,
   ArrowUpRight,
 } from 'lucide-react'
-import { blogPosts } from '@/lib/blog-data'
+import type { BlogSummary } from '@/lib/blog-data'
 import { GooglePlayIcon } from '@/components/google-play-icon'
 
-const categories = [
-  'All Research',
-  'Fuel Investigation',
-  'Superbikes & Performance',
-  'Cars & Turbo Engines',
-  'Classic Bikes & Cruisers',
-  'Fuel Quality & Rights',
-  'DIY Testing',
-  'Performance Testing',
-  'Two-Wheeler Care',
-  'Fuel Chemistry',
-]
-
-export default function BlogIndexPage() {
+export default function BlogIndexPage({ posts: blogPosts }: { posts: BlogSummary[] }) {
+  const categories = ['All Research', ...new Set(blogPosts.map((post) => post.category))]
   const [selectedCategory, setSelectedCategory] = useState('All Research')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -57,7 +45,7 @@ export default function BlogIndexPage() {
 
       return matchesCategory && matchesSearch
     })
-  }, [selectedCategory, searchQuery])
+  }, [blogPosts, selectedCategory, searchQuery])
 
   const featuredPost = blogPosts[0]
   const listPosts = searchQuery || selectedCategory !== 'All Research' ? filteredPosts : filteredPosts.slice(1)
@@ -108,26 +96,26 @@ export default function BlogIndexPage() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-                <BookOpen size={14} /> Indian Automotive Engineering & Field Research
+                <BookOpen size={14} /> E0 Finder Fuel Guides
               </div>
               <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-5xl lg:text-6xl text-foreground leading-[1.1]">
                 E0 Petrol & Engine Health <span className="text-primary">Knowledge Hub</span>
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-                Independent field research, laboratory chemical analysis, chassis dyno benchmarks, and maintenance guides tailored specifically for Indian roads, weather, and vehicles.
+                Fuel-grade explainers, supplier references, vehicle compatibility checks and practical refuelling guides for Indian motorists.
               </p>
 
               {/* Trust Badges */}
               <div className="mt-6 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-bold text-muted-foreground">
                 <span className="flex items-center gap-1.5 text-foreground">
-                  <ShieldCheck size={16} className="text-primary" /> Verified Field Telemetry
+                  <ShieldCheck size={16} className="text-primary" /> Supplier references
                 </span>
                 <span className="hidden sm:inline text-border">•</span>
                 <span className="flex items-center gap-1.5 text-foreground">
-                  <Star size={16} className="fill-amber-500 text-amber-500" /> Rated 4.9★ by 2,500+ Motorists
+                  <BookOpen size={16} className="text-primary" /> {blogPosts.length} guides
                 </span>
                 <span className="hidden sm:inline text-border">•</span>
-                <span className="text-foreground">IS 2796 & ASTM-53B Standards</span>
+                <Link href="/fuel-cost-calculator" className="text-primary underline underline-offset-4">Fuel-cost calculator</Link>
               </div>
             </div>
 
@@ -138,6 +126,7 @@ export default function BlogIndexPage() {
                   <Search size={18} className="absolute left-3 text-muted-foreground" />
                   <input
                     type="text"
+                    aria-label="Search fuel guides"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search guides, vehicles, fuel grades..."
@@ -146,6 +135,8 @@ export default function BlogIndexPage() {
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
+                      aria-label="Clear guide search"
+                      title="Clear guide search"
                       className="absolute right-3 text-muted-foreground hover:text-foreground"
                     >
                       <X size={16} />
@@ -171,6 +162,7 @@ export default function BlogIndexPage() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
+                  aria-pressed={isActive}
                   className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                     isActive
                       ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/25 scale-[1.02]'
@@ -201,7 +193,7 @@ export default function BlogIndexPage() {
                 <div>
                   <div className="flex items-center gap-3 text-xs">
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 font-bold text-primary">
-                      <Sparkles size={13} /> Featured Lead Investigation
+                      <Sparkles size={13} /> Featured Guide
                     </span>
                     <span className="text-muted-foreground flex items-center gap-1">
                       <Clock size={13} /> {featuredPost.readTime}
