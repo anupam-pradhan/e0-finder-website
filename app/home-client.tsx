@@ -482,10 +482,10 @@ export default function Page() {
               <span className="inline-block size-2 rounded-full bg-primary e0-pulse-ring" /> India’s First & Only 0% Ethanol Petrol Locator
             </div>
             <h1 className="e0-fade-up e0-delay-1 max-w-2xl text-[2.75rem] font-black leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-              Find <span className="e0-text-gradient">0% Ethanol (E0)</span> Petrol Stations Near You
+              E0 Finder: Find <span className="e0-text-gradient">0% Ethanol (E0)</span> Petrol Stations Near You
             </h1>
             <p className="e0-fade-up e0-delay-2 mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              Protect your superbike, vintage classic, and car from corrosive E20 fuel. Discover verified ethanol-free petrol pumps in real time — with crowd-validated density reports across India.
+              E0 Finder, pronounced E Zero Finder, helps protect your superbike, vintage classic, and car from corrosive E20 fuel. Discover verified ethanol-free petrol pumps in real time - with crowd-validated density reports across India.
             </p>
 
             {/* trust row */}
@@ -1361,7 +1361,7 @@ export default function Page() {
       </section>
 
       {/* Why E0 Banner */}
-      <section id="why-eo" className="bg-primary py-16 text-primary-foreground">
+      <section id="why-e0" className="bg-primary py-16 text-primary-foreground">
         <div className="mx-auto max-w-4xl px-5 text-center">
           <p className="text-sm font-bold uppercase tracking-widest text-primary-foreground/75">Why choose E0?</p>
           <h2 className="mt-3 text-3xl font-black sm:text-4xl">Better fuel starts with better information.</h2>

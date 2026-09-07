@@ -18,6 +18,8 @@ const sora = Sora({
 })
 
 const siteUrl = 'https://e0-finder.app'
+const playStoreUrl =
+  'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -113,10 +115,14 @@ export const viewport: Viewport = {
 const softwareSchema = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
+  '@id': `${siteUrl}/#software`,
   name: 'E0 Finder',
+  alternateName: ['E Zero Finder', 'E0 Fuel Finder', 'e0-finder.app'],
+  url: siteUrl,
   operatingSystem: 'Android',
   applicationCategory: 'NavigationApplication',
   applicationSubCategory: 'Automotive & Fuel',
+  isAccessibleForFree: true,
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -132,16 +138,20 @@ const softwareSchema = {
   description:
     'E0 Finder helps motorists find verified ethanol-free (0% ethanol) petrol stations across India in real-time with community-driven updates and live navigation.',
   screenshot: 'https://e0-finder.app/playstore_feature_graphic.png',
-  installUrl:
-    'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol',
+  downloadUrl: playStoreUrl,
+  installUrl: playStoreUrl,
+  sameAs: [playStoreUrl],
 }
 
 const orgSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${siteUrl}/#organization`,
   name: 'E0 Finder',
-  url: 'https://e0-finder.app',
-  logo: 'https://e0-finder.app/app-icon.png',
+  alternateName: ['E Zero Finder', 'E0 Fuel Finder'],
+  url: siteUrl,
+  logo: `${siteUrl}/app-icon.png`,
+  sameAs: [playStoreUrl],
   contactPoint: {
     '@type': 'ContactPoint',
     email: 'support@e0-finder.app',

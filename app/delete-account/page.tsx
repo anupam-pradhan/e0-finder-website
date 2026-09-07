@@ -7,6 +7,10 @@ export const metadata = {
   alternates: {
     canonical: '/delete-account',
   },
+  robots: {
+    index: false,
+    follow: true,
+  },
 }
 
 export default function DeleteAccountPage() {
