@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     absolute: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
   },
   description:
-    'Use the official E0 Finder app map to find verified 0% ethanol (E0) petrol pumps near you - IndianOil XP100, HPCL poWer100 and BPCL Speed 97, with live availability, density checks and directions.',
+    'Search the E0 Finder petrol map by city, area or postcode. Review reported fuel grades, outlet details and directions, then confirm current stock and ethanol content.',
   keywords: [
     'e0 fuel finder',
     'ethanol free petrol pump near me',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     url: '/find',
     title: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
     description:
-      'Use the official E0 Finder live map to locate verified ethanol-free (E0) petrol pumps near you across India - XP100, poWer100 and Speed 97.',
+      'Find petrol station reports across India. Check the exact grade, supplier information and current availability before travelling.',
     images: [
       {
         url: '/playstore_feature_graphic.png',

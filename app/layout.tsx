@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Sora } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { AppInstallBar } from '@/components/app-install-bar'
 
@@ -117,7 +118,7 @@ const softwareSchema = {
   '@type': 'SoftwareApplication',
   '@id': `${siteUrl}/#software`,
   name: 'E0 Finder',
-  alternateName: ['E Zero Finder', 'E0 Fuel Finder', 'e0-finder.app'],
+  alternateName: ['EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'e0-finder.app'],
   url: siteUrl,
   operatingSystem: 'Android',
   applicationCategory: 'NavigationApplication',
@@ -148,7 +149,7 @@ const orgSchema = {
   '@type': 'Organization',
   '@id': `${siteUrl}/#organization`,
   name: 'E0 Finder',
-  alternateName: ['E Zero Finder', 'E0 Fuel Finder'],
+  alternateName: ['EO Finder', 'E Zero Finder', 'E0 Fuel Finder'],
   url: siteUrl,
   logo: `${siteUrl}/app-icon.png`,
   sameAs: [playStoreUrl],
@@ -168,11 +169,6 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${sora.variable}`}>
       <head>
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7702804360140517"
-          crossOrigin="anonymous"
-        />
-        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
         />
@@ -183,6 +179,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7702804360140517"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
         <AppInstallBar />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

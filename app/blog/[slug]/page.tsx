@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArticleContent } from '@/components/article-content'
 import { notFound } from 'next/navigation'
 import {
   ArrowLeft,
@@ -53,10 +54,13 @@ export async function generateMetadata({
     },
     openGraph: {
       type: 'article',
+      siteName: 'E0 Finder',
+      locale: 'en_IN',
       url,
       title: post.metaTitle,
       description: post.metaDescription,
       publishedTime: new Date(post.publishedDate).toISOString(),
+      modifiedTime: new Date(post.updatedDate || post.publishedDate).toISOString(),
       authors: [post.author.name],
       images: [
         {
@@ -76,226 +80,7 @@ export async function generateMetadata({
   }
 }
 
-function parseInlineText(text: string): React.ReactNode {
-  const tokens: React.ReactNode[] = []
-  let buffer = ''
-  let i = 0
 
-  while (i < text.length) {
-    if (text.startsWith('**', i)) {
-      if (buffer) {
-        tokens.push(buffer)
-        buffer = ''
-      }
-      const closeIdx = text.indexOf('**', i + 2)
-      if (closeIdx !== -1) {
-        const boldText = text.substring(i + 2, closeIdx)
-        tokens.push(
-          <strong key={i} className="font-bold text-foreground">
-            {parseInlineText(boldText)}
-          </strong>
-        )
-        i = closeIdx + 2
-        continue
-      }
-    } else if (text.startsWith('`', i)) {
-      if (buffer) {
-        tokens.push(buffer)
-        buffer = ''
-      }
-      const closeIdx = text.indexOf('`', i + 1)
-      if (closeIdx !== -1) {
-        const codeText = text.substring(i + 1, closeIdx)
-        tokens.push(
-          <code key={i} className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs font-semibold text-primary">
-            {codeText}
-          </code>
-        )
-        i = closeIdx + 1
-        continue
-      }
-    } else if (text.startsWith('*', i) && !text.startsWith('**', i)) {
-      if (buffer) {
-        tokens.push(buffer)
-        buffer = ''
-      }
-      const closeIdx = text.indexOf('*', i + 1)
-      if (closeIdx !== -1) {
-        const italicText = text.substring(i + 1, closeIdx)
-        tokens.push(
-          <em key={i} className="italic text-foreground/90">
-            {italicText}
-          </em>
-        )
-        i = closeIdx + 1
-        continue
-      }
-    }
-    buffer += text[i]
-    i++
-  }
-
-  if (buffer) {
-    tokens.push(buffer)
-  }
-
-  return tokens.length === 1 && typeof tokens[0] === 'string' ? tokens[0] : tokens
-}
-
-function ArticleRenderer({ content }: { content: string }) {
-  const lines = content.trim().split('\n')
-  const blocks: React.ReactNode[] = []
-  let currentList: { type: 'ul' | 'ol'; items: string[] } | null = null
-
-  const flushList = (keyPrefix: number) => {
-    if (!currentList) return null
-    const listComponent =
-      currentList.type === 'ul' ? (
-        <ul key={`ul-${keyPrefix}`} className="my-4 space-y-2.5 pl-1">
-          {currentList.items.map((item, idx) => (
-            <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-7 text-foreground/90">
-              <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-primary" />
-              <div>{parseInlineText(item)}</div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <ol key={`ol-${keyPrefix}`} className="my-4 space-y-2.5 list-decimal pl-6 text-sm sm:text-base leading-7 text-foreground/90">
-          {currentList.items.map((item, idx) => (
-            <li key={idx} className="pl-1">
-              {parseInlineText(item)}
-            </li>
-          ))}
-        </ol>
-      )
-    currentList = null
-    return listComponent
-  }
-
-  lines.forEach((rawLine, idx) => {
-    const line = rawLine.trim()
-
-    if (!line) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      return
-    }
-
-    if (line === '---' || line === '***' || line === '___') {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      blocks.push(<hr key={idx} className="my-8 border-border" />)
-      return
-    }
-
-    if (line.startsWith('$$') && line.endsWith('$$')) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      const mathText = line.replace(/\$\$/g, '').replace(/\\text\{([^}]+)\}/g, '$1').replace(/\\times/g, '×').replace(/\\%/g, '%')
-      blocks.push(
-        <div key={idx} className="my-6 rounded-2xl border border-primary/20 bg-primary/[0.04] p-5 text-center font-mono text-sm sm:text-base font-bold text-primary shadow-xs">
-          {mathText}
-        </div>
-      )
-      return
-    }
-
-    // Markdown Table Parser
-    if (line.startsWith('|') && line.endsWith('|')) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      // Check if divider line
-      if (line.includes('---')) return
-
-      const cells = line.split('|').filter((c) => c.trim().length > 0)
-      blocks.push(
-        <div key={idx} className="my-1 flex items-center justify-between gap-4 rounded-xl border border-border/80 bg-card px-4 py-2.5 text-xs sm:text-sm font-medium text-foreground">
-          {cells.map((cell, cIdx) => (
-            <span key={cIdx} className={cIdx === 0 ? 'font-bold text-foreground shrink-0' : 'text-muted-foreground'}>
-              {parseInlineText(cell.trim())}
-            </span>
-          ))}
-        </div>
-      )
-      return
-    }
-
-    if (line.startsWith('#### ')) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      blocks.push(
-        <h4 key={idx} className="mt-6 mb-2 text-base sm:text-lg font-bold text-foreground tracking-tight">
-          {parseInlineText(line.replace(/^####\s+/, ''))}
-        </h4>
-      )
-      return
-    }
-
-    if (line.startsWith('### ')) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      const headingText = line.replace(/^###\s+/, '')
-      const anchorId = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-      blocks.push(
-        <h3 id={anchorId} key={idx} className="scroll-mt-20 mt-8 mb-3 text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-          {parseInlineText(headingText)}
-        </h3>
-      )
-      return
-    }
-
-    if (line.startsWith('## ')) {
-      const flushed = flushList(idx)
-      if (flushed) blocks.push(flushed)
-      const headingText = line.replace(/^##\s+/, '')
-      const anchorId = headingText.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-      blocks.push(
-        <h2 id={anchorId} key={idx} className="scroll-mt-20 mt-10 mb-4 text-2xl sm:text-3xl font-black text-foreground tracking-tight border-b border-border pb-2">
-          {parseInlineText(headingText)}
-        </h2>
-      )
-      return
-    }
-
-    if (line.startsWith('- ') || line.startsWith('* ')) {
-      const itemText = line.substring(2)
-      if (currentList && currentList.type === 'ul') {
-        currentList.items.push(itemText)
-      } else {
-        const flushed = flushList(idx)
-        if (flushed) blocks.push(flushed)
-        currentList = { type: 'ul', items: [itemText] }
-      }
-      return
-    }
-
-    const numMatch = line.match(/^(\d+)\.\s+(.*)/)
-    if (numMatch) {
-      const itemText = numMatch[2]
-      if (currentList && currentList.type === 'ol') {
-        currentList.items.push(itemText)
-      } else {
-        const flushed = flushList(idx)
-        if (flushed) blocks.push(flushed)
-        currentList = { type: 'ol', items: [itemText] }
-      }
-      return
-    }
-
-    const flushed = flushList(idx)
-    if (flushed) blocks.push(flushed)
-    blocks.push(
-      <p key={idx} className="my-3.5 text-base sm:text-lg leading-8 text-foreground/90">
-        {parseInlineText(line)}
-      </p>
-    )
-  })
-
-  const trailingList = flushList(lines.length)
-  if (trailingList) blocks.push(trailingList)
-
-  return <div className="article-prose space-y-1">{blocks}</div>
-}
 
 export default async function BlogPostPage({
   params,
@@ -322,7 +107,11 @@ export default async function BlogPostPage({
 
   const relatedPosts = blogPosts
     .filter((p) => p.slug !== post.slug)
-    .sort((a, b) => (a.category === post.category ? -1 : 1))
+    .sort((a, b) => {
+      const score = (slug: string, category: string) =>
+        (post.relatedSlugs?.includes(slug) ? 2 : 0) + (category === post.category ? 1 : 0)
+      return score(b.slug, b.category) - score(a.slug, a.category)
+    })
     .slice(0, 3)
 
   const articleSchema = {
@@ -332,7 +121,7 @@ export default async function BlogPostPage({
     description: post.metaDescription,
     image: `https://e0-finder.app${post.coverImage}`,
     author: {
-      '@type': 'Person',
+      '@type': post.author.name === 'E0 Finder Editorial Team' ? 'Organization' : 'Person',
       name: post.author.name,
       jobTitle: post.author.role,
     },
@@ -345,10 +134,22 @@ export default async function BlogPostPage({
       },
     },
     datePublished: new Date(post.publishedDate).toISOString(),
+    dateModified: new Date(post.updatedDate || post.publishedDate).toISOString(),
+    citation: post.sources?.map((source) => source.url),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': `https://e0-finder.app/blog/${post.slug}`,
     },
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://e0-finder.app/' },
+      { '@type': 'ListItem', position: 2, name: 'Fuel Guides', item: 'https://e0-finder.app/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: `https://e0-finder.app/blog/${post.slug}` },
+    ],
   }
 
   return (
@@ -357,6 +158,10 @@ export default async function BlogPostPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       {/* Top Navigation */}
@@ -478,8 +283,24 @@ export default async function BlogPostPage({
 
         {/* Main Article Content (Rendered Cleanly Without Raw Symbols) */}
         <div className="mt-10 max-w-none text-foreground leading-8">
-          <ArticleRenderer content={post.content} />
+          <ArticleContent content={post.content} />
         </div>
+
+        {post.sources && (
+          <section id="sources" className="mt-10 border-y border-border py-6" aria-labelledby="sources-heading">
+            <h2 id="sources-heading" className="text-xl font-bold">Sources and Further Reading</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Sources checked on {post.updatedDate || post.publishedDate}. Product information and local availability can change.</p>
+            <ul className="mt-4 space-y-3 text-sm">
+              {post.sources.map((source) => (
+                <li key={source.url}>
+                  <a href={source.url} target="_blank" rel="noreferrer" className="inline-flex items-start gap-2 text-primary underline underline-offset-4">
+                    <ExternalLink size={15} className="mt-0.5 shrink-0" />{source.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* Interactive Savings Calculator Callout Widget */}
         <div className="my-10 rounded-2xl border border-primary/30 bg-primary/[0.04] p-6 sm:p-7">
@@ -490,15 +311,15 @@ export default async function BlogPostPage({
               </div>
               <div>
                 <h4 className="text-base sm:text-lg font-bold text-foreground">
-                  Calculate Your Fuel & Maintenance Savings
+                  Compare Your Fuel Costs
                 </h4>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                  See how much fuel and preventive repair costs your bike or car saves on pure E0 petrol.
+                  Compare current prices using your own distance and measured mileage.
                 </p>
               </div>
             </div>
             <Link
-              href="/#calculator"
+              href="/fuel-cost-calculator"
               className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
             >
               Open Calculator <ArrowRight size={14} />
@@ -510,20 +331,20 @@ export default async function BlogPostPage({
         {post.articleImages && post.articleImages.length > 0 && (
           <div className="mt-12 space-y-8">
             <h3 className="text-xl font-bold text-foreground border-b border-border pb-3">
-              Visual Evidence & E0 Finder In-App Verification
+              E0 Finder App Screens
             </h3>
             <div className="grid gap-6 sm:grid-cols-2">
               {post.articleImages.map((img, idx) => (
                 <figure key={idx} className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
                   <div className="bg-muted/40 p-3 flex justify-center">
                     <img
-                      src={img.url}
-                      alt={img.caption}
+                      src={img.src}
+                      alt={img.alt}
                       className="max-h-[320px] rounded-xl object-contain shadow-xs"
                     />
                   </div>
                   <figcaption className="p-4 text-xs text-muted-foreground leading-5 border-t border-border">
-                    <strong className="text-foreground block mb-1">Live App Telemetry:</strong>
+                    <strong className="text-foreground block mb-1">App screenshot:</strong>
                     {img.caption}
                   </figcaption>
                 </figure>

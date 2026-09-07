@@ -40,7 +40,7 @@ import {
   Share2,
   Lightbulb,
 } from 'lucide-react'
-import { blogPosts } from '@/lib/blog-data'
+import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { ScrollReveal } from '@/components/scroll-reveal'
 
@@ -275,8 +275,12 @@ const popularCities = [
 
 const faqs = [
   {
+    q: 'Is EO Finder the same as E0 Finder?',
+    a: 'EO Finder, eofinder and E Zero Finder are common ways people search for E0 Finder. The official name uses the number zero: E0 Finder. The official website is e0-finder.app.',
+  },
+  {
     q: 'What is E0 petrol and why is it important?',
-    a: 'E0 petrol is 100% pure petrol with 0% ethanol blending. Unlike E10 or E20 blended fuel, pure E0 does not absorb moisture, prevents corrosion in fuel lines and carburettors, and delivers maximum engine output and fuel economy.',
+    a: 'E0 means petrol with zero ethanol. It does not by itself specify octane or guarantee better mileage. Check the fuel requirements for your vehicle and confirm the current blend with the supplier.',
   },
   {
     q: 'Why did you build E0 Finder when other mapping apps exist?',
@@ -284,15 +288,15 @@ const faqs = [
   },
   {
     q: 'How does the E0 Finder app find 0% ethanol petrol stations in India?',
-    a: 'E0 Finder uses a hybrid verification system combining field team inspections and crowd-sourced community reports. Motorists upload fuel bills, pump photos, and density tests to confirm whether a petrol pump dispenses authentic 0% ethanol fuel.',
+    a: 'Search the E0 Finder map by city, area or postcode, then review the station and reported grade. Confirm current stock and blend information with the outlet. A receipt or density reading alone does not certify zero ethanol.',
   },
   {
     q: 'Will E20 petrol damage my older bike or car?',
-    a: 'Vehicles manufactured prior to April 2023 were not designed for E20 blended fuel. Ethanol is corrosive to non-treated rubber seals, fuel lines, plastic fuel tanks, and metallic carburettor jets, leading to degradation, moisture-induced misfires, and reduced engine lifespan.',
+    a: 'A manufacturing year alone does not establish compatibility or diagnose damage. Check the exact vehicle manual, fuel label and any updated manufacturer guidance. Ask an authorised service centre to resolve uncertainty about your vehicle.',
   },
   {
     q: 'Are premium fuels like IndianOil XP95, BPCL Speed 97, or HPCL Power 99 ethanol-free?',
-    a: 'Official RTI disclosures and technical bulletins confirm that XP95, Power 95, and Speed 97 are blended with up to 20% ethanol (E20). The only commercially available 0% ethanol fuels in India are 100-octane fuels (like XP100 and poWer100) or select unblended batches.',
+    a: 'Premium branding and octane numbers do not establish ethanol content. Ask for current supplier information for the exact grade. Do not assume XP95, Speed 97, Power 99 or a 100-octane product is E0 simply from its name.',
   },
   {
     q: 'Is the E0 Finder app completely free to use?',
@@ -331,7 +335,7 @@ function Logo() {
   )
 }
 
-export default function Page() {
+export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSummary[]; totalPosts: number }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [activeScreen, setActiveScreen] = useState(0)
@@ -485,7 +489,7 @@ export default function Page() {
               E0 Finder: Find <span className="e0-text-gradient">0% Ethanol (E0)</span> Petrol Stations Near You
             </h1>
             <p className="e0-fade-up e0-delay-2 mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              E0 Finder, pronounced E Zero Finder, helps protect your superbike, vintage classic, and car from corrosive E20 fuel. Discover verified ethanol-free petrol pumps in real time - with crowd-validated density reports across India.
+              E0 Finder, also searched as EO Finder or E Zero Finder, helps you locate petrol stations across India. Check reported fuel grades and confirm current availability and blend information with the outlet before travelling.
             </p>
 
             {/* trust row */}
@@ -1258,7 +1262,7 @@ export default function Page() {
             href="/blog"
             className="inline-flex items-center gap-2 font-bold text-primary hover:underline"
           >
-            View all {blogPosts.length} guides →
+            View all {totalPosts} guides →
           </Link>
         </div>
 
