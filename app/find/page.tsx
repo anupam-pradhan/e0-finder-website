@@ -3,10 +3,10 @@ import FindE0WebPage from './find-client'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'E0 Fuel Finder — 0% Ethanol & XP100 Petrol Pumps Near You',
+    absolute: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
   },
   description:
-    'Find verified 0% ethanol (E0) petrol pumps near you — IndianOil XP100, HPCL poWer100, BPCL Speed 97 & XP95. Live map, real-time availability, density checks & directions.',
+    'Use the official E0 Finder app map to find verified 0% ethanol (E0) petrol pumps near you - IndianOil XP100, HPCL poWer100 and BPCL Speed 97, with live availability, density checks and directions.',
   keywords: [
     'e0 fuel finder',
     'ethanol free petrol pump near me',
@@ -23,24 +23,26 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
+    siteName: 'E0 Finder',
+    locale: 'en_IN',
     url: '/find',
-    title: 'E0 Fuel Finder — 0% Ethanol & XP100 Petrol Pumps Near You',
+    title: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
     description:
-      'Locate verified ethanol-free (E0) petrol pumps near you across India — XP100, poWer100, Speed 97 & XP95 — with a live map and directions.',
+      'Use the official E0 Finder live map to locate verified ethanol-free (E0) petrol pumps near you across India - XP100, poWer100 and Speed 97.',
     images: [
       {
         url: '/playstore_feature_graphic.png',
         width: 1024,
         height: 500,
-        alt: 'E0 Fuel Finder — Live 0% Ethanol Petrol Station Map',
+        alt: 'E0 Finder app - Live 0% Ethanol Petrol Station Map',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 Fuel Finder — 0% Ethanol & XP100 Petrol Pumps Near You',
+    title: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
     description:
-      'Locate verified ethanol-free (E0) petrol pumps near you across India — XP100, poWer100, Speed 97 & XP95 — with a live map and directions.',
+      'Use the official E0 Finder live map to locate verified ethanol-free (E0) petrol pumps near you across India.',
     images: ['/playstore_feature_graphic.png'],
   },
 }
