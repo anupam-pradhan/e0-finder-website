@@ -13,7 +13,6 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Star,
   ExternalLink,
   Award,
   Layers,
@@ -28,6 +27,7 @@ import {
 } from 'lucide-react'
 import type { BlogSummary } from '@/lib/blog-data'
 import { GooglePlayIcon } from '@/components/google-play-icon'
+import { siteConfig } from '@/lib/site-config'
 
 export default function BlogIndexPage({ posts: blogPosts }: { posts: BlogSummary[] }) {
   const categories = ['All Research', ...new Set(blogPosts.map((post) => post.category))]
@@ -79,7 +79,7 @@ export default function BlogIndexPage({ posts: blogPosts }: { posts: BlogSummary
               <ArrowLeft size={16} /> Home
             </Link>
             <a
-              href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+              href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
               className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
@@ -370,7 +370,7 @@ export default function BlogIndexPage({ posts: blogPosts }: { posts: BlogSummary
 
             <div className="flex flex-col items-center gap-2 shrink-0 w-full md:w-auto">
               <a
-                href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+                href={siteConfig.playStoreUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex w-full md:w-auto items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-sm font-bold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90"
@@ -378,7 +378,7 @@ export default function BlogIndexPage({ posts: blogPosts }: { posts: BlogSummary
                 <GooglePlayIcon className="size-5" /> Download on Google Play <ExternalLink size={16} />
               </a>
               <span className="text-[11px] font-medium text-muted-foreground">
-                100% Free • Rated 4.9★ by 2,500+ Motorists
+                Free Android app - station reports and live map
               </span>
             </div>
           </div>

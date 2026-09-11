@@ -14,7 +14,6 @@ import {
   Sparkles,
   CheckCircle2,
   MapPin,
-  Star,
   Users,
   AlertTriangle,
   Smartphone,
@@ -25,6 +24,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { blogPosts } from '@/lib/blog-data'
+import { siteConfig } from '@/lib/site-config'
 import type { Metadata } from 'next'
 
 export function generateStaticParams() {
@@ -176,7 +176,7 @@ export default async function BlogPostPage({
               <span className="font-bold text-sm">E0 Finder</span>
             </Link>
             <a
-              href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+              href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
               className="hidden sm:inline-flex rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90"
@@ -233,7 +233,7 @@ export default async function BlogPostPage({
             </div>
           </div>
           <div className="flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-600">
-            <Star size={13} className="fill-amber-500 text-amber-500" /> 4.9★ E0 Finder App
+            <ShieldCheck size={13} /> E0 Finder App
           </div>
         </div>
 
@@ -374,7 +374,7 @@ export default async function BlogPostPage({
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-bold text-foreground/80">
                   <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> 100% Free Forever</span>
-                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> 10,000+ Active Drivers</span>
+                  <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> Growing Driver Community</span>
                   <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-primary" /> Live GPS Routing</span>
                 </div>
               </div>
@@ -382,7 +382,7 @@ export default async function BlogPostPage({
 
             <div className="flex flex-col items-center gap-2 shrink-0 w-full sm:w-auto">
               <a
-                href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+                href={siteConfig.playStoreUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="flex w-full sm:w-auto items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] hover:bg-primary/90"
@@ -390,7 +390,7 @@ export default async function BlogPostPage({
                 <Download size={20} /> Install E0 Finder on Google Play
               </a>
               <span className="text-[11px] text-muted-foreground">
-                Rated 4.9★ by 2,500+ Indian Motorists
+                Free Android app for Indian motorists
               </span>
             </div>
           </div>

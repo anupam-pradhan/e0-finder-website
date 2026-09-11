@@ -17,6 +17,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { citiesData } from '@/lib/city-data'
+import { siteConfig } from '@/lib/site-config'
 import type { Metadata } from 'next'
 
 export function generateStaticParams() {
@@ -85,6 +86,7 @@ export default async function CityPage({
     notFound()
   }
 
+  const url = `https://e0-finder.app/city/${city.slug}`
   const otherCities = citiesData.filter((c) => c.slug !== city.slug).slice(0, 4)
 
   const faqSchema = {
@@ -100,6 +102,50 @@ export default async function CityPage({
     })),
   }
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://e0-finder.app/' },
+      { '@type': 'ListItem', position: 2, name: 'City Guides', item: 'https://e0-finder.app/#cities' },
+      { '@type': 'ListItem', position: 3, name: city.name, item: url },
+    ],
+  }
+
+  const stationListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': `${url}#featured-stations`,
+    name: `Featured E0 petrol pumps in ${city.name}`,
+    description: `Reported XP100, poWer100 and ethanol-free petrol station leads in ${city.name}.`,
+    itemListElement: city.featuredStations.map((station, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'GasStation',
+        name: `${station.brand} - ${station.area}`,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: station.location,
+          addressLocality: city.name,
+          addressRegion: city.state,
+          addressCountry: 'IN',
+        },
+        additionalProperty: [
+          {
+            '@type': 'PropertyValue',
+            name: 'Reported fuel grade',
+            value: station.fuelGrade,
+          },
+          {
+            '@type': 'PropertyValue',
+            name: 'Last verification date',
+            value: station.verifiedDate,
+          },
+        ],
+      },
+    })),
+  }
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Schema.org FAQ Structured Data */}
@@ -108,6 +154,14 @@ export default async function CityPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(stationListSchema) }}
+      />
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5 lg:px-8">
@@ -127,7 +181,7 @@ export default async function CityPage({
               <ArrowLeft size={16} /> Home
             </Link>
             <a
-              href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+              href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
               className="hidden sm:inline-flex rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
@@ -178,7 +232,7 @@ export default async function CityPage({
             </div>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Community Rating</span>
-              <strong className="block text-2xl font-black text-amber-500 mt-1">4.9★ (Live)</strong>
+              <strong className="block text-2xl font-black text-amber-500 mt-1">Fresh</strong>
             </div>
           </div>
         </div>
@@ -210,7 +264,7 @@ export default async function CityPage({
               </h2>
             </div>
             <a
-              href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+              href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
@@ -241,7 +295,7 @@ export default async function CityPage({
                     <ShieldCheck size={14} /> Verified Stock
                   </span>
                   <a
-                    href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+                    href={siteConfig.playStoreUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
@@ -322,7 +376,7 @@ export default async function CityPage({
             </div>
           </div>
           <a
-            href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+            href={siteConfig.playStoreUrl}
             target="_blank"
             rel="noreferrer"
             className="rounded-xl bg-primary px-6 py-3.5 font-bold text-primary-foreground hover:bg-primary/90 transition-transform hover:scale-[1.02] shadow-sm shrink-0"

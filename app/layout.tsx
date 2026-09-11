@@ -4,6 +4,7 @@ import { Inter, Sora } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import { AppInstallBar } from '@/components/app-install-bar'
+import { siteConfig } from '@/lib/site-config'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,25 +19,28 @@ const sora = Sora({
   display: 'swap',
 })
 
-const siteUrl = 'https://e0-finder.app'
-const playStoreUrl =
-  'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
+const siteUrl = siteConfig.siteUrl
+const playStoreUrl = siteConfig.playStoreUrl
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'E0 Finder — Find 0% Ethanol Petrol Stations in India',
+    default: 'E0 Finder - E0 Fuel Finder and Petrol Pump Map',
     template: '%s | E0 Finder',
   },
   description:
-    'Find verified ethanol-free (0% ethanol / E0) petrol pumps near you across India. Real-time availability, live community reports, directions, and fuel guides for bikes and cars.',
+    'Find E0 fuel and ethanol-free petrol pumps near you across India. Search XP100, poWer100 and non-E20 station reports with maps and directions.',
   keywords: [
+    'E0 Finder',
+    'EO Finder',
+    'E0 fuel finder',
     'E0 petrol',
     '0% ethanol petrol stations',
     'ethanol free petrol India',
     'find pure petrol near me',
-    'XP95 0 percent ethanol',
-    'Speed 97 ethanol free',
+    'XP100 petrol near me',
+    'without ethanol petrol pump near me',
+    'non E20 petrol pump near me',
     'E0 petrol pumps locator',
     'ethanol free petrol pump Delhi',
     'ethanol free petrol pump Bangalore',
@@ -68,9 +72,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     url: siteUrl,
-    title: 'E0 Finder — Find 0% Ethanol Petrol Stations in India',
+    title: 'E0 Finder - E0 Fuel Finder and Petrol Pump Map',
     description:
-      'Locate verified ethanol-free petrol pumps in real-time. Community verified, live updates, and navigation to pure E0 fuel near you.',
+      'Search E0 fuel, XP100 pumps and reported ethanol-free petrol stations near you with live map updates and navigation.',
     siteName: 'E0 Finder',
     images: [
       {
@@ -83,9 +87,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 Finder — Find 0% Ethanol Petrol Stations in India',
+    title: 'E0 Finder - E0 Fuel Finder and Petrol Pump Map',
     description:
-      'Find verified 0% ethanol petrol stations in real-time. Protect your engine with pure E0 fuel.',
+      'Find E0 fuel, XP100 pumps and ethanol-free petrol stations near you in India.',
     images: ['/playstore_feature_graphic.png'],
   },
   icons: {
@@ -118,27 +122,32 @@ const softwareSchema = {
   '@type': 'SoftwareApplication',
   '@id': `${siteUrl}/#software`,
   name: 'E0 Finder',
-  alternateName: ['EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'e0-finder.app'],
+  alternateName: ['E0 Finder App', 'EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'E0 Petrol Pump Locator', 'XP100 Petrol Pump Locator', 'e0-finder.app'],
   url: siteUrl,
   operatingSystem: 'Android',
   applicationCategory: 'NavigationApplication',
   applicationSubCategory: 'Automotive & Fuel',
   isAccessibleForFree: true,
+  inLanguage: 'en-IN',
+  areaServed: {
+    '@type': 'Country',
+    name: 'India',
+  },
+  featureList: [
+    'E0 fuel finder for ethanol-free petrol pumps',
+    'XP100 and poWer100 station reports',
+    'City and GPS-based petrol pump search',
+    'Fuel-grade and non-E20 station filtering',
+  ],
   offers: {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'INR',
   },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.9',
-    ratingCount: '2540',
-    bestRating: '5',
-    worstRating: '1',
-  },
   description:
-    'E0 Finder helps motorists find verified ethanol-free (0% ethanol) petrol stations across India in real-time with community-driven updates and live navigation.',
-  screenshot: 'https://e0-finder.app/playstore_feature_graphic.png',
+    'E0 Finder helps motorists search reported E0, XP100, poWer100 and non-E20 petrol station signals across India with map-based discovery and navigation.',
+  image: [`${siteUrl}/playstore_feature_graphic.png`, `${siteUrl}/playstore_graphics.png`],
+  screenshot: [`${siteUrl}/playstore_graphics.png`, `${siteUrl}/screenshots/e0_home.png`, `${siteUrl}/screenshots/e0_details_final.png`, `${siteUrl}/screenshots/e0_report_final.png`],
   downloadUrl: playStoreUrl,
   installUrl: playStoreUrl,
   sameAs: [playStoreUrl],
@@ -149,13 +158,17 @@ const orgSchema = {
   '@type': 'Organization',
   '@id': `${siteUrl}/#organization`,
   name: 'E0 Finder',
-  alternateName: ['EO Finder', 'E Zero Finder', 'E0 Fuel Finder'],
+  alternateName: ['E0 Finder App', 'EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'E0 Petrol Pump Locator'],
   url: siteUrl,
   logo: `${siteUrl}/app-icon.png`,
   sameAs: [playStoreUrl],
+  founder: {
+    '@type': 'Person',
+    name: siteConfig.founderName,
+  },
   contactPoint: {
     '@type': 'ContactPoint',
-    email: 'support@e0-finder.app',
+    email: siteConfig.supportEmail,
     contactType: 'customer support',
   },
 }

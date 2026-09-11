@@ -1,20 +1,27 @@
 import type { Metadata } from 'next'
 import FindE0WebPage from './find-client'
 
+const siteUrl = 'https://e0-finder.app'
+const title = 'E0 Fuel Finder Near Me - XP100 Petrol Pump Map'
+const description =
+  'Find ethanol-free petrol pumps near you in India. Search XP100, poWer100 and non-E20 fuel reports by GPS, city or area on E0 Finder.'
+
 export const metadata: Metadata = {
   title: {
-    absolute: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
+    absolute: title,
   },
-  description:
-    'Search the E0 Finder petrol map by city, area or postcode. Review reported fuel grades, outlet details and directions, then confirm current stock and ethanol content.',
+  description,
   keywords: [
     'e0 fuel finder',
+    'e0 finder near me',
     'ethanol free petrol pump near me',
     'xp100 petrol near me',
-    'xp95 petrol near me',
+    'xp100 petrol pump near me',
     'e0 petrol pump near me',
     '0 ethanol petrol near me',
     'without ethanol petrol pump near me',
+    'without e20 petrol pump near me',
+    'non e20 petrol pump near me',
     'poWer100 petrol pump near me',
     'pure petrol near me',
   ],
@@ -26,27 +33,101 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     locale: 'en_IN',
     url: '/find',
-    title: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
+    title,
     description:
-      'Find petrol station reports across India. Check the exact grade, supplier information and current availability before travelling.',
+      'Use the live E0 fuel finder to search XP100, poWer100 and reported ethanol-free petrol pumps near you across India.',
     images: [
       {
         url: '/playstore_feature_graphic.png',
         width: 1024,
         height: 500,
-        alt: 'E0 Finder app - Live 0% Ethanol Petrol Station Map',
+        alt: 'E0 Finder app - live XP100 and ethanol-free petrol pump map',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 Finder App - Live E0 Fuel Finder & 0% Ethanol Petrol Map',
+    title,
     description:
-      'Use the official E0 Finder live map to locate verified ethanol-free (E0) petrol pumps near you across India.',
+      'Search XP100, poWer100 and ethanol-free petrol pumps near you with the official E0 Finder live map.',
     images: ['/playstore_feature_graphic.png'],
   },
 }
 
-export default function FindPage() {
-  return <FindE0WebPage />
+const findPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': `${siteUrl}/find#webpage`,
+  url: `${siteUrl}/find`,
+  name: title,
+  description,
+  inLanguage: 'en-IN',
+  isPartOf: { '@id': `${siteUrl}/#website` },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: `${siteUrl}/playstore_feature_graphic.png`,
+  },
+  primaryEntity: {
+    '@type': 'WebApplication',
+    '@id': `${siteUrl}/find#webapp`,
+    name: 'E0 Fuel Finder',
+    alternateName: ['E0 Finder Map', 'XP100 Petrol Pump Locator', 'Ethanol-Free Petrol Finder'],
+    applicationCategory: 'NavigationApplication',
+    operatingSystem: 'Web, Android',
+    url: `${siteUrl}/find`,
+    isAccessibleForFree: true,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'INR',
+    },
+    featureList: [
+      'Find ethanol-free petrol pumps near you',
+      'Search IndianOil XP100 and HPCL poWer100 stations',
+      'Filter non-E20 petrol reports by city, brand and fuel grade',
+      'Open turn-by-turn directions to reported petrol pumps',
+    ],
+  },
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: 'Live E0 Fuel Finder', item: `${siteUrl}/find` },
+  ],
+}
+
+type SearchParams = {
+  q?: string | string[]
+  query?: string | string[]
+}
+
+type FindPageProps = {
+  searchParams: Promise<SearchParams>
+}
+
+function firstParam(value: string | string[] | undefined) {
+  if (Array.isArray(value)) return value[0] || ''
+  return value || ''
+}
+
+export default async function FindPage({ searchParams }: FindPageProps) {
+  const params = await searchParams
+  const initialQuery = firstParam(params.q) || firstParam(params.query)
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(findPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <FindE0WebPage initialQuery={initialQuery} />
+    </>
+  )
 }
