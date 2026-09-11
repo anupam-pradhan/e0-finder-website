@@ -5,8 +5,6 @@ import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 import { GooglePlayIcon } from '@/components/google-play-icon'
 
-const playStoreUrl =
-  'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
 
 /**
  * Persistent, dismissible "install the app" bar shown across the site to drive
@@ -51,13 +49,11 @@ export function AppInstallBar() {
             Get the E0 Finder app
           </strong>
           <span className="block truncate text-xs text-muted-foreground">
-            Live 0% ethanol pumps near you, on the map. Free on Android.
+            E0, XP100 and poWer100 station reports. Free on Android.
           </span>
         </div>
         <a
-          href={playStoreUrl}
-          target="_blank"
-          rel="noreferrer"
+          href="/download"
           className="e0-btn-gradient inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold shadow-md"
         >
           <GooglePlayIcon className="size-4" /> Install

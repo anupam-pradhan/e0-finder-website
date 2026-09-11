@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { SitePage, PolicySection } from '@/components/site-page'
+import { siteConfig } from '@/lib/site-config'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -120,7 +121,7 @@ export default function ContactPage() {
 
           {/* Android App Support */}
           <a
-            href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+            href={siteConfig.playStoreUrl}
             target="_blank"
             rel="noreferrer"
             className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs transition-all hover:border-primary/50 hover:shadow-md sm:col-span-2 lg:col-span-1"

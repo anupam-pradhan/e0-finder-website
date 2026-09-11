@@ -43,15 +43,17 @@ import {
 import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { ScrollReveal } from '@/components/scroll-reveal'
+import { siteConfig } from '@/lib/site-config'
+import { AppStoreProof } from '@/components/app-store-proof'
 
-const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol'
+const playStoreUrl = siteConfig.playStoreUrl
 
 
 const benefits = [
   { icon: Fuel, title: '0% Ethanol', text: 'Pure E0 Petrol Only' },
   { icon: ShieldCheck, title: 'Verified Stations', text: 'Team & community verified' },
   { icon: Zap, title: 'Live Availability', text: 'Real-time pump updates' },
-  { icon: Users, title: 'Community Driven', text: '10,000+ active drivers' },
+  { icon: Users, title: 'Community Reports', text: 'Fresh station signals' },
 ]
 
 const steps = [
@@ -232,7 +234,7 @@ const userReviews = [
     city: 'Delhi NCR',
     rating: 5,
     date: 'August 06, 2026',
-    title: '4.9 stars well deserved — brilliant UI and real data.',
+    title: 'Clean UI and practical station data for Indian roads.',
     review:
       'Most people dont realize XP95 now has 20% ethanol. This app opened my eyes. Found an IOCL XP100 station near Noida Expressway in 2 minutes. The turn-by-turn navigation is seamless.',
   },
@@ -284,7 +286,7 @@ const faqs = [
   },
   {
     q: 'Why did you build E0 Finder when other mapping apps exist?',
-    a: 'Google Maps and oil company apps treat petrol pumps as generic points of interest without disclosing ethanol blending percentages. E0 Finder fills this national gap as the first and only platform dedicated to crowd-verifying and tracking 0% ethanol petrol stations.',
+    a: 'Google Maps and oil company apps are useful for directions, but they usually treat petrol pumps as generic points of interest. E0 Finder focuses on fuel-grade context, report freshness and station-level verification notes.',
   },
   {
     q: 'How does the E0 Finder app find 0% ethanol petrol stations in India?',
@@ -314,7 +316,7 @@ const navItems = [
   ['E0 vs E20', 'fuel-guide'],
   ['State Index', 'state-index'],
   ['Trends', 'trends'],
-  ['Reviews', 'reviews'],
+  ['Feedback', 'reviews'],
   ['Cities', 'cities'],
   ['FAQ', 'faq'],
 ]
@@ -422,6 +424,18 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             >
               <BookOpen size={14} /> Blog & Guides
             </Link>
+            <Link
+              href="/download"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
+            >
+              <Smartphone size={14} /> Download
+            </Link>
+            <Link
+              href="/methodology"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
+            >
+              <ShieldCheck size={14} /> Trust
+            </Link>
           </nav>
           <div className="flex items-center gap-3 shrink-0">
             <a
@@ -466,6 +480,20 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             >
               <BookOpen size={16} /> Blog & Knowledge Hub
             </Link>
+            <Link
+              href="/download"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Smartphone size={16} /> Download App
+            </Link>
+            <Link
+              href="/methodology"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <ShieldCheck size={16} /> Trust Methodology
+            </Link>
           </nav>
         )}
       </header>
@@ -483,7 +511,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-24 lg:pt-16">
           <div>
             <div className="e0-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary backdrop-blur">
-              <span className="inline-block size-2 rounded-full bg-primary e0-pulse-ring" /> India’s First & Only 0% Ethanol Petrol Locator
+              <span className="inline-block size-2 rounded-full bg-primary e0-pulse-ring" /> India-Focused E0 Petrol Locator
             </div>
             <h1 className="e0-fade-up e0-delay-1 max-w-2xl text-[2.75rem] font-black leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
               E0 Finder: Find <span className="e0-text-gradient">0% Ethanol (E0)</span> Petrol Stations Near You
@@ -495,17 +523,15 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             {/* trust row */}
             <div className="e0-fade-up e0-delay-3 mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
               <div className="flex items-center gap-2">
-                <div className="flex items-center text-amber-500">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} className="fill-amber-500 text-amber-500" />
-                  ))}
+                <div className="flex items-center text-primary">
+                  <ShieldCheck size={18} />
                 </div>
-                <span className="text-sm font-bold text-foreground">4.9</span>
-                <span className="text-xs text-muted-foreground">2,500+ reviews</span>
+                <span className="text-sm font-bold text-foreground">Free</span>
+                <span className="text-xs text-muted-foreground">Android app</span>
               </div>
               <div className="h-4 w-px bg-border" />
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground/80">
-                <Users size={16} className="text-primary" /> 10,000+ riders
+                <Users size={16} className="text-primary" /> Community reports
               </div>
             </div>
 
@@ -577,14 +603,14 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               </div>
             </div>
 
-            {/* floating: rating */}
+            {/* floating app badge */}
             <div className="e0-glass e0-glow absolute bottom-24 right-0 z-20 hidden items-center gap-2 rounded-2xl px-3 py-2 sm:flex">
-              <span className="grid size-8 place-items-center rounded-full bg-amber-500/15 text-amber-500">
-                <Star size={16} className="fill-amber-500" />
+              <span className="grid size-8 place-items-center rounded-full bg-primary/10 text-primary">
+                <Smartphone size={16} />
               </span>
               <div className="leading-none">
-                <strong className="block text-sm text-foreground">4.9 ★</strong>
-                <span className="text-[10px] text-muted-foreground">2,500+ reviews</span>
+                <strong className="block text-sm text-foreground">Free app</strong>
+                <span className="text-[10px] text-muted-foreground">Google Play</span>
               </div>
             </div>
 
@@ -1022,7 +1048,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
         <div className="mx-auto grid max-w-7xl gap-6 px-5 py-6 sm:grid-cols-3 lg:px-8">
           {[
             ['100% E0 Verified', 'Dedicated to authentic zero-percent ethanol petrol pumps'],
-            ['10,000+ Active Drivers', 'Trusted by superbike riders, classic car owners & enthusiasts'],
+            ['Growing Driver Community', 'Reports from riders, car owners and enthusiasts'],
             ['Real-Time Live Updates', 'Community validated fuel availability & instant turn-by-turn navigation'],
           ].map(([title, text], i) => (
             <div key={title} className="flex items-center gap-4 border-border sm:border-r sm:px-6 first:sm:pl-0 last:sm:border-0">
@@ -1145,11 +1171,11 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
         </div>
       </section>
 
-      {/* 4.9★ Review Section */}
+      {/* Community Feedback Section */}
       <section id="reviews" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600">
-            <Star size={14} className="fill-amber-500" /> Rated 4.9 / 5.0 by 2,500+ Drivers
+            <Users size={14} /> Community feedback from Indian drivers
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
             Loved by Bikers, Classic Collectors & Drivers Across India
@@ -1205,6 +1231,8 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               A fast, modern mobile app built for Android to guide you to ethanol-free fuel whenever and wherever you drive.
             </p>
           </div>
+
+          <AppStoreProof className="mt-10" compact showCta={false} />
 
           <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-center">
             <div className="flex flex-col gap-3">
@@ -1419,7 +1447,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
         <p className="text-sm font-bold uppercase tracking-widest text-primary">By Location</p>
         <h2 className="mt-2 text-3xl font-black">Find 0% Ethanol Petrol in Your City</h2>
         <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
-          Explore verified ethanol-free petrol pumps — IndianOil XP100, HPCL poWer100 and BPCL Speed 97 — city by city across India.
+          Explore reported E0 petrol stations, high-octane pump listings and city-by-city verification notes across India.
         </p>
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {citiesData.map((c) => (
@@ -1492,6 +1520,9 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             </div>
             <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-primary-foreground/85">
               <a href="/find" className="hover:underline">Find E0 Petrol</a>
+              <a href="/download" className="hover:underline">Download App</a>
+              <a href="/about" className="hover:underline">About</a>
+              <a href="/methodology" className="hover:underline">Methodology</a>
               <a href="/blog" className="hover:underline">Blog & Guides</a>
               <a href="/privacy" className="hover:underline">Privacy Policy</a>
               <a href="/terms" className="hover:underline">Terms of Use</a>
@@ -1506,7 +1537,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             </div>
           </div>
           <div className="border-t border-primary-foreground/20 pt-5 text-center text-xs text-primary-foreground/65">
-            © 2026 E0 Finder. All rights reserved. <span id="privacy">Privacy policy available on request.</span> <span id="terms">Terms apply.</span> <span id="disclaimer">Information may change based on community updates.</span>
+            © 2026 E0 Finder. All rights reserved. <span id="privacy">Privacy, terms and station-data disclaimers are linked here.</span> <span id="terms">Terms apply.</span> <span id="disclaimer">Fuel availability can change; confirm with the outlet before travelling.</span>
           </div>
         </div>
       </footer>

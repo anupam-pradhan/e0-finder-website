@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import { siteConfig } from '@/lib/site-config'
 import Link from 'next/link'
 import {
   Search,
@@ -100,9 +101,9 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return (R * c).toFixed(1)
 }
 
-export default function FindE0WebPage() {
+export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: string }) {
   const [stations, setStations] = useState<WebStation[]>(initialStations)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedBrand, setSelectedBrand] = useState('All Brands')
   const [selectedFuelGrade, setSelectedFuelGrade] = useState('All Grades')
@@ -329,7 +330,7 @@ export default function FindE0WebPage() {
               Fuel Guides
             </Link>
             <a
-              href="https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol"
+              href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"

@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'E0 Finder — Ethanol-Free Petrol Stations Locator',
+    name: 'E0 Finder - E0 Fuel Finder and Petrol Pump Map',
     short_name: 'E0 Finder',
-    description: 'Find verified 0% ethanol petrol stations near you in real-time across India.',
+    description: 'Find E0 fuel, XP100 pumps and ethanol-free petrol stations near you across India.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
