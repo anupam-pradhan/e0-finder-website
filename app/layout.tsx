@@ -5,6 +5,7 @@ import Script from 'next/script'
 import './globals.css'
 import { AppInstallBar } from '@/components/app-install-bar'
 import { siteConfig } from '@/lib/site-config'
+import { absoluteImageUrl, screenshotGalleryImages, seoImages, toImageObject } from '@/lib/seo-images'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -78,10 +79,10 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     images: [
       {
-        url: '/playstore_feature_graphic.png',
-        width: 1024,
-        height: 500,
-        alt: 'E0 Finder — 0% Ethanol Petrol Stations Locator',
+        url: seoImages.appDownloadOg.path,
+        width: seoImages.appDownloadOg.width,
+        height: seoImages.appDownloadOg.height,
+        alt: seoImages.appDownloadOg.alt,
       },
     ],
   },
@@ -90,7 +91,7 @@ export const metadata: Metadata = {
     title: 'E0 Finder - E0 Fuel Finder and Petrol Pump Map',
     description:
       'Find E0 fuel, XP100 pumps and ethanol-free petrol stations near you in India.',
-    images: ['/playstore_feature_graphic.png'],
+    images: [seoImages.appDownloadOg.path],
   },
   icons: {
     icon: [
@@ -146,8 +147,14 @@ const softwareSchema = {
   },
   description:
     'E0 Finder helps motorists search reported E0, XP100, poWer100 and non-E20 petrol station signals across India with map-based discovery and navigation.',
-  image: [`${siteUrl}/playstore_feature_graphic.png`, `${siteUrl}/playstore_graphics.png`],
-  screenshot: [`${siteUrl}/playstore_graphics.png`, `${siteUrl}/screenshots/e0_home.png`, `${siteUrl}/screenshots/e0_details_final.png`, `${siteUrl}/screenshots/e0_report_final.png`],
+  image: [absoluteImageUrl(seoImages.appDownloadOg.path), absoluteImageUrl(seoImages.playStoreFeature.path), absoluteImageUrl(seoImages.playStoreScreens.path)],
+  screenshot: screenshotGalleryImages.map(toImageObject),
+  subjectOf: {
+    '@type': 'ImageGallery',
+    '@id': `${siteUrl}/screenshots#gallery`,
+    url: `${siteUrl}/screenshots`,
+    name: 'E0 Finder app screenshots',
+  },
   downloadUrl: playStoreUrl,
   installUrl: playStoreUrl,
   sameAs: [playStoreUrl],

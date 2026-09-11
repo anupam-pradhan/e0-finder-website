@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   AlertTriangle,
@@ -14,6 +15,7 @@ import {
   Smartphone,
 } from 'lucide-react'
 import { siteConfig, sourceLinks } from '@/lib/site-config'
+import { absoluteImageUrl, screenshotGalleryImages, seoImages, toImageObject } from '@/lib/seo-images'
 import { AppStoreProof } from '@/components/app-store-proof'
 
 const title = 'Download E0 Finder App - Ethanol-Free Petrol Map India'
@@ -41,10 +43,10 @@ export const metadata: Metadata = {
     description,
     images: [
       {
-        url: '/playstore_feature_graphic.png',
-        width: 1024,
-        height: 500,
-        alt: 'Download E0 Finder Android app',
+        url: seoImages.appDownloadOg.path,
+        width: seoImages.appDownloadOg.width,
+        height: seoImages.appDownloadOg.height,
+        alt: seoImages.appDownloadOg.alt,
       },
     ],
   },
@@ -52,7 +54,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title,
     description,
-    images: ['/playstore_feature_graphic.png'],
+    images: [seoImages.appDownloadOg.path],
   },
 }
 
@@ -107,8 +109,8 @@ const softwareSchema = {
   },
   downloadUrl: siteConfig.playStoreUrl,
   installUrl: siteConfig.playStoreUrl,
-  image: [`${siteConfig.siteUrl}/playstore_feature_graphic.png`, `${siteConfig.siteUrl}/playstore_graphics.png`],
-  screenshot: [`${siteConfig.siteUrl}/playstore_graphics.png`, `${siteConfig.siteUrl}/screenshots/e0_home.png`, `${siteConfig.siteUrl}/screenshots/e0_details_final.png`, `${siteConfig.siteUrl}/screenshots/e0_report_final.png`],
+  image: [absoluteImageUrl(seoImages.appDownloadOg.path), absoluteImageUrl(seoImages.playStoreFeature.path), absoluteImageUrl(seoImages.playStoreScreens.path)],
+  screenshot: screenshotGalleryImages.map(toImageObject),
   publisher: { '@id': `${siteConfig.siteUrl}/#organization` },
   areaServed: { '@type': 'Country', name: 'India' },
   description,
@@ -128,6 +130,7 @@ export default function DownloadPage() {
             <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-muted-foreground">
               <Link href="/find" className="hover:text-primary">Live map</Link>
               <Link href="/methodology" className="hover:text-primary">Methodology</Link>
+              <Link href="/screenshots" className="hover:text-primary">Screenshots</Link>
               <Link href="/about" className="hover:text-primary">About</Link>
             </div>
           </nav>
@@ -169,7 +172,15 @@ export default function DownloadPage() {
 
           <div className="mx-auto w-full max-w-[420px]">
             <div className="overflow-hidden rounded-3xl border border-border bg-card p-4 shadow-lg">
-              <img src="/playstore_feature_graphic.png" alt="E0 Finder Google Play feature graphic with app UI screenshots" className="w-full rounded-2xl object-contain" loading="eager" decoding="async" />
+              <Image
+                src={seoImages.playStoreFeature.path}
+                alt={seoImages.playStoreFeature.alt}
+                width={seoImages.playStoreFeature.width}
+                height={seoImages.playStoreFeature.height}
+                sizes="(max-width: 1024px) 92vw, 420px"
+                className="h-auto w-full rounded-2xl object-contain"
+                priority
+              />
             </div>
           </div>
         </section>
@@ -242,6 +253,7 @@ export default function DownloadPage() {
             <div className="flex flex-wrap gap-4">
               <Link href="/about" className="hover:underline">About</Link>
               <Link href="/methodology" className="hover:underline">Methodology</Link>
+              <Link href="/screenshots" className="hover:underline">Screenshots</Link>
               <Link href="/privacy" className="hover:underline">Privacy</Link>
               <Link href="/contact" className="hover:underline">Contact</Link>
             </div>

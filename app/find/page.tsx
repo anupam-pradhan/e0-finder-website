@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import FindE0WebPage from './find-client'
+import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 const siteUrl = 'https://e0-finder.app'
 const title = 'E0 Fuel Finder Near Me - XP100 Petrol Pump Map'
@@ -38,10 +39,10 @@ export const metadata: Metadata = {
       'Use the live E0 fuel finder to search XP100, poWer100 and reported ethanol-free petrol pumps near you across India.',
     images: [
       {
-        url: '/playstore_feature_graphic.png',
-        width: 1024,
-        height: 500,
-        alt: 'E0 Finder app - live XP100 and ethanol-free petrol pump map',
+        url: seoImages.appDownloadOg.path,
+        width: seoImages.appDownloadOg.width,
+        height: seoImages.appDownloadOg.height,
+        alt: seoImages.appDownloadOg.alt,
       },
     ],
   },
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     title,
     description:
       'Search XP100, poWer100 and ethanol-free petrol pumps near you with the official E0 Finder live map.',
-    images: ['/playstore_feature_graphic.png'],
+    images: [seoImages.appDownloadOg.path],
   },
 }
 
@@ -63,10 +64,8 @@ const findPageSchema = {
   description,
   inLanguage: 'en-IN',
   isPartOf: { '@id': `${siteUrl}/#website` },
-  primaryImageOfPage: {
-    '@type': 'ImageObject',
-    url: `${siteUrl}/playstore_feature_graphic.png`,
-  },
+  primaryImageOfPage: toImageObject(seoImages.screenLiveMap),
+  image: absoluteImageUrl(seoImages.appDownloadOg.path),
   primaryEntity: {
     '@type': 'WebApplication',
     '@id': `${siteUrl}/find#webapp`,
@@ -76,6 +75,7 @@ const findPageSchema = {
     operatingSystem: 'Web, Android',
     url: `${siteUrl}/find`,
     isAccessibleForFree: true,
+    screenshot: [toImageObject(seoImages.screenLiveMap), toImageObject(seoImages.screenDetails)],
     offers: {
       '@type': 'Offer',
       price: '0',

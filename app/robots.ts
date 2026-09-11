@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { siteConfig } from '@/lib/site-config'
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -22,8 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://e0-finder.app/sitemap.xml',
-    host: 'https://e0-finder.app',
+    sitemap: [`${siteConfig.siteUrl}/sitemap.xml`, `${siteConfig.siteUrl}/image-sitemap.xml`],
+    host: siteConfig.siteUrl,
   }
 }
-
