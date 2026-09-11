@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -44,6 +45,7 @@ import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { siteConfig } from '@/lib/site-config'
+import { seoImages } from '@/lib/seo-images'
 import { AppStoreProof } from '@/components/app-store-proof'
 
 const playStoreUrl = siteConfig.playStoreUrl
@@ -67,30 +69,32 @@ const appScreens = [
   {
     title: 'Interactive Map & Pump List',
     description: 'Instantly view verified 0% ethanol petrol pumps near you with real-time distance, live ratings, and navigation shortcuts.',
-    img: '/screenshots/e0_home.png',
+    image: seoImages.screenNearby,
   },
   {
     title: 'Detailed Station Insights',
     description: 'Check fuel availability, brand information, pump facilities, payment methods, and user verification scores.',
-    img: '/screenshots/e0_details_final.png',
+    image: seoImages.screenDetails,
   },
   {
     title: 'Community Fuel Reports',
     description: 'Contribute and verify fuel updates with receipts and live reports to keep the community informed.',
-    img: '/screenshots/e0_report_final.png',
+    image: seoImages.screenReport,
   },
   {
     title: 'Clean & Easy Onboarding',
     description: 'Simple setup without tedious signups, built for quick access when you are on the road.',
-    img: '/screenshots/e0_onboarding_clean.png',
+    image: seoImages.screenOnboarding,
   },
 ]
 
 function GooglePlayIcon({ className = 'size-5 shrink-0' }: { className?: string }) {
   return (
-    <img
+    <Image
       src="/assets/images/google-play-icon.png"
       alt="Google Play"
+      width={20}
+      height={20}
       className={`${className} object-contain`}
       loading="eager"
     />
@@ -584,11 +588,14 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             {/* phone frame */}
             <div className="e0-float relative z-10 w-[250px] shrink-0 rounded-[2.6rem] border-[7px] border-slate-900 bg-slate-900 shadow-2xl e0-glow-lg sm:w-[285px]">
               <div className="absolute left-1/2 top-2.5 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
-              <img
-                src="/screenshots/e0_home2.png"
-                alt="E0 Finder app showing a live map of verified 0% ethanol petrol pumps with prices"
+              <Image
+                src={seoImages.screenLiveMap.path}
+                alt={seoImages.screenLiveMap.alt}
+                width={seoImages.screenLiveMap.width}
+                height={seoImages.screenLiveMap.height}
+                sizes="285px"
                 className="h-[550px] w-full rounded-[2.05rem] object-cover object-top"
-                loading="eager"
+                priority
               />
             </div>
 
@@ -1259,12 +1266,13 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
 
             <div className="flex justify-center rounded-2xl border border-border bg-card p-6 shadow-sm">
               <div className="max-w-[340px] overflow-hidden rounded-xl border border-border/80 shadow-md">
-                <img
-                  src={appScreens[activeScreen].img}
-                  alt={appScreens[activeScreen].title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full object-cover transition-opacity duration-300"
+                <Image
+                  src={appScreens[activeScreen].image.path}
+                  alt={appScreens[activeScreen].image.alt}
+                  width={appScreens[activeScreen].image.width}
+                  height={appScreens[activeScreen].image.height}
+                  sizes="(max-width: 1024px) 78vw, 340px"
+                  className="h-auto w-full object-contain transition-opacity duration-300"
                 />
               </div>
             </div>
@@ -1387,7 +1395,14 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             </div>
           </div>
           <div className="flex items-center justify-center overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <img src="/playstore_graphics.png" alt="E0 Finder Steps Graphic" loading="lazy" decoding="async" className="max-h-[440px] w-full rounded-xl object-contain" />
+            <Image
+              src={seoImages.playStoreScreens.path}
+              alt={seoImages.playStoreScreens.alt}
+              width={seoImages.playStoreScreens.width}
+              height={seoImages.playStoreScreens.height}
+              sizes="(max-width: 1024px) 92vw, 620px"
+              className="h-auto max-h-[440px] w-full rounded-xl object-contain"
+            />
           </div>
         </div>
       </section>
@@ -1523,6 +1538,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               <a href="/download" className="hover:underline">Download App</a>
               <a href="/about" className="hover:underline">About</a>
               <a href="/methodology" className="hover:underline">Methodology</a>
+              <a href="/screenshots" className="hover:underline">Screenshots</a>
               <a href="/blog" className="hover:underline">Blog & Guides</a>
               <a href="/privacy" className="hover:underline">Privacy Policy</a>
               <a href="/terms" className="hover:underline">Terms of Use</a>

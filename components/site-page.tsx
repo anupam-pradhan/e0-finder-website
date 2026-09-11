@@ -51,4 +51,4 @@ export function BulletList({ items }: { items: string[] }) {
   return <ul className="flex list-disc flex-col gap-2 pl-5">{items.map((item) => <li key={item}>{item}</li>)}</ul>
 }
 
-export const pageLinks = [{ href: '/download', label: 'Download App' }, { href: '/about', label: 'About E0 Finder' }, { href: '/methodology', label: 'Methodology' }, { href: '/privacy', label: 'Privacy Policy' }, { href: '/terms', label: 'Terms of Use' }, { href: '/disclaimer', label: 'Disclaimer' }, { href: '/contact', label: 'Contact Support' }, { href: '/delete-account', label: 'Delete Account' }]
+export const pageLinks = [{ href: '/download', label: 'Download App' }, { href: '/about', label: 'About E0 Finder' }, { href: '/methodology', label: 'Methodology' }, { href: '/screenshots', label: 'App Screenshots' }, { href: '/privacy', label: 'Privacy Policy' }, { href: '/terms', label: 'Terms of Use' }, { href: '/disclaimer', label: 'Disclaimer' }, { href: '/contact', label: 'Contact Support' }, { href: '/delete-account', label: 'Delete Account' }]

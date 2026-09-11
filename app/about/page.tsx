@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import { siteConfig, sourceLinks } from '@/lib/site-config'
+import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 const title = 'About E0 Finder - Founder, Data Sources and Trust'
 const description =
@@ -27,9 +29,9 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     title,
     description,
-    images: [{ url: '/playstore_feature_graphic.png', width: 1024, height: 500, alt: 'About E0 Finder' }],
+    images: [{ url: seoImages.appDownloadOg.path, width: seoImages.appDownloadOg.width, height: seoImages.appDownloadOg.height, alt: seoImages.appDownloadOg.alt }],
   },
-  twitter: { card: 'summary_large_image', title, description, images: ['/playstore_feature_graphic.png'] },
+  twitter: { card: 'summary_large_image', title, description, images: [seoImages.appDownloadOg.path] },
 }
 
 const aboutSchema = {
@@ -43,6 +45,8 @@ const aboutSchema = {
   isPartOf: { '@id': `${siteConfig.siteUrl}/#website` },
   about: { '@id': `${siteConfig.siteUrl}/#software` },
   publisher: { '@id': `${siteConfig.siteUrl}/#organization` },
+  primaryImageOfPage: toImageObject(seoImages.playStoreFeature),
+  image: absoluteImageUrl(seoImages.playStoreFeature.path),
   mainEntity: {
     '@type': 'Organization',
     '@id': `${siteConfig.siteUrl}/#organization`,
@@ -91,6 +95,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap items-center gap-4 text-sm font-semibold text-muted-foreground">
               <Link href="/download" className="hover:text-primary">Download</Link>
               <Link href="/methodology" className="hover:text-primary">Methodology</Link>
+              <Link href="/screenshots" className="hover:text-primary">Screenshots</Link>
               <Link href="/contact" className="hover:text-primary">Contact</Link>
             </div>
           </nav>
@@ -117,7 +122,15 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="rounded-3xl border border-border bg-card p-5 shadow-lg">
-            <img src="/playstore_feature_graphic.png" alt="E0 Finder Google Play feature graphic showing app UI" className="w-full rounded-2xl object-contain" loading="eager" decoding="async" />
+<Image
+              src={seoImages.playStoreFeature.path}
+              alt={seoImages.playStoreFeature.alt}
+              width={seoImages.playStoreFeature.width}
+              height={seoImages.playStoreFeature.height}
+              sizes="(max-width: 1024px) 92vw, 480px"
+              className="h-auto w-full rounded-2xl object-contain"
+              priority
+            />
           </div>
         </section>
 
@@ -178,6 +191,7 @@ export default function AboutPage() {
             <span>© 2026 E0 Finder. Built for Indian drivers and riders.</span>
             <div className="flex flex-wrap gap-4">
               <Link href="/download" className="hover:underline">Download</Link>
+              <Link href="/screenshots" className="hover:underline">Screenshots</Link>
               <Link href="/find" className="inline-flex items-center gap-1 hover:underline"><MapPin size={14} /> Map</Link>
               <Link href="/privacy" className="hover:underline">Privacy</Link>
               <Link href="/contact" className="hover:underline">Contact</Link>
