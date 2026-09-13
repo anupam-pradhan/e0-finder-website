@@ -6,7 +6,7 @@ import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'E0 Finder App - E0 Fuel Finder and Petrol Map India',
+    absolute: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
   },
   description:
     'Official E0 Finder app for ethanol-free petrol in India. Find E0 fuel, XP100 pumps and non-E20 petrol near you with live map reports.',
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     locale: 'en_IN',
     url: '/',
-    title: 'E0 Finder App - E0 Fuel Finder and Petrol Map India',
+    title: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
     description:
       'Official E0 Finder app and website for ethanol-free petrol stations across India, with live pump reports, XP100 locations and navigation.',
     images: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 Finder App - E0 Fuel Finder and Petrol Map India',
+    title: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
     description:
       'Find E0 fuel, XP100 pumps and ethanol-free petrol stations near you across India.',
     images: [seoImages.appDownloadOg.path],
@@ -44,7 +44,7 @@ const homePageSchema = {
   '@type': 'WebPage',
   '@id': `${siteConfig.siteUrl}/#webpage`,
   url: `${siteConfig.siteUrl}/`,
-  name: 'E0 Finder App - E0 Fuel Finder and Petrol Map India',
+  name: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
   description: 'Official E0 Finder app for ethanol-free petrol in India, XP100 pump discovery and non-E20 petrol station reports.',
   inLanguage: 'en-IN',
   isPartOf: { '@id': `${siteConfig.siteUrl}/#website` },

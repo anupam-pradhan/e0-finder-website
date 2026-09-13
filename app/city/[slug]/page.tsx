@@ -89,18 +89,9 @@ export default async function CityPage({
   const url = `https://e0-finder.app/city/${city.slug}`
   const otherCities = citiesData.filter((c) => c.slug !== city.slug).slice(0, 4)
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: city.faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.a,
-      },
-    })),
-  }
+  // FAQPage schema removed — Google restricted FAQPage rich results to
+  // government and healthcare authority sites only (August 2023).
+  // FAQ content is still rendered visually for users.
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -148,12 +139,7 @@ export default async function CityPage({
   }
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Schema.org FAQ Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
+      {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}

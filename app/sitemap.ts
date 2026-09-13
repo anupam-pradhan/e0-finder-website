@@ -1,10 +1,12 @@
 import { MetadataRoute } from 'next'
 import { blogPosts } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
+import { statesData } from '@/lib/state-data'
+import { siteConfig } from '@/lib/site-config'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://e0-finder.app'
-  const lastModified = new Date('2026-09-11')
+  const baseUrl = siteConfig.siteUrl
+  const lastModified = new Date()
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -61,7 +63,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    // Cities index page
+    {
+      url: `${baseUrl}/city`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
   ]
+
+  const statePages: MetadataRoute.Sitemap = statesData.map((state) => ({
+    url: `${baseUrl}/state/${state.slug}`,
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
 
   const cityPages: MetadataRoute.Sitemap = citiesData.map((city) => ({
     url: `${baseUrl}/city/${city.slug}`,
@@ -77,5 +93,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }))
 
-  return [...staticPages, ...cityPages, ...blogPages]
+  return [...staticPages, ...statePages, ...cityPages, ...blogPages]
 }

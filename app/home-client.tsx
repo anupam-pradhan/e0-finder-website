@@ -379,28 +379,16 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
     setMenuOpen(false)
   }
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.a,
-      },
-    })),
-  }
+  // FAQPage schema removed — Google restricted FAQPage rich results to
+  // government and healthcare authority sites only (August 2023).
+  // FAQ content is still rendered visually for users.
 
   return (
     <main id="home" className="relative min-h-screen text-foreground overflow-x-hidden">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg">
+        Skip to content
+      </a>
       <ScrollReveal />
-
-      {/* FAQ Schema for Google SERP Rich Snippets */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -503,7 +491,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
       </header>
 
       {/* Hero Section — light premium panel */}
-      <section data-reveal-skip className="relative overflow-hidden">
+      <section id="main" data-reveal-skip className="relative overflow-hidden">
         {/* soft ambient glow + grid backdrop */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-background to-background" />
