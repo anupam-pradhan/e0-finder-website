@@ -155,14 +155,37 @@ Delhi NCR experiences extreme weather—scorching 45°C summers and freezing 4°
         area: 'Vashi / Navi Mumbai',
         verifiedDate: 'August 13, 2026',
       },
+      {
+        brand: 'IndianOil COCO BKC',
+        fuelGrade: 'XP100 (0% Ethanol)',
+        location: 'Bandra-Kurla Complex, G-Block',
+        area: 'BKC / Kurla',
+        verifiedDate: 'August 24, 2026',
+      },
     ],
     cityGuide: `
-Mumbai's coastal monsoon humidity creates a high risk for **fuel phase separation** in vehicles running E20 blended petrol. When humidity exceeds 80%, ethanol inside fuel tanks absorbs water and settles at the bottom. Filling with verified E0 petrol prevents tank corrosion and fuel pump failures.
+Mumbai's coastal monsoon climate presents the most severe **fuel phase separation** risk profile in western India. Between June and October, ambient relative humidity across South Mumbai, Bandra, and Navi Mumbai routinely exceeds 85% to 92%. 
+
+When vehicles running standard E20 petrol sit in underground basement parking or sea-facing garages along Marine Drive, Carter Road, or Worli Sea Face, moisture is drawn through the fuel tank breather within 20 to 25 days. The resulting water-alcohol slug settles at the bottom of the fuel tank directly around electric fuel pump pickups.
+
+For Mumbai's thriving supercar and sports bike community heading out for early morning Sunday drives to Lonavala via the Mumbai-Pune Expressway, or breakfast rides towards Charoti on the Ahmedabad Highway (NH48), filling up with verified unblended 0% ethanol petrol is essential. Pure E0 petrol eliminates hesitation, prevents fuel pump cavitation, and maintains factory boost targets on high-compression turbo engines.
     `,
     faqs: [
       {
         q: 'Where can I buy ethanol-free petrol in Mumbai before the Mumbai-Pune Expressway?',
-        a: 'The BPCL Bandra Reclamation outlet and HPCL Vashi bunk on Palm Beach Road both offer verified unblended and 100-octane fuels. Check E0 Finder for live morning stock updates.',
+        a: 'The BPCL Bandra Reclamation outlet right before the Rajiv Gandhi Sea Link and the HPCL Millennium bunk on Palm Beach Road in Vashi offer verified 100-octane E0 petrol. Check E0 Finder before refueling for live morning stock telemetry.',
+      },
+      {
+        q: 'How does Mumbai humidity affect parked sports cars and superbikes?',
+        a: 'When relative humidity exceeds 80%, the 20% ethanol in regular petrol saturates with water vapour within 3 to 4 weeks, triggering phase separation that leaves acidic water pooling at the tank floor. Storing vehicles with pure E0 petrol provides 6 to 12 months of corrosion-free stability.',
+      },
+      {
+        q: 'Is Shell V-Power in Mumbai ethanol-free?',
+        a: 'No. Shell V-Power dispensed across Mumbai and Thane contains between 15% and 20% ethanol blended with proprietary DYNAFLEX cleaning additives. For verified 0% ethanol, you must use 100-octane fuels like XP100 or poWer100.',
+      },
+      {
+        q: 'Which fuel stations in South Mumbai dispense XP100?',
+        a: 'IndianOil Jubilee Bunk on Dr. Annie Besant Road in Worli is the premier verified XP100 distributor serving South Mumbai, Nariman Point, and Lower Parel motorists.',
       },
     ],
   },
@@ -296,14 +319,44 @@ Chennai's famous East Coast Road (ECR) to Mahabalipuram and Pondicherry is South
         area: 'EM Bypass / Kasba',
         verifiedDate: 'August 14, 2026',
       },
+      {
+        brand: 'BPCL Company Owned Outlet',
+        fuelGrade: 'Speed 97 / XP100',
+        location: 'Major Arterial Road, Action Area II',
+        area: 'New Town / Rajarhat',
+        verifiedDate: 'August 22, 2026',
+      },
+      {
+        brand: 'IndianOil Auto Care Centre',
+        fuelGrade: 'XP100 (0% Ethanol)',
+        location: 'Diamond Harbour Road, Near Alipore Zoo',
+        area: 'Alipore / South Kolkata',
+        verifiedDate: 'August 25, 2026',
+      },
     ],
     cityGuide: `
-Kolkata has rich classic vehicle clubs and heritage car rallies. Humid monsoon seasons accelerate ethanol phase separation in metal fuel tanks. E0 Finder maps verified unblended bunks along EM Bypass and New Town.
+Kolkata has India's most celebrated community of vintage, classic, and heritage automobile collectors, anchored by organizations like the Automobile Association of Eastern India (AAEI). Classic British roadsters, vintage Ambassadors, Fiat 1100s, and classic Royal Enfield motorcycles are particularly susceptible to ethanol damage.
+
+The tropical humidity of West Bengal, combined with prolonged seasonal parking between classic car rallies and monsoon downpours, causes rapid water absorption in E20 petrol. In older metal fuel tanks with lead-tin solder seams, this moisture accelerates galvanic corrosion and gums up delicate carburetor float needles and jets. 
+
+For modern performance vehicle owners heading out towards Shantiniketan via the Durgapur Expressway (NH19) or towards Digha on NH116B, E0 Finder maps verified pure 0% ethanol pumps along EM Bypass, New Town, and Kona Expressway.
     `,
     faqs: [
       {
         q: 'Where is 0% ethanol fuel available in Kolkata?',
-        a: 'IOCL COCO on EM Bypass near Ruby Hospital is Kolkata’s top verified XP100 station. Check E0 Finder for updates.',
+        a: 'The IndianOil COCO outlet on EM Bypass near Ruby General Hospital and the BPCL Major Arterial Road station in New Town are Kolkata’s primary verified 100-octane E0 petrol stations.',
+      },
+      {
+        q: 'Can classic and vintage cars in Kolkata safely run on E20 petrol?',
+        a: 'No. Vehicles manufactured before 2010 use nitrile rubber fuel lines, brass float valves, and untreated mild steel tanks that degrade rapidly when exposed to ethanol. Owners should strictly use unblended E0 petrol.',
+      },
+      {
+        q: 'Where can I fuel pure petrol before taking the Kolkata-Durgapur Expressway (NH19)?',
+        a: 'Motorists should fuel up at IOCL EM Bypass or BPCL New Town before joining Kona Expressway and the Dankuni toll plaza onto NH19.',
+      },
+      {
+        q: 'How does Kolkata monsoon humidity affect fuel in stored motorcycles?',
+        a: 'With monsoon relative humidity frequently reaching 90%, ethanol blends absorb water from tank air within 3 weeks, creating a corrosive bottom layer that destroys electric fuel pumps and clogs fuel injectors.',
       },
     ],
   },
@@ -386,14 +439,44 @@ Jaipur is home to royal vintage car collections and classic motorcycle rallies. 
         area: 'Kaloor / Kadavanthra',
         verifiedDate: 'August 14, 2026',
       },
+      {
+        brand: 'BPCL Marine Drive Fuel Hub',
+        fuelGrade: 'Speed 97 / XP100',
+        location: 'Shanmugham Road, Near High Court Junction',
+        area: 'Marine Drive / High Court',
+        verifiedDate: 'August 23, 2026',
+      },
+      {
+        brand: 'IndianOil Highway Service Station',
+        fuelGrade: 'XP100 (0% Ethanol)',
+        location: 'NH544 Bypass, Near Edappally Toll',
+        area: 'Edappally / Bypass',
+        verifiedDate: 'August 26, 2026',
+      },
     ],
     cityGuide: `
-Kerala receives over 3,000mm of annual rainfall. High humidity accelerates ethanol phase separation, leading to water accumulation in vehicle and marine boat fuel tanks. E0 Finder maps verified unblended pumps across Kochi and NH66.
+Kochi and the broader coastal belt of Kerala experience over 3,000mm of annual rainfall accompanied by extreme relative humidity ranging from 85% to 95%. In this maritime environment, ethanol-blended petrol (E20) poses an existential threat to both automotive and marine petrol engines.
+
+Ethanol's intense hygroscopic nature means it greedily pulls airborne humidity directly into fuel tanks through breather vents. Within 18 to 25 days of storage, phase separation occurs: the water-saturated ethanol falls out of suspension and pools at the bottom of the fuel tank. 
+
+For leisure boat owners in the backwaters, superbikers riding the Container Terminal Road, and motorists embarking on long Western Ghats highway runs via NH544 or coastal drives on NH66, filling up with verified unblended 0% ethanol petrol is essential to prevent fuel tank rust, clogged high-pressure fuel injectors, and mid-journey breakdown.
     `,
     faqs: [
       {
-        q: 'Why is E0 petrol recommended for coastal Kerala?',
-        a: 'Ethanol is hygroscopic and pulls water from coastal humid air into fuel tanks within 2 to 3 weeks. Pure E0 petrol is completely hydrophobic and immune to moisture absorption.',
+        q: 'Why is E0 petrol particularly crucial in coastal Kochi and Kerala?',
+        a: 'With average atmospheric humidity exceeding 85%, ethanol blends absorb water from the air rapidly, leading to phase separation within 3 weeks. Pure E0 petrol is 100% hydrophobic, preventing water accumulation and corrosion.',
+      },
+      {
+        q: 'Where can I find verified 0% ethanol petrol in Kochi?',
+        a: 'Top verified stations include the IndianOil COCO on Kaloor-Kadavanthra Road, BPCL on Shanmugham Road near Marine Drive, and IOCL on the NH544 Edappally bypass. View live reports on E0 Finder.',
+      },
+      {
+        q: 'Can marine outboard boat engines in Kochi run on regular E20 petrol?',
+        a: 'No. Outboard motor manufacturers (Yamaha, Mercury, Suzuki Marine) strictly warn against high ethanol blends because moisture in humid sea air immediately separates the fuel, seizing carburetors and fuel pumps.',
+      },
+      {
+        q: 'Where should motorists refuel E0 before driving to Munnar or Wayanad?',
+        a: 'Refuel at IndianOil COCO Kaloor or Edappally before exiting the city onto the hill highway routes, where high-octane E0 petrol is unavailable.',
       },
     ],
   },
