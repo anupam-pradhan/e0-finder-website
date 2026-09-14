@@ -198,6 +198,43 @@ export default function VehiclesPage() {
               </p>
             </div>
           </div>
+
+          {/* Related In-Depth Guides */}
+          <div className="mt-10 border-t border-border pt-8">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+              Detailed Engine Guides &amp; Case Studies
+            </h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link
+                href="/blog/ktm-duke-rc-390-throttle-jerk-ethanol-fix"
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all text-xs"
+              >
+                <strong className="block text-foreground font-semibold">KTM Duke &amp; RC 390 Ethanol Analysis</strong>
+                <span className="text-muted-foreground mt-0.5 block">Detailed breakdown of low-RPM jerkiness and fuel filter maintenance.</span>
+              </Link>
+              <Link
+                href="/blog/royal-enfield-bullet-hunter-himalayan-ethanol-guide"
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all text-xs"
+              >
+                <strong className="block text-foreground font-semibold">Royal Enfield J-Series &amp; Sherpa 450 Guide</strong>
+                <span className="text-muted-foreground mt-0.5 block">Tank condensation, mileage drop, and E0 touring tips for Ladakh.</span>
+              </Link>
+              <Link
+                href="/blog/turbo-petrol-cars-tsi-gdi-ethanol-effects"
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all text-xs"
+              >
+                <strong className="block text-foreground font-semibold">Skoda/VW TSI &amp; Hyundai Turbo GDi Analysis</strong>
+                <span className="text-muted-foreground mt-0.5 block">Direct injector deposits and high-pressure fuel pump longevity.</span>
+              </Link>
+              <Link
+                href="/blog/yamaha-rx100-rd350-2-stroke-oil-separation-disaster"
+                className="rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-all text-xs"
+              >
+                <strong className="block text-foreground font-semibold">Vintage &amp; 2-Stroke (RX100 / RD350) Risks</strong>
+                <span className="text-muted-foreground mt-0.5 block">2T oil separation and carburetor float bowl corrosion explained.</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

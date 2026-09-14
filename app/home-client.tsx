@@ -1416,6 +1416,124 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             </article>
           ))}
         </div>
+
+        {/* Curated Guides Directory — guarantees 1-hop crawl depth for all core guides */}
+        <div className="mt-8 rounded-3xl border border-border bg-card/50 p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4">
+            <div>
+              <h3 className="text-base font-bold text-foreground sm:text-lg">
+                Essential Engine &amp; Fuel Testing Guides
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                In-depth guides for high-compression engines, direct injection cars, and density testing in India.
+              </p>
+            </div>
+            <Link href="/blog" className="text-xs font-semibold text-primary hover:underline shrink-0">
+              Browse All Guides →
+            </Link>
+          </div>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 text-xs">
+            <Link
+              href="/blog/ethanol-free-petrol-india-complete-guide-e0-xp100-power100"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Fuel size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Complete E0 Petrol Guide</strong>
+                <span className="text-[11px] text-muted-foreground">XP100 vs poWer100 vs Speed 100 explained</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/how-to-check-petrol-density-at-indian-fuel-pumps"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Gauge size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Petrol Density Test Guide</strong>
+                <span className="text-[11px] text-muted-foreground">How to read hydrometer readings at the pump</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/ktm-duke-rc-390-throttle-jerk-ethanol-fix"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Bike size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">KTM 390 Throttle Jerk Fix</strong>
+                <span className="text-[11px] text-muted-foreground">Solving stalling &amp; knock on Duke / RC</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/royal-enfield-bullet-hunter-himalayan-ethanol-guide"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Bike size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Royal Enfield Ethanol Guide</strong>
+                <span className="text-[11px] text-muted-foreground">Classic, Bullet &amp; Himalayan 450 fuel tips</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/turbo-petrol-cars-tsi-gdi-ethanol-effects"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Wrench size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Turbo Petrol (TSI / GDi) Effects</strong>
+                <span className="text-[11px] text-muted-foreground">Direct injection carbon &amp; HPFP protection</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/two-wheeler-ethanol-damage-prevention"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <ShieldCheck size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Two-Wheeler Damage Prevention</strong>
+                <span className="text-[11px] text-muted-foreground">Protecting fuel pumps, lines &amp; carburetors</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/viral-instagram-petrol-water-test-guide"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <HelpCircle size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Water Separation Test Truth</strong>
+                <span className="text-[11px] text-muted-foreground">The science behind viral fuel test videos</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/petrol-additives-in-india-do-they-neutralize-ethanol"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <Flame size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Petrol Additives in India</strong>
+                <span className="text-[11px] text-muted-foreground">Do fuel stabilizers neutralize ethanol?</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/blog/yamaha-rx100-rd350-2-stroke-oil-separation-disaster"
+              className="flex items-start gap-2.5 rounded-xl border border-border/70 bg-background/50 p-3 hover:border-primary/50 hover:text-primary transition-all"
+            >
+              <AlertCircle size={16} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-foreground font-semibold">Yamaha RX100 / RD350 2-Stroke</strong>
+                <span className="text-[11px] text-muted-foreground">2T oil separation risks in vintage engines</span>
+              </div>
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* Popular Cities Coverage */}

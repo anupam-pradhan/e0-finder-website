@@ -340,6 +340,38 @@ export default function WhatIsE0PetrolPage() {
               </div>
             ))}
           </div>
+
+          <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/[0.04] p-5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-primary">
+              Fuel Chemistry &amp; Testing Deep Dives:
+            </h4>
+            <div className="mt-3 grid gap-2.5 sm:grid-cols-2 text-xs">
+              <Link
+                href="/blog/how-to-check-petrol-density-at-indian-fuel-pumps"
+                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+              >
+                <span>→ How to Request &amp; Read Density Hydrometer at Pumps</span>
+              </Link>
+              <Link
+                href="/blog/viral-instagram-petrol-water-test-guide"
+                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+              >
+                <span>→ Testing Phase Separation with Water (The Real Science)</span>
+              </Link>
+              <Link
+                href="/blog/petrol-additives-in-india-do-they-neutralize-ethanol"
+                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+              >
+                <span>→ Petrol Additives: Can Stabilizers Neutralize E20?</span>
+              </Link>
+              <Link
+                href="/blog/two-wheeler-ethanol-damage-prevention"
+                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+              >
+                <span>→ Comprehensive Two-Wheeler Damage Prevention Guide</span>
+              </Link>
+            </div>
+          </div>
         </section>
 
         {/* Section 4: Which vehicles need E0 */}
