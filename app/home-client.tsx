@@ -40,6 +40,9 @@ import {
   Play,
   Share2,
   Lightbulb,
+  Bike,
+  Compass,
+  PlusCircle,
 } from 'lucide-react'
 import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
@@ -405,6 +408,30 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               </button>
             ))}
             <Link
+              href="/what-is-e0-petrol"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary whitespace-nowrap"
+            >
+              What is E0?
+            </Link>
+            <Link
+              href="/vehicles"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary whitespace-nowrap"
+            >
+              Vehicles
+            </Link>
+            <Link
+              href="/highways"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary whitespace-nowrap"
+            >
+              Highways
+            </Link>
+            <Link
+              href="/report-pump"
+              className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary whitespace-nowrap"
+            >
+              Report Pump
+            </Link>
+            <Link
               href="/find"
               className="text-xs xl:text-sm font-semibold text-foreground/80 hover:text-primary flex items-center gap-1 whitespace-nowrap"
             >
@@ -458,6 +485,41 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
                 {label}
               </button>
             ))}
+            <Link
+              href="/what-is-e0-petrol"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Fuel size={16} /> What is E0?
+            </Link>
+            <Link
+              href="/vehicles"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Bike size={16} /> Vehicle Compatibility
+            </Link>
+            <Link
+              href="/highways"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Compass size={16} /> Highway Corridors
+            </Link>
+            <Link
+              href="/report-pump"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <PlusCircle size={16} /> Report a Pump
+            </Link>
+            <Link
+              href="/city"
+              className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              <MapPin size={16} /> Cities Index
+            </Link>
             <Link
               href="/find"
               className="rounded-md px-3 py-2 text-left font-semibold text-foreground/80 hover:bg-muted flex items-center gap-2"
@@ -1523,6 +1585,11 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
             </div>
             <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-primary-foreground/85">
               <a href="/find" className="hover:underline">Find E0 Petrol</a>
+              <a href="/what-is-e0-petrol" className="hover:underline">What is E0?</a>
+              <a href="/vehicles" className="hover:underline">Vehicles</a>
+              <a href="/highways" className="hover:underline">Highways</a>
+              <a href="/city" className="hover:underline">Cities</a>
+              <a href="/report-pump" className="hover:underline">Report Pump</a>
               <a href="/download" className="hover:underline">Download App</a>
               <a href="/about" className="hover:underline">About</a>
               <a href="/methodology" className="hover:underline">Methodology</a>

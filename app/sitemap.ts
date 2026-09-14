@@ -77,6 +77,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    // Vehicle fuel compatibility guide
+    {
+      url: `${baseUrl}/vehicles`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    // Highway and expressway corridors
+    {
+      url: `${baseUrl}/highways`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    // Crowdsourced station report form
+    {
+      url: `${baseUrl}/report-pump`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
   ]
 
   const statePages: MetadataRoute.Sitemap = statesData.map((state) => ({

@@ -172,7 +172,16 @@ export default async function CityPage({
             </div>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+            <Link href="/vehicles" className="hidden md:inline-flex text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">
+              Vehicles
+            </Link>
+            <Link href="/highways" className="hidden md:inline-flex text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">
+              Highways
+            </Link>
+            <Link href="/report-pump" className="hidden md:inline-flex text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">
+              Report Pump
+            </Link>
+            <Link href="/" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-primary hover:underline">
               <ArrowLeft size={16} /> Home
             </Link>
             <a
@@ -392,8 +401,12 @@ export default async function CityPage({
       <footer className="border-t border-border bg-primary py-8 text-primary-foreground">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <span>© 2026 E0 Finder. Built for Indian Drivers & Enthusiasts.</span>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Link href="/" className="hover:underline">Home</Link>
+            <Link href="/what-is-e0-petrol" className="hover:underline">What is E0?</Link>
+            <Link href="/vehicles" className="hover:underline">Vehicles</Link>
+            <Link href="/highways" className="hover:underline">Highways</Link>
+            <Link href="/report-pump" className="hover:underline">Report Pump</Link>
             <Link href="/blog" className="hover:underline">Blog</Link>
             <Link href="/privacy" className="hover:underline">Privacy</Link>
             <Link href="/contact" className="hover:underline">Contact</Link>
