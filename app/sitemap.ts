@@ -70,6 +70,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    // Pillar content page
+    {
+      url: `${baseUrl}/what-is-e0-petrol`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
   ]
 
   const statePages: MetadataRoute.Sitemap = statesData.map((state) => ({

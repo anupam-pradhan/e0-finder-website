@@ -3,7 +3,7 @@ import FindE0WebPage from './find-client'
 import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 const siteUrl = 'https://e0-finder.app'
-const title = 'E0 Fuel Finder Near Me - XP100 Petrol Pump Map'
+const title = 'E0 Fuel Finder Near Me — XP100 Petrol Pump Map [Live Data]'
 const description =
   'Find ethanol-free petrol pumps near you in India. Search XP100, poWer100 and non-E20 fuel reports by GPS, city or area on E0 Finder.'
 

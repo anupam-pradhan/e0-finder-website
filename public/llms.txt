@@ -20,7 +20,10 @@ E0 Finder is an independent mobile app and website that helps Indian motorists s
 
 ## Key Resources
 - Live locator: https://e0-finder.app/find
-- City pages: https://e0-finder.app/city/bangalore, https://e0-finder.app/city/delhi, https://e0-finder.app/city/mumbai, https://e0-finder.app/city/pune
+- Pillar Guide — What is E0 Petrol?: https://e0-finder.app/what-is-e0-petrol
+- City directory (42+ Indian cities): https://e0-finder.app/city
+- Popular city pages: https://e0-finder.app/city/bangalore, https://e0-finder.app/city/delhi, https://e0-finder.app/city/mumbai, https://e0-finder.app/city/pune, https://e0-finder.app/city/hyderabad, https://e0-finder.app/city/chennai
+- State directory: https://e0-finder.app/state
 - Blog and fuel guides: https://e0-finder.app/blog
 - Fuel cost calculator: https://e0-finder.app/fuel-cost-calculator
 - Privacy policy: https://e0-finder.app/privacy

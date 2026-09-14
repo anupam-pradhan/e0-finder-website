@@ -35,11 +35,15 @@ export async function generateMetadata({
   const city = citiesData.find((c) => c.slug === slug)
   if (!city) return {}
 
-  const url = `https://e0-finder.app/city/${city.slug}`
+  const url = `${siteConfig.siteUrl}/city/${city.slug}`
+  const now = new Date()
+  const monthYear = now.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+  const title = `${city.verifiedPumpsCount}+ E0 Petrol Pumps in ${city.name} — XP100 Near You [${monthYear}]`
+  const description = `Find ${city.verifiedPumpsCount}+ verified ethanol-free (E0) petrol pumps in ${city.name}, ${city.state}. XP100, poWer100 & Speed 100 station locations with live reports. Updated ${monthYear}.`
 
   return {
-    title: city.metaTitle,
-    description: city.metaDescription,
+    title,
+    description,
     keywords: [
       `0% ethanol petrol in ${city.name}`,
       `E0 petrol pump ${city.name}`,
@@ -54,8 +58,8 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       url,
-      title: city.metaTitle,
-      description: city.metaDescription,
+      title,
+      description,
       images: [
         {
           url: '/playstore_feature_graphic.png',
@@ -67,8 +71,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: city.metaTitle,
-      description: city.metaDescription,
+      title,
+      description,
       images: ['/playstore_feature_graphic.png'],
     },
   }
@@ -86,7 +90,9 @@ export default async function CityPage({
     notFound()
   }
 
-  const url = `https://e0-finder.app/city/${city.slug}`
+  const url = `${siteConfig.siteUrl}/city/${city.slug}`
+  const now = new Date()
+  const lastUpdated = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   const otherCities = citiesData.filter((c) => c.slug !== city.slug).slice(0, 4)
 
   // FAQPage schema removed — Google restricted FAQPage rich results to
@@ -97,8 +103,8 @@ export default async function CityPage({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://e0-finder.app/' },
-      { '@type': 'ListItem', position: 2, name: 'City Guides', item: 'https://e0-finder.app/#cities' },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteConfig.siteUrl}/` },
+      { '@type': 'ListItem', position: 2, name: 'Cities', item: `${siteConfig.siteUrl}/city` },
       { '@type': 'ListItem', position: 3, name: city.name, item: url },
     ],
   }
@@ -139,6 +145,9 @@ export default async function CityPage({
   }
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg">
+        Skip to content
+      </a>
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
@@ -179,13 +188,13 @@ export default async function CityPage({
       </header>
 
       {/* Hero Section */}
-      <section className="border-b border-border bg-gradient-to-b from-primary/[0.05] to-transparent py-12 lg:py-16">
+      <section id="main" className="border-b border-border bg-gradient-to-b from-primary/[0.05] to-transparent py-12 lg:py-16">
         <div className="mx-auto max-w-6xl px-4 lg:px-8">
           {/* Breadcrumbs */}
-          <nav className="mb-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <nav className="mb-4 flex items-center gap-2 text-xs text-muted-foreground" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-primary">Home</Link>
             <ChevronRight size={12} />
-            <span>Cities</span>
+            <Link href="/city" className="hover:text-primary">Cities</Link>
             <ChevronRight size={12} />
             <span className="text-foreground font-semibold">{city.name}</span>
           </nav>
@@ -198,9 +207,16 @@ export default async function CityPage({
             0% Ethanol (E0) Petrol Stations in <span className="text-primary">{city.name}</span>
           </h1>
 
+          {/* Answer Block — concise direct answer for AI extractability (AEO) */}
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Real-time verified locations, crowd-sourced density tests, and turn-by-turn navigation to authentic 0% ethanol petrol pumps (XP100 & poWer100) across {city.name}.
+            {city.name} has {city.verifiedPumpsCount}+ verified ethanol-free (E0) petrol pumps selling XP100, poWer100 and Speed 100 across {city.popularAreas.slice(0, 3).join(', ')} and more. All stations are community-verified with density tests and live stock reports. Availability is never guaranteed — confirm at the pump.
           </p>
+
+          {/* Last Updated Badge */}
+          <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Clock size={12} />
+            <span>Last updated: <time dateTime={now.toISOString()}>{lastUpdated}</time></span>
+          </div>
 
           {/* City Stats Bar */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl">
