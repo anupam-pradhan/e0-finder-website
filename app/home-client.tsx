@@ -613,6 +613,38 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               </Link>
             </div>
 
+            {/* Quick Hub Navigation Pills */}
+            <div className="e0-fade-up e0-delay-4 mt-6 flex flex-wrap items-center gap-2">
+              <Link
+                href="/what-is-e0-petrol"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card/60 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur hover:border-primary/50 hover:bg-card hover:text-primary transition-all shadow-xs"
+              >
+                <Fuel size={13} className="text-primary" />
+                <span>What is E0?</span>
+              </Link>
+              <Link
+                href="/vehicles"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card/60 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur hover:border-primary/50 hover:bg-card hover:text-primary transition-all shadow-xs"
+              >
+                <Bike size={13} className="text-primary" />
+                <span>Vehicle Checker</span>
+              </Link>
+              <Link
+                href="/highways"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card/60 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur hover:border-primary/50 hover:bg-card hover:text-primary transition-all shadow-xs"
+              >
+                <Compass size={13} className="text-primary" />
+                <span>Highway Stops</span>
+              </Link>
+              <Link
+                href="/report-pump"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-card/60 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur hover:border-primary/50 hover:bg-card hover:text-primary transition-all shadow-xs"
+              >
+                <PlusCircle size={13} className="text-primary" />
+                <span>Report a Pump</span>
+              </Link>
+            </div>
+
             {/* benefit chips */}
             <div className="e0-fade-up e0-delay-5 mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
               {benefits.map(({ icon: Icon, title, text }) => (

@@ -1,0 +1,46 @@
+# E0 Finder — Comprehensive Knowledge Base (llms-full.txt)
+> India-focused 0% Ethanol (E0) Petrol Discovery, Vehicle Compatibility & Expressway Network
+
+## About E0 Finder
+E0 Finder (https://e0-finder.app) is India's leading community-driven discovery engine for authentic, unblended 0% ethanol (E0) petrol. With India having rolled out mandatory 20% ethanol blending (E20) across all standard retail fuel pumps, premium products like IndianOil XP100 and HPCL poWer100 remain among the only accessible sources of pure hydrocarbon 100-octane fuel for motorists whose vehicles are damaged or degraded by ethanol.
+
+## Key Terminology
+- **E0 Petrol**: Pure hydrocarbon fuel with zero (0%) added ethanol. Offers maximum volumetric energy density, prevents moisture-induced phase separation, and avoids corrosive degradation of brass, zinc, cork, and rubber seals.
+- **E20 Petrol**: Government-mandated standard motor spirit containing 20% denatured anhydrous ethanol and 80% fossil gasoline. Has roughly 6% to 9% lower energy density per liter and absorbs ambient atmospheric moisture.
+- **XP100**: IndianOil Corporation's (IOCL) flagship 100-octane super-premium petrol. Formulated as a zero-ethanol, high-octane racing and superbike fuel.
+- **poWer100**: Hindustan Petroleum's (HPCL) ultra-premium 100 RON gasoline for high-performance sports cars and high-compression superbikes.
+- **Speed 97 & Speed 100**: Bharat Petroleum's (BPCL) premium gasoline offerings.
+- **Hydrometer Density Test**: The standard testing method in India. Pure gasoline has an observed density of 740 to 755 kg/m³ at 15°C. Ethanol-blended fuels typically display higher densities (755 to 765+ kg/m³).
+
+## Platform URLs & Navigation
+- Live Locator: https://e0-finder.app/find
+- Pillar Guide: https://e0-finder.app/what-is-e0-petrol
+- Vehicle Compatibility: https://e0-finder.app/vehicles
+- Highway Corridors: https://e0-finder.app/highways
+- Report Station: https://e0-finder.app/report-pump
+- City Index (42+ Indian Cities): https://e0-finder.app/city
+- State Index: https://e0-finder.app/state
+- Cost Calculator: https://e0-finder.app/fuel-cost-calculator
+- Android App: https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol
+
+## Vehicle Vulnerability Summary
+1. **Superbikes (Kawasaki Ninja ZX-10R/Z900, BMW S1000RR, Ducati Panigale)**:
+   - High compression (12.5:1 to 13.5:1) strictly requires 95+ to 98+ RON.
+   - E20 triggers knock sensor retarding, loss of 15-25 BHP, and high thermal stress.
+   - Recommended Fuel: IOCL XP100 or HPCL poWer100.
+2. **KTM 390 Duke / RC 390**:
+   - 12.8:1 compression single-cylinder. E20 leads to in-tank pump filter gumming, radiator fan run times spiking, and low-RPM stalling.
+3. **Skoda / Volkswagen 1.0 & 1.5 TSI**:
+   - Direct injection engines (TSI) lack intake port wash. Ethanol blends accelerate direct injector carbon buildup and HPFP seal wear.
+4. **Vintage & Carbureted Pre-2010 Vehicles (Maruti 800, Yamaha RD350, Bullet CI 350)**:
+   - Zero ethanol resistance in metallurgy. Ethanol dissolves zinc-aluminum carburetor float bowls and rots rubber fuel hoses. Strict E0 requirement.
+
+## Major Expressway Corridors Mapped
+- Mumbai – Pune Expressway (NH48): Stops at Palm Beach Vashi, Kalamboli, Khalapur, and Urse Toll.
+- Delhi – Jaipur Expressway (NH48 / NE4): Stops at Rajiv Chowk Gurugram, IMT Manesar, Neemrana, and Kukas.
+- Bangalore – Mysore Expressway (NH275): Stops at Kengeri, Ramanagara, Mandya, and Mysore Ring Road.
+- Delhi – Chandigarh Highway (NH44): Stops at Murthal, Karnal Oasis, Ambala, and Chandigarh Sector 33.
+- Samruddhi Mahamarg: Stops at Shirdi Interchange, Aurangabad Shendra, and Amravati.
+
+## Verification & Trust Disclaimer
+Station availability in India fluctuates based on oil refinery logistics and delivery schedules. E0 Finder aggregates crowd-sourced verification reports, dispenser photo audits, and hydrometer density observations. Motorists should confirm availability at the pump nozzle before filling.

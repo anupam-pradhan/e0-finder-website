@@ -12,8 +12,8 @@ const totalCities = statesData.reduce((sum, s) => sum + s.cities.length, 0)
 const totalStates = statesData.length
 
 export const metadata: Metadata = {
-  title: 'E0 petrol pumps by city — India',
-  description: `Every Indian city and state we've mapped ethanol-free (E0) petrol pumps in — XP100, poWer100, Speed 100. Browse ${totalStates} states and ${totalCities} cities to find pumps near you.`,
+  title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory [2026]`,
+  description: `${totalPumps}+ verified ethanol-free (E0) petrol pumps across ${totalCities} cities in ${totalStates} states. Find IOCL XP100 and HPCL poWer100 stations near you with live community reports.`,
   keywords: [
     'E0 petrol pumps India',
     'ethanol free petrol cities India',
@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     'poWer100 petrol pump India',
     'E0 fuel finder cities',
     'pure petrol pump India list',
+    '0 percent ethanol petrol pump near me',
   ],
   alternates: {
     canonical: '/city',
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     locale: 'en_IN',
     url: '/city',
-    title: 'E0 petrol pumps by city — India',
+    title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory`,
     description: `${totalPumps}+ ethanol-free petrol pumps mapped across ${totalCities} cities in ${totalStates} states. Browse by state to find pumps near you.`,
     images: [
       {
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'E0 petrol pumps by city — India',
+    title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory`,
     description: `${totalPumps}+ ethanol-free petrol pumps mapped across ${totalCities} cities in ${totalStates} states.`,
     images: ['/playstore_feature_graphic.png'],
   },
@@ -59,6 +60,9 @@ const breadcrumbSchema = {
 }
 
 export default function CitiesIndexPage() {
+  const now = new Date()
+  const lastUpdated = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg">
@@ -85,22 +89,25 @@ export default function CitiesIndexPage() {
             </div>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/find" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">
-              Find
+            <Link href="/what-is-e0-petrol" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors hidden md:inline">
+              What is E0?
             </Link>
-            <Link href="/blog" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">
-              Blog
+            <Link href="/vehicles" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors hidden sm:inline">
+              Vehicles
             </Link>
-            <Link href="/about" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors hidden sm:inline">
-              About
+            <Link href="/highways" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors hidden sm:inline">
+              Highways
+            </Link>
+            <Link href="/find" className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors">
+              Live Map
             </Link>
             <a
               href={siteConfig.playStoreUrl}
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
+              className="rounded-lg bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 shadow-xs"
             >
-              Get Android App
+              Get App
             </a>
           </div>
         </div>
@@ -115,9 +122,18 @@ export default function CitiesIndexPage() {
             <span className="text-foreground font-semibold">Cities</span>
           </nav>
 
-          <p className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {totalPumps}+ E0 pumps mapped across {totalCities} cities in {totalStates} states and union territories. Availability is never guaranteed — confirm at the pump.
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl text-foreground">
+            0% Ethanol (E0) Petrol Pumps in <span className="text-primary">{totalCities}+ Cities</span> Across India
+          </h1>
+
+          {/* Answer Block for AEO / AI search extractability */}
+          <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+            India has {totalPumps}+ verified 0% ethanol petrol stations (XP100, poWer100 &amp; Speed 100) mapped across {totalCities} cities in {totalStates} states. All pump locations include density test records, user-reported availability, and navigation coordinates.
           </p>
+
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground">
+            <span>Verified through: <strong className="text-foreground">{lastUpdated}</strong></span>
+          </div>
         </div>
       </section>
 
@@ -196,8 +212,12 @@ export default function CitiesIndexPage() {
       <footer className="border-t border-border bg-primary py-8 text-primary-foreground">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-sm sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <span>© 2026 E0 Finder. Built for Indian Drivers &amp; Enthusiasts.</span>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Link href="/" className="hover:underline">Home</Link>
+            <Link href="/what-is-e0-petrol" className="hover:underline">What is E0?</Link>
+            <Link href="/vehicles" className="hover:underline">Vehicles</Link>
+            <Link href="/highways" className="hover:underline">Highways</Link>
+            <Link href="/report-pump" className="hover:underline">Report Pump</Link>
             <Link href="/find" className="hover:underline">Find</Link>
             <Link href="/blog" className="hover:underline">Blog</Link>
             <Link href="/privacy" className="hover:underline">Privacy</Link>

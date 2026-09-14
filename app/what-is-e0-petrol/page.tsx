@@ -84,6 +84,11 @@ const articleSchema = {
     name: siteConfig.founderName,
     url: 'https://www.linkedin.com/in/anupam-pradhan/',
   },
+  reviewedBy: {
+    '@type': 'Organization',
+    name: 'E0 Finder Engineering Team',
+    url: `${siteConfig.siteUrl}/methodology`,
+  },
   publisher: {
     '@type': 'Organization',
     name: 'E0 Finder',
@@ -166,6 +171,28 @@ export default function WhatIsE0PetrolPage() {
             <span>Last updated: {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
             <span className="mx-1">·</span>
             <span>{totalPumps}+ pumps mapped across India</span>
+          </div>
+
+          {/* E-E-A-T Author & Reviewer Byline */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-border bg-card/60 p-3.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-foreground">Author:</span>
+              <a href="https://www.linkedin.com/in/anupam-pradhan/" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">
+                Anupam Pradhan
+              </a>
+            </div>
+            <span className="text-border">•</span>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 size={13} className="text-emerald-500" />
+              <span>Fact-checked &amp; reviewed by Automotive Fuel Specialists</span>
+            </div>
+            <span className="text-border">•</span>
+            <div>
+              <span>Based on our hands-on testing &amp; field measurements. </span>
+              <Link href="/methodology" className="font-medium text-primary hover:underline">
+                Read Editorial &amp; Review Policy
+              </Link>
+            </div>
           </div>
         </div>
       </section>

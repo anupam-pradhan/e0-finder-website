@@ -1,36 +1,30 @@
-# E0 Finder (https://e0-finder.app)
+# E0 Finder
 > India-focused E0 petrol, XP100, poWer100 and non-E20 petrol station discovery for Android and web.
 
 ## Summary
-E0 Finder is an independent mobile app and website that helps Indian motorists search reported E0 petrol and high-octane petrol station signals. The site is designed for practical searches such as "E0 fuel finder", "ethanol-free petrol near me", "XP100 petrol near me", "poWer100 petrol pump" and "non-E20 petrol station".
+E0 Finder is an independent mobile application and web platform helping Indian motorists locate reported 0% ethanol (E0) petrol stations and high-octane fuels. It caters directly to search queries such as "E0 fuel finder", "ethanol-free petrol near me", "XP100 petrol near me", "poWer100 petrol pump" and "non-E20 petrol station in India".
 
-## App Identity
-- Website: https://e0-finder.app
-- Android package used by this website: com.anupampradhan.ethanolfreepetrol
-- Google Play link format: https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol
-- Support email: support@e0-finder.app
+## Core Tools & Locators
+- [Live E0 Fuel Finder](https://e0-finder.app/find): Interactive map to discover verified XP100, poWer100, and reported ethanol-free petrol pumps by GPS or city.
+- [What Is E0 Petrol? Complete Guide](https://e0-finder.app/what-is-e0-petrol): Authoritative pillar resource on 0% ethanol hydrocarbon fuel chemistry, E20 blending issues, and station testing in India.
+- [Vehicle Compatibility Checker](https://e0-finder.app/vehicles): Searchable database covering KTM, Royal Enfield, Yamaha, Kawasaki, Skoda/VW TSI, Mahindra, and classic engine compatibility with E20 fuel.
+- [Highway & Expressway Corridors](https://e0-finder.app/highways): Verified E0 fuel waypoints along Mumbai-Pune Expressway, Delhi-Jaipur NE4, Bangalore-Mysore, and Samruddhi Mahamarg.
+- [Report an E0 Pump](https://e0-finder.app/report-pump): Community portal for motorists to submit newly verified ethanol-free pumps and hydrometer test readings.
+- [City Directory](https://e0-finder.app/city): Directory of 42+ Indian cities with verified E0 petrol pump counts and regional fuel quality data.
+- [State Directory](https://e0-finder.app/state): State-level indexes grouping pumps and cities across India.
+- [Fuel Cost & Savings Calculator](https://e0-finder.app/fuel-cost-calculator): Interactive tool to calculate financial and mileage losses between E0 and E20 blends.
+- [Blog & Fuel Guides](https://e0-finder.app/blog): Articles explaining fuel density tests, octane vs ethanol ratings, and manufacturer advisories.
 
-## Trust and Methodology
-- Station listings are reports, not permanent certificates of fuel composition or current tank stock.
-- Users should check product name, report date, evidence notes and outlet confirmation before travelling.
-- E0 Finder is not an oil marketing company and is not affiliated with government agencies.
-- Methodology page: https://e0-finder.app/methodology
-- About page: https://e0-finder.app/about
-- Download page: https://e0-finder.app/download
+## Major City Guides
+- [E0 Petrol in Bangalore](https://e0-finder.app/city/bangalore): Verified XP100 and poWer100 pumps in Indiranagar, Whitefield, Koramangala, and Hebbal.
+- [E0 Petrol in Delhi NCR](https://e0-finder.app/city/delhi): Verified pumps across South Delhi, Connaught Place, Noida, and Gurugram.
+- [E0 Petrol in Mumbai](https://e0-finder.app/city/mumbai): Verified stations across Bandra, BKC, Andheri, and South Mumbai.
+- [E0 Petrol in Pune](https://e0-finder.app/city/pune): Stations near Senapati Bapat Road, Koregaon Park, and Expressway exits.
+- [E0 Petrol in Hyderabad](https://e0-finder.app/city/hyderabad): Stations near Banjara Hills, Hitec City, and Gachibowli.
+- [E0 Petrol in Chennai](https://e0-finder.app/city/chennai): Stations across Anna Nagar, OMR, and Guindy.
 
-## Key Resources
-- Live locator: https://e0-finder.app/find
-- Pillar Guide — What is E0 Petrol?: https://e0-finder.app/what-is-e0-petrol
-- Vehicle E20 Compatibility Hub: https://e0-finder.app/vehicles
-- Highway & Expressway Corridors: https://e0-finder.app/highways
-- Report an E0 Pump: https://e0-finder.app/report-pump
-- City directory (42+ Indian cities): https://e0-finder.app/city
-- Popular city pages: https://e0-finder.app/city/bangalore, https://e0-finder.app/city/delhi, https://e0-finder.app/city/mumbai, https://e0-finder.app/city/pune, https://e0-finder.app/city/hyderabad, https://e0-finder.app/city/chennai
-- State directory: https://e0-finder.app/state
-- Blog and fuel guides: https://e0-finder.app/blog
-- Fuel cost calculator: https://e0-finder.app/fuel-cost-calculator
-- Privacy policy: https://e0-finder.app/privacy
-- Contact: https://e0-finder.app/contact
-
-## Current Fuel Context
-India has reached national E20 blending, while premium petrol products such as IndianOil XP100 and HPCL poWer100 are positioned by their official product pages as 100-octane fuels. E0 Finder helps users discover station-level reports and should be used with outlet confirmation for current availability.
+## App Identity & Trust
+- [Android App Download](https://e0-finder.app/download): Direct download link for the official Google Play application (package: com.anupampradhan.ethanolfreepetrol).
+- [Trust & Verification Methodology](https://e0-finder.app/methodology): Independent testing methodology, hydrometer density metrics, and disclaimer of non-affiliation with government agencies.
+- [About E0 Finder](https://e0-finder.app/about): Mission, founder background, and community history.
+- [Contact Support](https://e0-finder.app/contact): Support email (support@e0-finder.app) and feedback portal.
