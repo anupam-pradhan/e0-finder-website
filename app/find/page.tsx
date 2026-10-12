@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import FindE0WebPage from './find-client'
+import { fetchNetworkStats } from '@/lib/supabase-stations'
 import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 const siteUrl = 'https://e0-finder.app'
-const title = 'E0 Fuel Finder Near Me — XP100 Petrol Pump Map [Live Data]'
+const title = 'XP100 Petrol Pump Near Me — Ethanol-Free E0 Fuel Finder Map, India'
 const description =
-  'Find ethanol-free petrol pumps near you in India. Search XP100, poWer100 and non-E20 fuel reports by GPS, city or area on E0 Finder.'
+  'Find XP100, poWer100 and ethanol-free (E0) petrol pumps near me. Live search over 52,000+ mapped pumps in India by GPS, city, area or pump name, with directions and last-verified dates.'
 
 export const metadata: Metadata = {
   title: {
@@ -116,6 +117,8 @@ function firstParam(value: string | string[] | undefined) {
 export default async function FindPage({ searchParams }: FindPageProps) {
   const params = await searchParams
   const initialQuery = firstParam(params.q) || firstParam(params.query)
+  const stats = await fetchNetworkStats()
+  const pumps = stats ? stats.total.toLocaleString('en-IN') : '52,000+'
 
   return (
     <>
@@ -127,6 +130,12 @@ export default async function FindPage({ searchParams }: FindPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {/* Direct answer block: server-rendered so search engines and AI answer engines can quote it. */}
+      <section aria-label="How this finder works" className="mx-auto max-w-7xl px-4 pt-6 lg:px-8">
+        <p className="rounded-2xl border border-border bg-muted/20 px-4 py-3 text-sm leading-6 text-muted-foreground">
+          <strong className="text-foreground">Looking for an XP100 or ethanol-free petrol pump near you?</strong> E0 Finder searches {pumps} petrol pumps mapped across India. Pumps that report 0% ethanol (E0), IndianOil XP100 or HPCL poWer100 are listed first, with the data source and last-verified date on each one. Use your GPS, or type a city, area, pincode or pump name. Confirm the grade at the pump before filling.
+        </p>
+      </section>
       <FindE0WebPage initialQuery={initialQuery} />
     </>
   )

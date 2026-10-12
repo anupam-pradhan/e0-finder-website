@@ -8,10 +8,10 @@ import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
+    absolute: 'E0 Finder — Official App: Ethanol-Free E0 Petrol Pumps Near Me in India',
   },
   description:
-    'Official E0 Finder app for ethanol-free petrol in India. Find E0 fuel, XP100 pumps and non-E20 petrol near you with live map reports.',
+    'E0 Finder is the official Android app on Google Play for ethanol-free petrol near me. 52,000+ pumps mapped on Google Maps with XP100, poWer100 and 0% ethanol reports, data source and last-verified date on every pump.',
   alternates: {
     canonical: '/',
   },
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     locale: 'en_IN',
     url: '/',
-    title: 'E0 Finder — Find Ethanol-Free E0 Petrol Near You in India',
+    title: 'E0 Finder — Official App: Ethanol-Free E0 Petrol Pumps Near Me in India',
     description:
-      'Official E0 Finder app and website for ethanol-free petrol stations across India, with live pump reports, XP100 locations and navigation.',
+      'The official E0 Finder app and website. 52,000+ petrol pumps mapped across India with XP100, poWer100 and 0% ethanol reports, directions and real last-verified dates.',
     images: [
       {
         url: seoImages.appDownloadOg.path,

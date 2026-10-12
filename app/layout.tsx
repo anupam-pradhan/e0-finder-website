@@ -26,11 +26,11 @@ const playStoreUrl = siteConfig.playStoreUrl
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'E0 Finder — Ethanol-Free E0 Petrol Pump Finder India [Live Data]',
+    default: 'E0 Finder — Official Ethanol-Free E0 Petrol Pump Finder App, India',
     template: '%s | E0 Finder',
   },
   description:
-    'Find E0 fuel and ethanol-free petrol pumps near you across India. Search XP100, poWer100 and non-E20 station reports with maps and directions.',
+    'Official E0 Finder app: ethanol-free petrol near me across India. 52,000+ pumps on Google Maps with XP100, poWer100 and 0% ethanol reports, directions and last-verified dates.',
   keywords: [
     'E0 Finder',
     'EO Finder',
