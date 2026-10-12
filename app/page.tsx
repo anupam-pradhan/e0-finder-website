@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import HomeClient from './home-client'
 import { blogPosts, toBlogSummary } from '@/lib/blog-data'
 import { siteConfig } from '@/lib/site-config'
+import { citiesData } from '@/lib/city-data'
+import { fetchCityStats, fetchNetworkStats } from '@/lib/supabase-stations'
 import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 export const metadata: Metadata = {
@@ -76,7 +78,24 @@ const websiteSchema = {
   },
 }
 
-export default function Page() {
+// Pump counts come from the live catalogue; refresh daily.
+export const revalidate = 86400
+
+const homeCitySlugs = ['bangalore', 'delhi', 'mumbai', 'pune', 'hyderabad', 'chennai', 'kolkata', 'chandigarh', 'jaipur', 'kochi', 'ahmedabad', 'goa']
+
+async function loadCityCounts(): Promise<Record<string, number>> {
+  const entries = await Promise.all(
+    homeCitySlugs.map(async (slug) => {
+      const name = citiesData.find((c) => c.slug === slug)?.name
+      const stats = await fetchCityStats([name ?? slug, slug.replace(/-/g, ' ')])
+      return [slug, stats?.total ?? 0] as const
+    }),
+  )
+  return Object.fromEntries(entries.filter(([, n]) => n > 0))
+}
+
+export default async function Page() {
+  const [networkStats, cityCounts] = await Promise.all([fetchNetworkStats(), loadCityCounts()])
   return (
     <>
       <script
@@ -87,7 +106,7 @@ export default function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
-      <HomeClient posts={blogPosts.slice(0, 6).map(toBlogSummary)} totalPosts={blogPosts.length} />
+      <HomeClient posts={blogPosts.slice(0, 6).map(toBlogSummary)} totalPosts={blogPosts.length} networkStats={networkStats} cityCounts={cityCounts} />
     </>
   )
 }

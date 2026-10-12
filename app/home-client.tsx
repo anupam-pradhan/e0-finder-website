@@ -48,6 +48,7 @@ import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { siteConfig } from '@/lib/site-config'
+import type { NetworkStats } from '@/lib/supabase-stations'
 import { seoImages } from '@/lib/seo-images'
 import { AppStoreProof } from '@/components/app-store-proof'
 
@@ -56,13 +57,13 @@ const playStoreUrl = siteConfig.playStoreUrl
 
 const benefits = [
   { icon: Fuel, title: '0% Ethanol', text: 'Pure E0 Petrol Only' },
-  { icon: ShieldCheck, title: 'Verified Stations', text: 'Team & community verified' },
-  { icon: Zap, title: 'Live Availability', text: 'Real-time pump updates' },
+  { icon: ShieldCheck, title: 'Source-graded Data', text: 'Oil company, community or Google Maps' },
+  { icon: Zap, title: 'Google Maps Built In', text: 'Instant viewport loading & search' },
   { icon: Users, title: 'Community Reports', text: 'Fresh station signals' },
 ]
 
 const steps = [
-  { icon: Search, title: 'Search Location', text: 'Enter any city, highway, landmark, or let GPS locate nearest pumps.' },
+  { icon: Search, title: 'Search Location', text: 'Search any city, area, highway or pump name across 52,000+ mapped pumps, or let GPS find the nearest.' },
   { icon: Fuel, title: 'Check E0 Status', text: 'Verify 0% ethanol availability, pump facilities, and user verification timestamps.' },
   { icon: Navigation, title: 'Navigate Directly', text: 'Open Google Maps or Apple Maps with one tap to reach the verified station.' },
   { icon: Users, title: 'Submit Live Reports', text: 'Help fellow motorists by submitting fuel bills, pump status, and price updates.' },
@@ -344,7 +345,18 @@ function Logo() {
   )
 }
 
-export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSummary[]; totalPosts: number }) {
+export default function Page({
+  posts: blogPosts,
+  totalPosts,
+  networkStats = null,
+  cityCounts = {},
+}: {
+  posts: BlogSummary[]
+  totalPosts: number
+  networkStats?: NetworkStats | null
+  cityCounts?: Record<string, number>
+}) {
+  const pumpsMapped = networkStats ? networkStats.total.toLocaleString('en-IN') : siteConfig.catalogueSize
   const [menuOpen, setMenuOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [activeScreen, setActiveScreen] = useState(0)
@@ -571,7 +583,7 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
               E0 Finder: Find <span className="e0-text-gradient">0% Ethanol (E0)</span> Petrol Stations Near You
             </h1>
             <p className="e0-fade-up e0-delay-2 mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
-              E0 Finder, also searched as EO Finder or E Zero Finder, helps you locate petrol stations across India. Check reported fuel grades and confirm current availability and blend information with the outlet before travelling.
+              E0 Finder, also searched as EO Finder or E Zero Finder, maps {pumpsMapped} petrol pumps across India on Google Maps, with XP100, poWer100 and 0% ethanol reports, the data source behind every listing and a real last-verified date. Confirm availability and blend with the outlet before travelling.
             </p>
 
             {/* trust row */}
@@ -1562,7 +1574,9 @@ export default function Page({ posts: blogPosts, totalPosts }: { posts: BlogSumm
                   <span className="mt-1 block text-xs text-muted-foreground">{city.state}</span>
                 </div>
                 <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-                  <span className="text-xs font-semibold text-primary">{city.stations}</span>
+                  <span className="text-xs font-semibold text-primary">
+                    {cityCounts[city.slug] ? `${cityCounts[city.slug].toLocaleString('en-IN')} pumps mapped` : city.stations}
+                  </span>
                   <Link href={`/city/${city.slug}`} className="text-xs font-semibold text-primary hover:underline">
                     View City Guide →
                   </Link>

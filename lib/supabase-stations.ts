@@ -1,0 +1,254 @@
+import { WebStation } from '@/lib/stations-data'
+
+/**
+ * Read-only access to the live E0 Finder catalogue in Supabase (52,000+ pumps).
+ * Uses the publishable key, which RLS limits to SELECT on public tables.
+ */
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://rwgikpgkmmzpbzwvuiix.supabase.co'
+const SUPABASE_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
+
+const STATION_COLUMNS =
+  'id,name,brand,brand_logo,fuel_grade,is_e0_confirmed,is_coco,address,area,city,state,pincode,latitude,longitude,price,density,last_verified,verified_by,rating,review_count,is_open_24_hours,timing,phone,amenities,source,needs_review,updated_at'
+
+export type StationConfidence = 'official' | 'community' | 'listed' | 'unverified'
+
+export interface LiveStation extends WebStation {
+  source: string
+  confidence: StationConfidence
+  confidenceLabel: string
+  updatedAt: string
+  distanceKm?: number
+}
+
+export interface StationQuery {
+  q?: string
+  lat?: number
+  lng?: number
+  radiusKm?: number
+  city?: string
+  brand?: string
+  grade?: string
+  e0Only?: boolean
+  limit?: number
+}
+
+export interface NetworkStats {
+  total: number
+  e0Confirmed: number
+  xp100: number
+  power100: number
+}
+
+export interface CityStats extends NetworkStats {
+  premium: number
+}
+
+const DAY_SECONDS = 86_400
+const DEFAULT_LIMIT = 60
+const MAX_LIMIT = 200
+
+function headers(extra: Record<string, string> = {}): Record<string, string> {
+  return { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, ...extra }
+}
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+function num(value: unknown): number {
+  if (typeof value === 'number') return value
+  if (typeof value === 'string') return Number(value) || 0
+  return 0
+}
+
+/** Mirrors the app's confidence model so web and app say the same thing. */
+export function confidenceFor(row: { source?: string | null; needs_review?: boolean | null; verified_by?: string | null }): StationConfidence {
+  const source = (row.source ?? '').toLowerCase()
+  if (['iocl', 'hpcl', 'bpcl', 'official'].includes(source)) return 'official'
+  if (source === 'community' || (row.verified_by ?? '').toLowerCase().includes('community')) return 'community'
+  if (source === 'curated') return 'listed'
+  if (source === 'osm' || row.needs_review) return 'unverified'
+  return 'listed'
+}
+
+export const confidenceLabels: Record<StationConfidence, string> = {
+  official: 'Oil company data',
+  community: 'Community verified',
+  listed: 'Listed on Google Maps',
+  unverified: 'Unverified listing',
+}
+
+function formatVerified(row: Record<string, unknown>): string {
+  const raw = text(row.last_verified)
+  const iso = Date.parse(raw) ? raw : text(row.updated_at)
+  const date = iso ? new Date(iso) : null
+  if (date && !Number.isNaN(date.getTime())) {
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' })
+  }
+  return raw || 'Not yet verified'
+}
+
+export function toLiveStation(row: Record<string, unknown>): LiveStation {
+  const confidence = confidenceFor(row as { source?: string; needs_review?: boolean; verified_by?: string })
+  const amenities = Array.isArray(row.amenities) ? row.amenities.filter((a): a is string => typeof a === 'string') : []
+  const brand = (text(row.brand) || 'Other') as WebStation['brand']
+  const fuelGrade = (text(row.fuel_grade) || 'Regular Petrol (E20)') as WebStation['fuelGrade']
+  return {
+    id: text(row.id),
+    name: text(row.name) || brand,
+    brand,
+    brandLogo: text(row.brand_logo),
+    fuelGrade,
+    isE0Confirmed: row.is_e0_confirmed === true,
+    isCOCO: row.is_coco === true,
+    address: text(row.address) || [text(row.area), text(row.city), text(row.state)].filter(Boolean).join(', '),
+    area: text(row.area),
+    city: text(row.city),
+    state: text(row.state),
+    pincode: text(row.pincode),
+    latitude: num(row.latitude),
+    longitude: num(row.longitude),
+    price: num(row.price),
+    density: text(row.density),
+    lastVerified: formatVerified(row),
+    verifiedBy: text(row.verified_by) || confidenceLabels[confidence],
+    rating: num(row.rating),
+    reviewCount: num(row.review_count),
+    isOpen24Hours: row.is_open_24_hours === true,
+    timing: text(row.timing),
+    phone: text(row.phone),
+    amenities,
+    source: text(row.source) || 'google_crawl',
+    confidence,
+    confidenceLabel: confidenceLabels[confidence],
+    updatedAt: text(row.updated_at),
+    distanceKm: typeof row.distance_m === 'number' ? Math.round(row.distance_m / 100) / 10 : undefined,
+  }
+}
+
+async function rpc(name: string, body: Record<string, unknown>, revalidate = 300): Promise<Record<string, unknown>[]> {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${name}`, {
+    method: 'POST',
+    headers: headers({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(body),
+    next: { revalidate },
+  })
+  if (!res.ok) throw new Error(`Supabase rpc ${name} failed: ${res.status}`)
+  return (await res.json()) as Record<string, unknown>[]
+}
+
+function clampLimit(limit?: number): number {
+  return Math.min(Math.max(limit ?? DEFAULT_LIMIT, 1), MAX_LIMIT)
+}
+
+function applyFilters(rows: LiveStation[], query: StationQuery): LiveStation[] {
+  const brand = query.brand?.toLowerCase()
+  const grade = query.grade?.toLowerCase()
+  return rows.filter((s) => {
+    if (query.e0Only && !s.isE0Confirmed) return false
+    if (brand && !s.brand.toLowerCase().includes(brand)) return false
+    if (grade && !s.fuelGrade.toLowerCase().includes(grade)) return false
+    return true
+  })
+}
+
+function rankE0First(rows: LiveStation[]): LiveStation[] {
+  const score = (s: LiveStation) => (s.isE0Confirmed ? 3 : 0) + (/xp100|power100|speed 97/i.test(s.fuelGrade) ? 2 : 0) + (s.isCOCO ? 1 : 0)
+  return [...rows].sort((a, b) => score(b) - score(a) || (a.distanceKm ?? 0) - (b.distanceKm ?? 0))
+}
+
+/** Search the live catalogue by text, GPS or city. Returns E0/premium pumps first. */
+export async function fetchStations(query: StationQuery): Promise<LiveStation[]> {
+  const limit = clampLimit(query.limit)
+  const fetchLimit = Math.min(limit * 3, MAX_LIMIT * 2)
+  let rows: Record<string, unknown>[]
+
+  if (query.q && query.q.trim().length >= 2) {
+    rows = await rpc('stations_search', { q: query.q.trim(), lat: query.lat ?? null, lng: query.lng ?? null, max_results: fetchLimit })
+  } else if (typeof query.lat === 'number' && typeof query.lng === 'number') {
+    rows = await rpc('stations_nearby', {
+      lat: query.lat,
+      lng: query.lng,
+      radius_m: Math.round((query.radiusKm ?? 25) * 1000),
+      max_results: fetchLimit,
+    })
+  } else {
+    const params = new URLSearchParams({ select: STATION_COLUMNS, is_active: 'eq.true', limit: String(fetchLimit) })
+    params.set('order', 'is_e0_confirmed.desc,rating.desc.nullslast')
+    if (query.city) params.set('city', `ilike.*${query.city.replace(/[%*,()]/g, '')}*`)
+    if (query.e0Only) params.set('is_e0_confirmed', 'eq.true')
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/stations?${params}`, { headers: headers(), next: { revalidate: 300 } })
+    if (!res.ok) throw new Error(`Supabase stations query failed: ${res.status}`)
+    rows = (await res.json()) as Record<string, unknown>[]
+  }
+
+  return rankE0First(applyFilters(rows.map(toLiveStation), query)).slice(0, limit)
+}
+
+async function count(filters: Record<string, string>): Promise<number> {
+  const params = new URLSearchParams({ select: 'id', is_active: 'eq.true', ...filters })
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/stations?${params}`, {
+    method: 'HEAD',
+    headers: headers({ Prefer: 'count=exact', 'Range-Unit': 'items', Range: '0-0' }),
+    next: { revalidate: DAY_SECONDS },
+  })
+  const range = res.headers.get('content-range') ?? ''
+  const total = Number(range.split('/')[1])
+  return Number.isFinite(total) ? total : 0
+}
+
+/** Whole-India totals, refreshed daily. */
+export async function fetchNetworkStats(): Promise<NetworkStats | null> {
+  try {
+    const [total, e0Confirmed, xp100, power100] = await Promise.all([
+      count({}),
+      count({ is_e0_confirmed: 'eq.true' }),
+      count({ fuel_grade: 'ilike.*xp100*' }),
+      count({ fuel_grade: 'ilike.*power100*' }),
+    ])
+    return total > 0 ? { total, e0Confirmed, xp100, power100 } : null
+  } catch {
+    return null
+  }
+}
+
+function cityFilter(names: string[]): string {
+  const clean = names.map((n) => n.replace(/[%*,()]/g, '').trim()).filter(Boolean)
+  return `(${clean.map((n) => `city.ilike.*${n}*`).join(',')})`
+}
+
+/** Per-city totals. Pass every spelling the catalogue may use (e.g. Bengaluru + Bangalore). */
+export async function fetchCityStats(names: string[]): Promise<CityStats | null> {
+  try {
+    const or = cityFilter(names)
+    const [total, e0Confirmed, xp100, power100] = await Promise.all([
+      count({ or }),
+      count({ or, is_e0_confirmed: 'eq.true' }),
+      count({ or, fuel_grade: 'ilike.*xp100*' }),
+      count({ or, fuel_grade: 'ilike.*power100*' }),
+    ])
+    return total > 0 ? { total, e0Confirmed, xp100, power100, premium: xp100 + power100 } : null
+  } catch {
+    return null
+  }
+}
+
+/** Best pumps to feature on a city page: confirmed E0 and premium grades first. */
+export async function fetchCityHighlights(names: string[], limit = 9): Promise<LiveStation[]> {
+  try {
+    const params = new URLSearchParams({
+      select: STATION_COLUMNS,
+      is_active: 'eq.true',
+      or: cityFilter(names),
+      order: 'is_e0_confirmed.desc,is_coco.desc,rating.desc.nullslast',
+      limit: String(limit * 4),
+    })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/stations?${params}`, { headers: headers(), next: { revalidate: DAY_SECONDS } })
+    if (!res.ok) return []
+    const rows = (await res.json()) as Record<string, unknown>[]
+    return rankE0First(rows.map(toLiveStation)).slice(0, limit)
+  } catch {
+    return []
+  }
+}

@@ -6,7 +6,9 @@ export const siteConfig = {
   playStoreUrl: 'https://play.google.com/store/apps/details?id=com.anupampradhan.ethanolfreepetrol',
   supportEmail: 'support@e0-finder.app',
   founderName: 'Anupam Pradhan',
-  lastUpdated: '2026-09-11',
+  lastUpdated: '2026-10-12',
+  appVersion: '1.0.7',
+  catalogueSize: '52,000+',
 } as const
 
 export const sourceLinks = {

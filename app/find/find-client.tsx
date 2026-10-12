@@ -124,17 +124,27 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
   const [reportFuelGrade, setReportFuelGrade] = useState('XP100 (0% Ethanol)')
   const [reportCity, setReportCity] = useState('Bengaluru')
   const [reportNotes, setReportNotes] = useState('')
-  const [lastSyncTime, setLastSyncTime] = useState<string>('06:00 AM IST Today')
+  const [lastSyncTime, setLastSyncTime] = useState<string>('connecting…')
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
+  const [liveSource, setLiveSource] = useState<'supabase' | 'curated'>('curated')
 
-  // Fetch live daily updated stations on mount
+  // Fetch from the live catalogue (52,000+ pumps) whenever the search changes.
   const fetchLiveStations = async () => {
     try {
       setIsSyncing(true)
-      const res = await fetch('/api/stations')
+      const params = new URLSearchParams({ limit: '80' })
+      if (searchQuery.trim().length >= 2) params.set('q', searchQuery.trim())
+      if (userLocation) {
+        params.set('lat', String(userLocation.lat))
+        params.set('lng', String(userLocation.lng))
+      }
+      if (selectedCity !== 'All Cities') params.set('city', selectedCity)
+      if (selectedBrand !== 'All Brands') params.set('brand', selectedBrand)
+      if (selectedFuelGrade !== 'All Grades') params.set('grade', selectedFuelGrade)
+      const res = await fetch(`/api/stations?${params.toString()}`)
       if (res.ok) {
         const data = await res.json()
-        if (data.stations && data.stations.length > 0) {
+        if (Array.isArray(data.stations)) {
           // Load any local community submissions
           let localReports: WebStation[] = []
           try {
@@ -143,8 +153,17 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
           } catch (e) {}
 
           setStations([...localReports, ...data.stations])
-          if (data.omcRevisionDate) {
-            setLastSyncTime(`${data.omcRevisionDate} • ${data.omcRevisionTime}`)
+          setLiveSource(data.source === 'supabase' ? 'supabase' : 'curated')
+          if (data.lastSyncAt) {
+            setLastSyncTime(
+              new Date(data.lastSyncAt).toLocaleString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                hour: 'numeric',
+                minute: '2-digit',
+                timeZone: 'Asia/Kolkata',
+              }),
+            )
           }
         }
       }
@@ -156,8 +175,10 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
   }
 
   useEffect(() => {
-    fetchLiveStations()
-  }, [])
+    const handle = setTimeout(fetchLiveStations, searchQuery ? 350 : 0)
+    return () => clearTimeout(handle)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, userLocation, selectedCity, selectedBrand, selectedFuelGrade])
 
   // Geolocation trigger
   const handleLocateMe = () => {
@@ -187,20 +208,12 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
   const filteredStations = useMemo(() => {
     return stations
       .filter((stn) => {
-        const matchesQuery =
-          stn.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          stn.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          stn.area.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          stn.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          stn.pincode.includes(searchQuery)
-
-        const matchesCity = selectedCity === 'All Cities' || stn.city === selectedCity
-        const matchesBrand = selectedBrand === 'All Brands' || stn.brand === selectedBrand
-        const matchesGrade = selectedFuelGrade === 'All Grades' || stn.fuelGrade === selectedFuelGrade
+        // Text, city, brand and grade are matched server-side against the live
+        // catalogue; only the local toggles are applied here.
         const matchesCOCO = !cocoOnly || stn.isCOCO
         const matches24 = !open24Only || stn.isOpen24Hours
 
-        return matchesQuery && matchesCity && matchesBrand && matchesGrade && matchesCOCO && matches24
+        return matchesCOCO && matches24
       })
       .map((stn) => {
         let distance = '0'
@@ -213,7 +226,7 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
         if (userLocation) {
           return a.computedDistance - b.computedDistance
         }
-        return b.rating - a.rating
+        return Number(b.isE0Confirmed) - Number(a.isE0Confirmed) || (b.rating || 0) - (a.rating || 0)
       })
   }, [
     stations,
@@ -231,7 +244,8 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
   }, [stations, activeStationId, filteredStations])
 
   const citiesList = useMemo(() => {
-    return ['All Cities', ...Array.from(new Set(stations.map((s) => s.city)))]
+    const known = citiesData.map((c) => c.name)
+    return ['All Cities', ...Array.from(new Set([...known, ...stations.map((s) => s.city).filter(Boolean)]))]
   }, [stations])
 
   const handleShare = (stn: WebStation) => {
@@ -364,10 +378,10 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Daily Updates
+                {liveSource === 'supabase' ? 'Live Catalogue · 52,000+ pumps' : 'Curated List'}
               </span>
               <span className="text-muted-foreground text-[11px]">
-                Daily Verified Prices & Petrol Purity: <strong className="text-foreground">{lastSyncTime}</strong>
+                Synced <strong className="text-foreground">{lastSyncTime}</strong> · E0 and premium grades first
               </span>
             </div>
             <button
@@ -375,7 +389,7 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
               disabled={isSyncing}
               className="inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline"
             >
-              {isSyncing ? 'Syncing Feeds...' : '↻ Refresh Feeds'}
+              {isSyncing ? 'Searching…' : '↻ Refresh'}
             </button>
           </div>
 
@@ -582,6 +596,11 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                             COCO Flagship
                           </span>
                         )}
+                        {stn.isE0Confirmed && (
+                          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                            E0 Confirmed
+                          </span>
+                        )}
                       </div>
                       <h3 className="mt-2 text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors leading-snug break-words">
                         {stn.name}
@@ -599,9 +618,11 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                           {stn.computedDistance} km
                         </span>
                       )}
-                      <span className="block text-xs font-bold text-foreground mt-0.5">
-                        ₹{stn.price.toFixed(1)}/L
-                      </span>
+                      {stn.price > 0 && (
+                        <span className="block text-xs font-bold text-foreground mt-0.5">
+                          ₹{stn.price.toFixed(1)}/L
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -610,12 +631,14 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                     <span className="flex items-center gap-1 font-medium truncate">
                       <Clock size={12} className="shrink-0" /> {stn.lastVerified}
                     </span>
-                    <span className="font-mono font-semibold text-foreground/80 truncate">
-                      {stn.density}
+                    <span className="font-semibold text-foreground/80 truncate">
+                      {stn.density || stn.confidenceLabel || stn.verifiedBy}
                     </span>
-                    <span className="flex items-center gap-1 text-amber-600 font-bold shrink-0">
-                      <Star size={12} className="fill-amber-500 text-amber-500" /> {stn.rating}
-                    </span>
+                    {stn.rating > 0 && (
+                      <span className="flex items-center gap-1 text-amber-600 font-bold shrink-0">
+                        <Star size={12} className="fill-amber-500 text-amber-500" /> {stn.rating}
+                      </span>
+                    )}
                   </div>
                 </div>
               )
@@ -655,7 +678,7 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                         </span>
                       )}
                       <span className="text-xs text-muted-foreground">
-                        Verified {activeStation.lastVerified}
+                        {activeStation.confidenceLabel || activeStation.verifiedBy} · {activeStation.lastVerified}
                       </span>
                     </div>
 
@@ -675,13 +698,15 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                         Live Fuel Price
                       </span>
                       <strong className="block text-2xl font-black text-foreground">
-                        ₹{activeStation.price.toFixed(2)}/L
+                        {activeStation.price > 0 ? `₹${activeStation.price.toFixed(2)}/L` : 'Not reported'}
                       </strong>
                     </div>
-                    <div className="flex items-center gap-1 text-amber-600 font-bold text-sm">
-                      <Star size={16} className="fill-amber-500 text-amber-500" /> {activeStation.rating}
-                      <span className="text-xs text-muted-foreground">({activeStation.reviewCount} reviews)</span>
-                    </div>
+                    {activeStation.rating > 0 && (
+                      <div className="flex items-center gap-1 text-amber-600 font-bold text-sm">
+                        <Star size={16} className="fill-amber-500 text-amber-500" /> {activeStation.rating}
+                        <span className="text-xs text-muted-foreground">({activeStation.reviewCount} reviews)</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -689,13 +714,13 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
                     <span className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Form-8 Density
+                      Reported Density
                     </span>
                     <strong className="block text-sm sm:text-base font-black text-foreground mt-1">
-                      {activeStation.density}
+                      {activeStation.density || 'Not reported'}
                     </strong>
-                    <span className="block text-[10px] text-green-600 font-semibold mt-0.5">
-                      IS 2796 Reference Match
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">
+                      {activeStation.density ? 'From user fuel-bill reports' : 'Submit a report after filling'}
                     </span>
                   </div>
 
@@ -704,7 +729,7 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                       Operating Hours
                     </span>
                     <strong className="block text-sm sm:text-base font-black text-foreground mt-1">
-                      {activeStation.timing}
+                      {activeStation.timing || (activeStation.isOpen24Hours ? '24 hours' : 'Check at pump')}
                     </strong>
                     <span className="block text-[10px] text-muted-foreground mt-0.5">
                       {activeStation.isOpen24Hours ? 'Open 24/7' : 'Standard Shifts'}
@@ -719,7 +744,7 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
                       {activeStation.verifiedBy}
                     </strong>
                     <span className="block text-[10px] text-primary font-semibold mt-0.5">
-                      Active Fuel Stock
+                      {activeStation.isE0Confirmed ? '0% ethanol reported' : 'Confirm grade at the pump'}
                     </span>
                   </div>
 

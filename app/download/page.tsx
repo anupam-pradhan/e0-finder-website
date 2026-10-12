@@ -66,8 +66,8 @@ const appFeatures = [
   },
   {
     icon: MapPin,
-    title: 'Use map-first station discovery',
-    text: 'Check nearby station reports, fuel-grade notes, distance, navigation links and city coverage without digging through generic map results.',
+    title: 'Google Maps with 52,000+ pumps',
+    text: 'Pumps load instantly as you pan or zoom, cluster at city level, and open directions with one tap. Search by name, area or address.',
   },
   {
     icon: ShieldCheck,
@@ -79,6 +79,15 @@ const appFeatures = [
     title: 'Track the India fuel shift',
     text: 'India has reached 20 percent ethanol blending nationally, so premium-fuel and E0 searches need fresher station-level context.',
   },
+]
+
+const whatsNew = [
+  'Google Maps is now built in: pumps load instantly as you move the map, with clusters at city level.',
+  'Search by pump name, area or address, merging Google Maps results with the 52,000+ pump E0 Finder catalogue.',
+  'Quick Find: one tap for 0% ethanol, XP100, poWer100 or company-owned (COCO) outlets near you.',
+  'Every pump shows its data source, a confidence label and the real last-verified time.',
+  'Amenities with icons, fuel grade, density, price and 24-hour status on each station page.',
+  'Report a pump straight from the map preview or the station page.',
 ]
 
 const trustChecks = [
@@ -107,6 +116,8 @@ const softwareSchema = {
     availability: 'https://schema.org/InStock',
     url: siteConfig.playStoreUrl,
   },
+  softwareVersion: siteConfig.appVersion,
+  dateModified: siteConfig.lastUpdated,
   downloadUrl: siteConfig.playStoreUrl,
   installUrl: siteConfig.playStoreUrl,
   image: [absoluteImageUrl(seoImages.appDownloadOg.path), absoluteImageUrl(seoImages.playStoreFeature.path), absoluteImageUrl(seoImages.playStoreScreens.path)],
@@ -197,6 +208,19 @@ export default function DownloadPage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-14 lg:px-8" aria-labelledby="whats-new-heading">
+          <p className="text-sm font-bold uppercase tracking-widest text-primary">Version {siteConfig.appVersion} · {new Date(siteConfig.lastUpdated).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</p>
+          <h2 id="whats-new-heading" className="mt-2 text-3xl font-black tracking-tight">What&apos;s new in E0 Finder {siteConfig.appVersion}</h2>
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+            {whatsNew.map((item) => (
+              <li key={item} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 text-sm leading-6 text-muted-foreground shadow-xs">
+                <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-primary" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="mx-auto grid max-w-6xl gap-8 px-5 py-14 lg:grid-cols-2 lg:px-8">

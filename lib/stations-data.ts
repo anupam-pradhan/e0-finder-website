@@ -1,9 +1,9 @@
 export interface WebStation {
   id: string
   name: string
-  brand: 'IndianOil' | 'HPCL' | 'BPCL' | 'Shell' | 'Jio-bp'
+  brand: 'IndianOil' | 'HPCL' | 'BPCL' | 'Shell' | 'Jio-bp' | 'Nayara' | 'Reliance' | 'Essar' | 'Other'
   brandLogo: string
-  fuelGrade: 'XP100 (0% Ethanol)' | 'poWer100 (0% Ethanol)' | 'Speed 97 (0% Ethanol)' | 'Verified E0 Batch'
+  fuelGrade: 'XP100 (0% Ethanol)' | 'poWer100 (0% Ethanol)' | 'Speed 97 (0% Ethanol)' | 'Verified E0 Batch' | (string & {})
   isE0Confirmed: boolean
   isCOCO: boolean
   address: string
@@ -23,6 +23,12 @@ export interface WebStation {
   timing: string
   phone: string
   amenities: string[]
+  /** Set on rows served from the live Supabase catalogue. */
+  source?: string
+  confidence?: 'official' | 'community' | 'listed' | 'unverified'
+  confidenceLabel?: string
+  updatedAt?: string
+  distanceKm?: number
 }
 
 export const initialStations: WebStation[] = [

@@ -105,6 +105,19 @@ export default async function BlogPostPage({
       return { title, id, isH2 }
     })
 
+  // Guides that otherwise receive only one internal link (blog index).
+  const essentialSlugs = [
+    'how-to-find-e0-petrol-pumps-in-india-step-by-step',
+    'is-xp95-speed97-ethanol-free',
+    'e0-vs-e20-highway-mileage-tank-range-calculation',
+    'planning-fuel-stops-india',
+    'petrol-mileage-full-tank-measurement',
+    'fuel-phase-separation-storage-guide',
+  ]
+  const essentialPosts = essentialSlugs
+    .map((s) => blogPosts.find((p) => p.slug === s))
+    .filter((p): p is (typeof blogPosts)[number] => Boolean(p) && p!.slug !== post.slug)
+
   const relatedPosts = blogPosts
     .filter((p) => p.slug !== post.slug)
     .sort((a, b) => {
@@ -395,6 +408,22 @@ export default async function BlogPostPage({
             </div>
           </div>
         </div>
+
+        {/* Essential reading (keeps every guide reachable within one hop) */}
+        {essentialPosts.length > 0 && (
+          <nav aria-label="Essential E0 guides" className="mt-12 rounded-2xl border border-border bg-muted/20 p-5">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-primary">Essential E0 reading</h3>
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              {essentialPosts.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}`} className="text-sm font-semibold text-foreground hover:text-primary hover:underline">
+                    {p.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
 
         {/* Related Guides */}
         {relatedPosts.length > 0 && (
