@@ -144,9 +144,15 @@ const softwareSchema = {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'INR',
+    availability: 'https://schema.org/InStock',
+    url: playStoreUrl,
   },
+  softwareVersion: siteConfig.appVersion,
+  dateModified: siteConfig.lastUpdated,
+  publisher: { '@id': `${siteUrl}/#organization` },
+  author: { '@id': `${siteUrl}/#organization` },
   description:
-    'E0 Finder helps motorists search reported E0, XP100, poWer100 and non-E20 petrol station signals across India with map-based discovery and navigation.',
+    'E0 Finder maps 52,000+ petrol pumps across India on Google Maps and flags XP100, poWer100 and reported 0% ethanol (E0) outlets, with the data source and last-verified date on every pump.',
   image: [absoluteImageUrl(seoImages.appDownloadOg.path), absoluteImageUrl(seoImages.playStoreFeature.path), absoluteImageUrl(seoImages.playStoreScreens.path)],
   screenshot: screenshotGalleryImages.map(toImageObject),
   subjectOf: {
@@ -165,6 +171,8 @@ const orgSchema = {
   '@type': 'Organization',
   '@id': `${siteUrl}/#organization`,
   name: 'E0 Finder',
+  disambiguatingDescription:
+    'E0 Finder (e0-finder.app) is the Android app and website by Anupam Pradhan that maps 52,000+ Indian petrol pumps. It is not affiliated with e0fuel.in, e0-finder.com or any other product using a similar name.',
   alternateName: ['E0 Finder App', 'EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'E0 Petrol Pump Locator'],
   url: siteUrl,
   logo: `${siteUrl}/app-icon.png`,

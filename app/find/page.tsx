@@ -5,9 +5,9 @@ import { fetchNetworkStats } from '@/lib/supabase-stations'
 import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 const siteUrl = 'https://e0-finder.app'
-const title = 'XP100 Petrol Pump Near Me — Ethanol-Free E0 Fuel Finder Map, India'
+const title = 'Non-E20 Petrol Pump Near Me — Live E0 Map (IndianOil, HPCL, BPCL)'
 const description =
-  'Find XP100, poWer100 and ethanol-free (E0) petrol pumps near me. Live search over 52,000+ mapped pumps in India by GPS, city, area or pump name, with directions and last-verified dates.'
+  'Find non-E20 and ethanol-free (E0) petrol pumps near me across India. Live search over 52,000+ mapped pumps from all three oil companies by GPS, city, area or pump name, with the data source and last-verified date on every pump.'
 
 export const metadata: Metadata = {
   title: {

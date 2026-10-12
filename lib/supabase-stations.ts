@@ -94,9 +94,12 @@ export function toLiveStation(row: Record<string, unknown>): LiveStation {
   const amenities = Array.isArray(row.amenities) ? row.amenities.filter((a): a is string => typeof a === 'string') : []
   const brand = (text(row.brand) || 'Other') as WebStation['brand']
   const fuelGrade = (text(row.fuel_grade) || 'Regular Petrol (E20)') as WebStation['fuelGrade']
+  const rawName = text(row.name)
+  const place = text(row.area) || text(row.city)
+  const name = !rawName || rawName.toLowerCase() === brand.toLowerCase() ? [brand, place].filter(Boolean).join(' ') : rawName
   return {
     id: text(row.id),
-    name: text(row.name) || brand,
+    name,
     brand,
     brandLogo: text(row.brand_logo),
     fuelGrade,
@@ -298,17 +301,17 @@ export const fuelGradePages: Record<
   xp100: {
     name: 'XP100',
     brand: 'IndianOil',
-    title: 'XP100 Petrol Pumps in India — Live List by State (Near Me)',
-    h1: 'All XP100 petrol pumps in India',
+    title: 'XP100 Petrol Near Me — Every XP100 Pump in India, by State',
+    h1: 'XP100 petrol pumps in India',
     intro:
-      'IndianOil XP100 is a 100-octane premium petrol that IndianOil sells without ethanol. This list shows every XP100 outlet in the E0 Finder catalogue, grouped by state, with directions and the date each listing was last verified.',
+      'IndianOil XP100 is a 100-octane premium petrol. IndianOil positions it as unblended, but its product page does not publish a guarantee, so E0 Finder shows each pump as reported by its source. This list is every XP100 outlet in the E0 Finder catalogue so far, grouped by state, with directions and dates. Use the live finder for the nearest one.',
     matches: (s) => /xp100/i.test(s.fuelGrade),
   },
   power100: {
     name: 'poWer100',
     brand: 'HPCL',
-    title: 'HPCL poWer100 Petrol Pumps in India — Live List by State (Near Me)',
-    h1: 'All HPCL poWer100 petrol pumps in India',
+    title: 'poWer100 Petrol Near Me — Every HPCL poWer100 Pump in India, by State',
+    h1: 'HPCL poWer100 petrol pumps in India',
     intro:
       'HPCL poWer100 is a 100-octane premium petrol. HPCL lists some outlets as 0% ethanol and others as low ethanol (up to 4.5%); each pump below shows which. Grouped by state with directions and last-verified dates.',
     matches: (s) => /power100/i.test(s.fuelGrade),
@@ -316,17 +319,17 @@ export const fuelGradePages: Record<
   'speed-97': {
     name: 'Speed 97',
     brand: 'BPCL',
-    title: 'BPCL Speed 97 Petrol Pumps in India — Live List by State (Near Me)',
-    h1: 'All BPCL Speed 97 petrol pumps in India',
+    title: 'Speed 97 Petrol Near Me — BPCL Speed 97 Pumps and Is It Ethanol-Free?',
+    h1: 'BPCL Speed 97 petrol pumps in India',
     intro:
-      'BPCL Speed 97 is a 97-octane premium petrol reported as ethanol-free at the outlets listed here. Grouped by state with directions and last-verified dates.',
+      'BPCL Speed 97 is a 97-octane premium petrol. BPCL has not published its ethanol content, and some owner reports say it is blended, so E0 Finder lists these pumps as "reported", not confirmed ethanol-free. Ask at the pump and submit a report after filling.',
     matches: (s) => /speed ?97|speed ?100/i.test(s.fuelGrade),
   },
   'ethanol-free': {
     name: 'ethanol-free (E0)',
     brand: 'All brands',
-    title: 'Ethanol-Free (E0) Petrol Pumps in India — Live List by State (Near Me)',
-    h1: 'All petrol pumps reporting 0% ethanol (E0) petrol in India',
+    title: 'Ethanol-Free Petrol Pump Near Me — All 0% Ethanol Pumps in India, by State',
+    h1: 'Petrol pumps reporting 0% ethanol (E0) in India',
     intro:
       'Every pump in the E0 Finder catalogue that reports 0% ethanol petrol, across IndianOil, HPCL and BPCL. Grouped by state with directions and last-verified dates. Stock changes daily, so confirm at the pump.',
     matches: (s) => s.isE0Confirmed,
@@ -376,4 +379,35 @@ export function pumpPath(s: { id: string }): string {
 
 export function directionsUrl(s: { latitude: number; longitude: number }): string {
   return `https://www.google.com/maps/dir/?api=1&destination=${s.latitude},${s.longitude}`
+}
+
+export interface StateCoverageRow {
+  slug: string
+  name: string
+  total: number
+  e0Confirmed: number
+  premium: number
+}
+
+/** Rows for the homepage state table: only states with pumps in the catalogue. */
+export async function fetchStateCoverage(states: { slug: string; name: string }[]): Promise<StateCoverageRow[]> {
+  const rows = await Promise.all(
+    states.map(async (st) => {
+      const stats = await fetchStateStats([st.name])
+      return stats ? { slug: st.slug, name: st.name, total: stats.total, e0Confirmed: stats.e0Confirmed, premium: stats.premium } : null
+    }),
+  )
+  return rows.filter((r): r is StateCoverageRow => r !== null).sort((a, b) => b.total - a.total)
+}
+
+/** "Verified <date>" only when a person checked it; Google/OSM imports are "Updated <date>". */
+export function verifiedPhrase(s: { confidence: StationConfidence; lastVerified: string }): string {
+  return `${s.confidence === 'community' || s.confidence === 'official' ? 'Verified' : 'Updated'} ${s.lastVerified}`
+}
+
+/** Featured pumps inside one state (matches the catalogue's free-text state column). */
+export async function fetchFeaturedPumpsInState(stateName: string): Promise<LiveStation[]> {
+  const needle = stateName.split(/[&/]/)[0].trim().toLowerCase()
+  const all = await fetchFeaturedPumps()
+  return all.filter((p) => p.state.toLowerCase().includes(needle))
 }

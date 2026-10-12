@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { citiesData } from '@/lib/city-data'
 import { siteConfig } from '@/lib/site-config'
-import { fetchCityHighlights, fetchCityStats, type CityStats } from '@/lib/supabase-stations'
+import { fetchCityHighlights, fetchCityStats, isFeaturedPump, pumpPath, type CityStats } from '@/lib/supabase-stations'
 import { PumpCard } from '@/components/pump-card'
 import type { Metadata } from 'next'
 
@@ -124,6 +124,30 @@ export default async function CityPage({
   const aliases = cityAliases(city)
   const [stats, highlights] = await Promise.all([fetchCityStats(aliases), fetchCityHighlights(aliases, 9)])
   const pumpsMapped = stats ? inr(stats.total) : `${city.verifiedPumpsCount}+`
+  const e0Names = highlights.filter((h) => h.isE0Confirmed).map((h) => h.name)
+  const premiumNames = highlights.filter((h) => /xp100|power100/i.test(h.fuelGrade)).map((h) => h.name)
+  const liveFaqs = [
+    {
+      q: `How many petrol pumps in ${city.name} sell ethanol-free (E0) petrol?`,
+      a: stats
+        ? `${inr(stats.total)} petrol pumps in ${city.name} are mapped in the E0 Finder catalogue. ${stats.e0Confirmed === 0 ? 'None has reported 0% ethanol petrol yet.' : `${stats.e0Confirmed} report 0% ethanol petrol${e0Names.length ? `, including ${e0Names.slice(0, 3).join(', ')}` : ''}.`} Reports change daily, so confirm at the pump.`
+        : `The live count for ${city.name} is loading. Open the live finder for the current list.`,
+    },
+    {
+      q: `Where can I get XP100 or poWer100 in ${city.name}?`,
+      a: stats && stats.premium > 0
+        ? `${stats.premium} pump${stats.premium === 1 ? '' : 's'} in ${city.name} report IndianOil XP100 or HPCL poWer100${premiumNames.length ? `, for example ${premiumNames.slice(0, 3).join(', ')}` : ''}. These are the two grades the oil companies position as 100-octane premium petrol.`
+        : `No pump in ${city.name} has reported XP100 or poWer100 yet. The nationwide XP100 and poWer100 lists on this site show the nearest outlets, and the app searches by GPS.`,
+    },
+    {
+      q: `How does E0 Finder verify pumps in ${city.name}?`,
+      a: `Each listing shows where it came from: an oil company locator, a community report with a fuel bill or density reading, or a Google Maps listing. Only community and oil-company entries are marked "verified"; Google-sourced entries show an "updated" date instead. Availability is never guaranteed.`,
+    },
+    {
+      q: `Which areas of ${city.name} are covered?`,
+      a: `Coverage includes ${city.popularAreas.slice(0, 5).join(', ')} and the ${city.highwayCorridors[0] ?? 'main highway'} corridor. Use the live finder or the Android app to search any area, pincode or pump name.`,
+    },
+  ]
   const otherCities = citiesData.filter((c) => c.slug !== city.slug).slice(0, 4)
 
   // FAQPage schema removed — Google restricted FAQPage rich results to
@@ -151,8 +175,10 @@ export default async function CityPage({
       ? highlights.map((h, index) => ({
           '@type': 'ListItem',
           position: index + 1,
+          ...(isFeaturedPump(h) ? { url: `${siteConfig.siteUrl}${pumpPath(h)}` } : {}),
           item: {
             '@type': 'GasStation',
+            ...(isFeaturedPump(h) ? { '@id': `${siteConfig.siteUrl}${pumpPath(h)}#station`, url: `${siteConfig.siteUrl}${pumpPath(h)}` } : {}),
             name: h.name,
             address: { '@type': 'PostalAddress', streetAddress: h.address, addressLocality: h.city || city.name, addressRegion: h.state || city.state, addressCountry: 'IN' },
             geo: { '@type': 'GeoCoordinates', latitude: h.latitude, longitude: h.longitude },
@@ -262,7 +288,7 @@ export default async function CityPage({
           </div>
 
           <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl text-foreground">
-            0% Ethanol (E0) Petrol Stations in <span className="text-primary">{city.name}</span>
+            {stats && stats.e0Confirmed > 0 ? '0% Ethanol (E0) Petrol Stations in ' : 'Petrol Pumps and E0 Reports in '}<span className="text-primary">{city.name}</span>
           </h1>
 
           {/* Answer Block — concise direct answer for AI extractability (AEO) */}
@@ -329,62 +355,6 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* Featured Stations & Live Reports */}
-      <section className="border-t border-border bg-muted/20 py-12 lg:py-16">
-        <div className="mx-auto max-w-6xl px-4 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary">Live Pump Verification</p>
-              <h2 className="mt-1 text-2xl sm:text-3xl font-black text-foreground">
-                Featured 0% Ethanol Pumps in {city.name}
-              </h2>
-            </div>
-            <a
-              href={siteConfig.playStoreUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-            >
-              View all {pumpsMapped} pumps in app →
-            </a>
-          </div>
-
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {city.featuredStations.map((stn, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-xs"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                      {stn.fuelGrade}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">{stn.verifiedDate}</span>
-                  </div>
-                  <h3 className="mt-4 text-base font-bold text-foreground">{stn.brand}</h3>
-                  <p className="mt-1 text-xs font-medium text-primary">{stn.area}</p>
-                  <p className="mt-2 text-xs text-muted-foreground leading-5">{stn.location}</p>
-                </div>
-                <div className="mt-6 border-t border-border pt-4 flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-green-600">
-                    <ShieldCheck size={14} /> Verified Stock
-                  </span>
-                  <a
-                    href={siteConfig.playStoreUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-                  >
-                    Navigate <Navigation size={13} />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Live catalogue listings */}
       {highlights.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 py-12 lg:px-8" aria-labelledby="live-pumps-heading">
@@ -444,7 +414,7 @@ export default async function CityPage({
           <div className="mt-10">
             <h3 className="text-xl font-bold text-foreground mb-4">Frequently Asked Questions for {city.name}</h3>
             <div className="space-y-3">
-              {city.faqs.map((faq, i) => (
+              {liveFaqs.map((faq, i) => (
                 <div key={i} className="rounded-xl border border-border bg-card p-5 shadow-xs">
                   <strong className="block text-sm font-bold text-foreground">{faq.q}</strong>
                   <p className="mt-2 text-xs leading-6 text-muted-foreground">{faq.a}</p>

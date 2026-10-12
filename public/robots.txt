@@ -54,4 +54,3 @@ Disallow: /
 
 Sitemap: https://e0-finder.app/sitemap.xml
 Sitemap: https://e0-finder.app/image-sitemap.xml
-Host: https://e0-finder.app

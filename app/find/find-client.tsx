@@ -359,13 +359,13 @@ export default function FindE0WebPage({ initialQuery = '' }: { initialQuery?: st
       <section className="border-b border-border bg-gradient-to-b from-primary/[0.06] to-transparent px-4 pt-6 pb-4 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <h1 className="e0-fade-up text-2xl font-black tracking-tight text-foreground sm:text-3xl">
-            <span className="e0-text-gradient">Ethanol-Free (E0)</span> Petrol Pumps Near You
+            <span className="e0-text-gradient">Non-E20 & Ethanol-Free</span> Petrol Pumps Near You
           </h1>
           <p className="e0-fade-up e0-delay-1 mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-            Use the live <strong>E0 fuel finder</strong> to locate verified 0% ethanol petrol pumps near you
-            across India — including IndianOil <strong>XP100</strong>, HPCL <strong>poWer100</strong>,
-            BPCL <strong>Speed 97</strong> and <strong>XP95</strong>. Check real-time availability, fuel
-            density and prices, then get directions to the nearest ethanol-free petrol station.
+            Search the live <strong>E0 fuel finder</strong> for pumps that report 0% ethanol petrol across India,
+            including IndianOil <strong>XP100</strong> and HPCL <strong>poWer100</strong>, the two grades the oil
+            companies position as ethanol-free. BPCL Speed 97 and XP95 appear where pumps report them, but their
+            ethanol content is not confirmed. Every result shows its data source and last-verified date; confirm at the pump.
           </p>
         </div>
       </section>

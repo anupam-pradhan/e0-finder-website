@@ -11,7 +11,8 @@ import {
 import { statesData } from '@/lib/state-data'
 import { siteConfig } from '@/lib/site-config'
 import type { Metadata } from 'next'
-import { fetchStateStats, fetchStateTotals, type CityStats } from '@/lib/supabase-stations'
+import { fetchFeaturedPumpsInState, fetchStateStats, fetchStateTotals, type CityStats } from '@/lib/supabase-stations'
+import { PumpCard } from '@/components/pump-card'
 
 // Pump totals come from the live catalogue; refresh daily.
 export const revalidate = 86400
@@ -100,6 +101,7 @@ export default async function StatePage({
   const cityCount = state.cities.length
   const otherStates = statesData.filter((s) => s.slug !== state.slug).slice(0, 6)
   const otherTotals = await fetchStateTotals(otherStates)
+  const featured = await fetchFeaturedPumpsInState(state.name)
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -247,6 +249,38 @@ export default async function StatePage({
               <ChevronRight size={16} className="text-muted-foreground group-hover:text-primary transition-colors" />
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Live E0 / premium pumps in this state */}
+      <section className="border-t border-border bg-muted/20 py-12 lg:py-16" aria-labelledby="state-pumps-heading">
+        <div className="mx-auto max-w-6xl px-4 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">From the live catalogue</p>
+          <h2 id="state-pumps-heading" className="mt-1 text-2xl sm:text-3xl font-black text-foreground">
+            Pumps in {state.name} reporting E0, XP100 or poWer100
+          </h2>
+          {featured.length > 0 ? (
+            <>
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                {featured.length} pump{featured.length === 1 ? '' : 's'} in {state.name} currently report 0% ethanol or a premium grade. Each card shows its data source and whether a person verified it or it was imported from Google Maps.
+              </p>
+              <ol className="mt-6 grid gap-4 md:grid-cols-3">
+                {featured.slice(0, 12).map((p) => (
+                  <PumpCard key={p.id} pump={p} />
+                ))}
+              </ol>
+            </>
+          ) : (
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              No pump in {state.name} has reported ethanol-free or premium petrol yet. Filled up at one? Report it in the app and it will appear here after review.
+            </p>
+          )}
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link href="/fuel/xp100" className="text-primary hover:underline">All XP100 pumps</Link>
+            <Link href="/fuel/power100" className="text-primary hover:underline">All poWer100 pumps</Link>
+            <Link href="/fuel/ethanol-free" className="text-primary hover:underline">All E0 pumps</Link>
+            <Link href="/find" className="text-primary hover:underline">Live finder</Link>
+          </div>
         </div>
       </section>
 

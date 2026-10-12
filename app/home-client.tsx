@@ -48,7 +48,7 @@ import type { BlogSummary } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { ScrollReveal } from '@/components/scroll-reveal'
 import { siteConfig } from '@/lib/site-config'
-import type { NetworkStats } from '@/lib/supabase-stations'
+import type { NetworkStats, StateCoverageRow } from '@/lib/supabase-stations'
 import { seoImages } from '@/lib/seo-images'
 import { AppStoreProof } from '@/components/app-store-proof'
 
@@ -158,7 +158,7 @@ const vehicleCategories = [
     category: 'Royal Enfield Motorcycles',
     models: [
       { name: 'Bullet 350 / 500 (Cast Iron / AVL / UCE)', year: 'Pre-2023', risk: 'High Risk', fuel: 'E0 Required', note: 'Carburettor jets & rubber petcock degrade on E20.' },
-      { name: 'Interceptor 650 / Continental GT 650', year: 'All Years', risk: 'Moderate Risk', fuel: 'E0 Recommended', note: 'Smoother idle, +1.8 WHP power gain, zero injector knock.' },
+      { name: 'Interceptor 650 / Continental GT 650', year: 'All Years', risk: 'Moderate Risk', fuel: 'E0 Recommended', note: 'Owners report smoother idle and no injector knock on E0.' },
       { name: 'Himalayan 411 / Scram 411', year: '2016-2022', risk: 'High Risk', fuel: 'E0 Required', note: 'Prone to morning cold-start misfires with water absorption.' },
       { name: 'Himalayan 450 / Hunter 350', year: '2023+', risk: 'Safe (E20 Ready)', fuel: 'E0 Optimal', note: 'E20 compliant; E0 gives 7% better highway range.' },
     ],
@@ -183,18 +183,6 @@ const vehicleCategories = [
   },
 ]
 
-const stateEthanolIndex = [
-  { state: 'Delhi NCR', blend: '20.0%', density: '748 kg/m³', stations: '64 Verified Bunks', status: 'Highest E20 Penetration' },
-  { state: 'Maharashtra (Mumbai/Pune)', blend: '19.8%', density: '745 kg/m³', stations: '58 Verified Bunks', status: 'Active Community' },
-  { state: 'Rajasthan (Jaipur/Udaipur)', blend: '19.6%', density: '746 kg/m³', stations: '29 Verified Bunks', status: 'Growing Coverage' },
-  { state: 'Gujarat (Ahmedabad/Surat)', blend: '19.5%', density: '744 kg/m³', stations: '32 Verified Bunks', status: 'High Highway Demand' },
-  { state: 'Karnataka (Bengaluru/Mysuru)', blend: '19.4%', density: '742 kg/m³', stations: '42 Verified Bunks', status: 'Top Superbike Hub' },
-  { state: 'Telangana (Hyderabad)', blend: '19.2%', density: '743 kg/m³', stations: '38 Verified Bunks', status: 'Verified Corridor' },
-  { state: 'Tamil Nadu (Chennai/Coimbatore)', blend: '18.9%', density: '740 kg/m³', stations: '36 Verified Bunks', status: 'Active Enthusiast Base' },
-  { state: 'Kerala (Kochi/Trivandrum)', blend: '18.7%', density: '739 kg/m³', stations: '25 Verified Bunks', status: 'High Humidity Moisture Alert' },
-  { state: 'Punjab & Chandigarh', blend: '20.0%', density: '747 kg/m³', stations: '31 Verified Bunks', status: 'High E20 Rollout' },
-  { state: 'West Bengal (Kolkata)', blend: '18.5%', density: '738 kg/m³', stations: '24 Verified Bunks', status: 'Expanding Network' },
-]
 
 const calculatorVehicles = [
   { label: 'Superbike / Twin (600cc+)', e0Kmpl: 20, e20Kmpl: 17.5, maintSaved: 15000 },
@@ -205,68 +193,6 @@ const calculatorVehicles = [
   { label: 'Hatchback / Sedan (1.2L Petrol)', e0Kmpl: 18, e20Kmpl: 16.1, maintSaved: 9000 },
 ]
 
-const userReviews = [
-  {
-    name: 'Vikramaditya S.',
-    role: 'Ducati Panigale V4 & RE Interceptor 650 Owner',
-    city: 'Bengaluru',
-    rating: 5,
-    date: 'August 14, 2026',
-    title: 'Absolute lifesaver for superbike owners in India!',
-    review:
-      'Finding 100-octane E0 petrol in Bengaluru used to be pure guesswork. E0 Finder shows exact pump locations, when the last batch was verified, and if the station has stock. My Panigale runs noticeably smoother with zero injector knock.',
-  },
-  {
-    name: 'Rohan Deshmukh',
-    role: 'Vintage Motorcycle Restorer (RD350 / RX100)',
-    city: 'Pune',
-    rating: 5,
-    date: 'August 11, 2026',
-    title: 'Saved my carburettors from green corrosion.',
-    review:
-      'After E20 rolled out, my Yamaha RD350 carburettor jets were constantly getting clogged with white crust. Thanks to this app, I only fill verified E0 unblended petrol. Essential app for any two-stroke enthusiast.',
-  },
-  {
-    name: 'Col. Rajesh Nair (Retd.)',
-    role: '1974 Royal Enfield Bullet 350 Owner',
-    city: 'Kochi',
-    rating: 5,
-    date: 'August 09, 2026',
-    title: 'Community verification is super accurate.',
-    review:
-      'I was skeptical at first, but the community upload feature where fellow riders post fuel bills and density test readings gives 100% confidence before driving 15 km to a fuel station.',
-  },
-  {
-    name: 'Aditya Mathur',
-    role: 'Track Enthusiast & VW Polo GTI Driver',
-    city: 'Delhi NCR',
-    rating: 5,
-    date: 'August 06, 2026',
-    title: 'Clean UI and practical station data for Indian roads.',
-    review:
-      'Most people dont realize XP95 now has 20% ethanol. This app opened my eyes. Found an IOCL XP100 station near Noida Expressway in 2 minutes. The turn-by-turn navigation is seamless.',
-  },
-  {
-    name: 'Karthik Ramanathan',
-    role: 'Long Distance Highway Tourer',
-    city: 'Chennai',
-    rating: 5,
-    date: 'August 02, 2026',
-    title: 'Indispensable tool for highway road trips.',
-    review:
-      'Used E0 Finder on a 2,000 km ride from Chennai to Goa. Mapped all verified E0 stops along the highway. Zero moisture hesitation in heavy monsoon rains.',
-  },
-  {
-    name: 'Suresh Patil',
-    role: 'Independent Automotive Technician',
-    city: 'Mumbai',
-    rating: 5,
-    date: 'July 29, 2026',
-    title: 'I recommend this app to every customer who walks in.',
-    review:
-      'We see so many pre-2020 cars coming in with corroded fuel pump gaskets. I tell every customer to use E0 Finder to locate ethanol-free fuel for their weekend cars.',
-  },
-]
 
 const popularCities = [
   { name: 'Bengaluru', state: 'Karnataka', stations: '35+ Verified Pumps', slug: 'bangalore' },
@@ -350,11 +276,13 @@ export default function Page({
   totalPosts,
   networkStats = null,
   cityCounts = {},
+  stateCoverage = [],
 }: {
   posts: BlogSummary[]
   totalPosts: number
   networkStats?: NetworkStats | null
   cityCounts?: Record<string, number>
+  stateCoverage?: StateCoverageRow[]
 }) {
   const pumpsMapped = networkStats ? networkStats.total.toLocaleString('en-IN') : siteConfig.catalogueSize
   const [menuOpen, setMenuOpen] = useState(false)
@@ -700,7 +628,7 @@ export default function Page({
               </span>
               <div className="leading-none">
                 <strong className="block text-sm text-foreground">0% Ethanol</strong>
-                <span className="text-[10px] text-muted-foreground">Verified today</span>
+                <span className="text-[10px] text-muted-foreground">Source-graded</span>
               </div>
             </div>
 
@@ -966,116 +894,41 @@ export default function Page({
         </div>
       </section>
 
-      {/* Social Trends / Instagram Viral Radar */}
-      <section id="trends" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-pink-500/20 bg-pink-500/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-pink-600">
-            <Camera size={14} /> Viral Enthusiast Movement
-          </div>
-          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-            Trending on <span className="text-pink-600">Instagram & YouTube</span>: The Pure Petrol Revolution
-          </h2>
-          <p className="mt-4 text-base leading-7 text-muted-foreground">
-            Over 50 Million views across reels and shorts documenting DIY 100ml water extraction tests, dynamometer runs, and classic bike revivals.
-          </p>
-        </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-xs text-pink-600 font-bold uppercase tracking-wider">
-                <span>Instagram Trend</span>
-                <span>18.4M Views</span>
-              </div>
-              <h3 className="mt-3 text-lg font-bold text-foreground">The 100ml Graduated Cylinder Water Test</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Motovloggers demonstrating how water extracts alcohol from pump fuel in real-time. Riders are using this test before logging pumps on E0 Finder.
-              </p>
-            </div>
-            <Link
-              href="/blog/viral-instagram-petrol-water-test-guide"
-              className="mt-6 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-            >
-              Read DIY Test Guide →
-            </Link>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-xs text-pink-600 font-bold uppercase tracking-wider">
-                <span>Dyno Telemetry</span>
-                <span>12.8M Views</span>
-              </div>
-              <h3 className="mt-3 text-lg font-bold text-foreground">E0 vs E20 Horsepower Dyno Shootouts</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Performance tuning garages proving +4% horsepower gains and cleaner AFR curves when running 100% pure E0 fuel on KTMs and GT650s.
-              </p>
-            </div>
-            <Link
-              href="/blog/e20-vs-e0-dyno-test-power-mileage"
-              className="mt-6 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-            >
-              View Dyno Charts →
-            </Link>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between text-xs text-pink-600 font-bold uppercase tracking-wider">
-                <span>Vintage Preservation</span>
-                <span>21.2M Views</span>
-              </div>
-              <h3 className="mt-3 text-lg font-bold text-foreground">Two-Stroke & Classic Bullet Restoration</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Mechanics warning against 2T oil separation and brass carburettor jet clogging, pointing classic owners exclusively to E0 stations.
-              </p>
-            </div>
-            <Link
-              href="/blog/protecting-vintage-classic-motorcycles-from-ethanol"
-              className="mt-6 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-            >
-              Read Protection Guide →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* State-by-State Ethanol Blending Index */}
+      {/* State-by-State Coverage — live catalogue counts */}
       <section id="state-index" className="border-t border-border bg-muted/20 py-16">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              <BarChart3 size={14} /> Pan-India Data Matrix
-            </div>
-            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-              State-Wise Ethanol Blending & Density Index (2026)
-            </h2>
-            <p className="mt-4 text-base leading-7 text-muted-foreground">
-              Official refinery blend averages, standard fuel density ranges, and verified E0 stations across major states.
+          <div className="max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">State-by-state coverage</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Where E0 and premium petrol is reported, by state</h2>
+            <p className="mt-3 text-muted-foreground">
+              Live counts from the E0 Finder catalogue: every mapped pump, the pumps reporting 0% ethanol, and the XP100 / poWer100 outlets. Refreshed daily.
             </p>
           </div>
-
-          <div className="mt-10 overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
+          <div className="mt-8 overflow-x-auto rounded-2xl border border-border bg-card shadow-xs">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
+              <thead className="border-b border-border bg-muted/40 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="px-6 py-4 font-bold">State / Territory</th>
-                  <th className="px-6 py-4 font-bold">Regular Blend %</th>
-                  <th className="px-6 py-4 font-bold">Standard Fuel Density</th>
-                  <th className="px-6 py-4 font-bold">Verified E0 Stations</th>
-                  <th className="px-6 py-4 font-bold">Status Profile</th>
+                  <th scope="col" className="px-6 py-4">State</th>
+                  <th scope="col" className="px-6 py-4">Pumps mapped</th>
+                  <th scope="col" className="px-6 py-4">Reporting 0% ethanol</th>
+                  <th scope="col" className="px-6 py-4">XP100 / poWer100</th>
+                  <th scope="col" className="px-6 py-4">Guide</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {stateEthanolIndex.map((row) => (
-                  <tr key={row.state} className="hover:bg-muted/30">
-                    <td className="px-6 py-4 font-bold text-foreground">{row.state}</td>
-                    <td className="px-6 py-4 text-destructive font-semibold">{row.blend}</td>
-                    <td className="px-6 py-4 text-muted-foreground">{row.density}</td>
-                    <td className="px-6 py-4 font-bold text-primary">{row.stations}</td>
-                    <td className="px-6 py-4 text-xs text-muted-foreground">{row.status}</td>
+                {stateCoverage.map((row) => (
+                  <tr key={row.slug}>
+                    <th scope="row" className="px-6 py-4 font-bold text-foreground">{row.name}</th>
+                    <td className="px-6 py-4 font-bold text-primary">{row.total.toLocaleString('en-IN')}</td>
+                    <td className="px-6 py-4 font-semibold text-emerald-700">{row.e0Confirmed}</td>
+                    <td className="px-6 py-4 text-muted-foreground">{row.premium}</td>
+                    <td className="px-6 py-4"><Link href={`/state/${row.slug}`} className="text-xs font-semibold text-primary hover:underline">View {row.name} →</Link></td>
                   </tr>
                 ))}
+                {stateCoverage.length === 0 && (
+                  <tr><td colSpan={5} className="px-6 py-6 text-center text-muted-foreground">Live counts are loading. Browse the <Link href="/state" className="text-primary underline">state directory</Link>.</td></tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -1272,55 +1125,6 @@ export default function Page({
         </div>
       </section>
 
-      {/* Community Feedback Section */}
-      <section id="reviews" className="mx-auto max-w-7xl px-5 py-16 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600">
-            <Users size={14} /> Community feedback from Indian drivers
-          </div>
-          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-            Loved by Bikers, Classic Collectors & Drivers Across India
-          </h2>
-          <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
-            See how E0 Finder is protecting engines and giving motorists peace of mind every time they refuel.
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {userReviews.map((rev) => (
-            <div
-              key={rev.name}
-              className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-xs transition-transform hover:-translate-y-1"
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-amber-500">
-                    {[...Array(rev.rating)].map((_, i) => (
-                      <Star key={i} size={16} className="fill-amber-500 text-amber-500" />
-                    ))}
-                  </div>
-                  <span className="text-xs text-muted-foreground">{rev.date}</span>
-                </div>
-
-                <h3 className="mt-3 text-base font-bold text-foreground">{rev.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground italic">
-                  &ldquo;{rev.review}&rdquo;
-                </p>
-              </div>
-
-              <div className="mt-6 flex items-center gap-3 border-t border-border pt-4">
-                <div className="grid size-9 place-items-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                  {rev.name.charAt(0)}
-                </div>
-                <div>
-                  <strong className="block text-sm font-bold text-foreground">{rev.name}</strong>
-                  <span className="block text-xs text-muted-foreground">{rev.role} • {rev.city}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* App Screenshots Showcase */}
       <section id="screenshots" className="border-t border-border bg-muted/20 py-16">

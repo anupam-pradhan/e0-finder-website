@@ -97,40 +97,33 @@ const trustChecks = [
   'Official fuel and policy sources are linked so users can verify important claims.',
 ]
 
-const softwareSchema = {
+const downloadPageSchema = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  '@id': `${siteConfig.siteUrl}/download#software`,
-  name: siteConfig.appName,
-  alternateName: ['EO Finder', 'E Zero Finder', 'E0 Fuel Finder', 'E0 Petrol Pump Locator'],
+  '@type': 'WebPage',
+  '@id': `${siteConfig.siteUrl}/download#webpage`,
   url: `${siteConfig.siteUrl}/download`,
-  operatingSystem: 'Android',
-  applicationCategory: 'NavigationApplication',
-  applicationSubCategory: 'Automotive fuel station locator',
-  isAccessibleForFree: true,
+  name: 'Download E0 Finder App',
   inLanguage: 'en-IN',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'INR',
-    availability: 'https://schema.org/InStock',
-    url: siteConfig.playStoreUrl,
-  },
-  softwareVersion: siteConfig.appVersion,
+  isPartOf: { '@id': `${siteConfig.siteUrl}/#website` },
+  about: { '@id': `${siteConfig.siteUrl}/#software` },
+  mainEntity: { '@id': `${siteConfig.siteUrl}/#software` },
   dateModified: siteConfig.lastUpdated,
-  downloadUrl: siteConfig.playStoreUrl,
-  installUrl: siteConfig.playStoreUrl,
-  image: [absoluteImageUrl(seoImages.appDownloadOg.path), absoluteImageUrl(seoImages.playStoreFeature.path), absoluteImageUrl(seoImages.playStoreScreens.path)],
-  screenshot: screenshotGalleryImages.map(toImageObject),
-  publisher: { '@id': `${siteConfig.siteUrl}/#organization` },
-  areaServed: { '@type': 'Country', name: 'India' },
-  description,
+}
+
+const downloadBreadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteConfig.siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: 'Download', item: `${siteConfig.siteUrl}/download` },
+  ],
 }
 
 export default function DownloadPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(downloadPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(downloadBreadcrumb) }} />
       <main className="min-h-screen bg-background text-foreground">
         <header className="border-b border-border/70 bg-background/95">
           <nav className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-4 lg:px-8">

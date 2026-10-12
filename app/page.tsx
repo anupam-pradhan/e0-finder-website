@@ -3,12 +3,13 @@ import HomeClient from './home-client'
 import { blogPosts, toBlogSummary } from '@/lib/blog-data'
 import { siteConfig } from '@/lib/site-config'
 import { citiesData } from '@/lib/city-data'
-import { fetchCityStats, fetchNetworkStats } from '@/lib/supabase-stations'
+import { fetchCityStats, fetchNetworkStats, fetchStateCoverage } from '@/lib/supabase-stations'
+import { statesData } from '@/lib/state-data'
 import { absoluteImageUrl, seoImages, toImageObject } from '@/lib/seo-images'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'E0 Finder — Official App: Ethanol-Free E0 Petrol Pumps Near Me in India',
+    absolute: 'E0 Finder — Official App for Ethanol-Free E0 Petrol in India (52,000+ Pumps)',
   },
   description:
     'E0 Finder is the official Android app on Google Play for ethanol-free petrol near me. 52,000+ pumps mapped on Google Maps with XP100, poWer100 and 0% ethanol reports, data source and last-verified date on every pump.',
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     siteName: 'E0 Finder',
     locale: 'en_IN',
     url: '/',
-    title: 'E0 Finder — Official App: Ethanol-Free E0 Petrol Pumps Near Me in India',
+    title: 'E0 Finder — Official App for Ethanol-Free E0 Petrol in India (52,000+ Pumps)',
     description:
       'The official E0 Finder app and website. 52,000+ petrol pumps mapped across India with XP100, poWer100 and 0% ethanol reports, directions and real last-verified dates.',
     images: [
@@ -95,7 +96,7 @@ async function loadCityCounts(): Promise<Record<string, number>> {
 }
 
 export default async function Page() {
-  const [networkStats, cityCounts] = await Promise.all([fetchNetworkStats(), loadCityCounts()])
+  const [networkStats, cityCounts, stateCoverage] = await Promise.all([fetchNetworkStats(), loadCityCounts(), fetchStateCoverage(statesData.slice(0, 12))])
   return (
     <>
       <script
@@ -106,7 +107,7 @@ export default async function Page() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
-      <HomeClient posts={blogPosts.slice(0, 6).map(toBlogSummary)} totalPosts={blogPosts.length} networkStats={networkStats} cityCounts={cityCounts} />
+      <HomeClient posts={blogPosts.slice(0, 6).map(toBlogSummary)} totalPosts={blogPosts.length} networkStats={networkStats} cityCounts={cityCounts} stateCoverage={stateCoverage} />
     </>
   )
 }

@@ -112,6 +112,9 @@ export default function AboutPage() {
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
               Generic petrol pump listings rarely explain fuel grade, ethanol context, report date or station confidence. E0 Finder turns those details into a searchable map for drivers, riders, classic-vehicle owners and high-performance petrol users.
             </p>
+            <p className="mt-4 max-w-3xl rounded-2xl border border-border bg-muted/20 px-4 py-3 text-sm leading-6 text-muted-foreground">
+              <strong className="text-foreground">Which E0 Finder is this?</strong> This is e0-finder.app, the Android app on Google Play by Anupam Pradhan, launched in August 2026, with a catalogue of 52,000+ petrol pumps. It is independent and not affiliated with e0fuel.in, e0-finder.com or any other site or app that uses a similar name.
+            </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link href="/download" className="e0-btn-gradient e0-glow inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-bold">
                 Download the app <ArrowRight size={18} />

@@ -7,7 +7,7 @@ import { fetchFeaturedPumps, fuelGradePages, pumpPath } from '@/lib/supabase-sta
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.siteUrl
-  const lastModified = new Date()
+  const lastModified = new Date(siteConfig.lastUpdated)
   const featured = await fetchFeaturedPumps()
   const fuelPages: MetadataRoute.Sitemap = Object.keys(fuelGradePages).map((grade) => ({
     url: `${baseUrl}/fuel/${grade}`,

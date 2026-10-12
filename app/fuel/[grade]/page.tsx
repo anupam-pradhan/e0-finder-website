@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PumpCard } from '@/components/pump-card'
 import { PumpPageShell } from '@/components/pump-page-shell'
-import { siteConfig } from '@/lib/site-config'
+import { siteConfig, sourceLinks } from '@/lib/site-config'
 import { fetchFeaturedPumps, fuelGradePages, pumpPath, type FuelGradeKey } from '@/lib/supabase-stations'
 
 // Nationwide list per fuel grade, grouped by state. Refreshed daily.
@@ -83,7 +83,12 @@ export default async function FuelGradePage({ params }: { params: Promise<{ grad
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
             <strong className="text-foreground">{pumps.length} {page.name} pumps</strong> across {stateEntries.length} states are in the E0 Finder catalogue right now. {page.intro}
           </p>
-          <div className="mt-6 flex flex-wrap gap-2 text-sm font-semibold">
+          <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link href="/find" className="inline-flex items-center rounded-xl bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">Find the nearest on the live map</Link>
+            {grade === 'xp100' && <a href={sourceLinks.ioclXp100.url} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-xl border border-border bg-card px-4 py-2 hover:bg-muted">IndianOil XP100 product page</a>}
+            {grade === 'power100' && <a href={sourceLinks.hpclPower100.url} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-xl border border-border bg-card px-4 py-2 hover:bg-muted">HPCL poWer100 product page</a>}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold">
             {stateEntries.map(([state, list]) => (
               <a key={state} href={`#${state.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="rounded-xl border border-border bg-card px-3 py-1.5 hover:border-primary/50">
                 {state} <span className="text-muted-foreground">({list.length})</span>

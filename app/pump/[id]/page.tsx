@@ -6,7 +6,7 @@ import { PumpCard } from '@/components/pump-card'
 import { PumpPageShell } from '@/components/pump-page-shell'
 import { citiesData } from '@/lib/city-data'
 import { siteConfig } from '@/lib/site-config'
-import { directionsUrl, fetchFeaturedPumps, fetchPumpById, isFeaturedPump, pumpPath, type LiveStation } from '@/lib/supabase-stations'
+import { directionsUrl, fetchFeaturedPumps, fetchPumpById, isFeaturedPump, pumpPath, verifiedPhrase, type LiveStation } from '@/lib/supabase-stations'
 
 // One page per pump that reports 0% ethanol or a premium grade. Refreshed daily.
 export const revalidate = 86400
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!pump) return { robots: { index: false, follow: false } }
   const where = [pump.area, pump.city].filter(Boolean).join(', ')
   const title = `${pump.name} — ${pump.fuelGrade.replace(/\s*\(.*\)/, '')} petrol pump in ${where || pump.state}`
-  const description = `${pump.name} at ${pump.address}${pump.city ? `, ${pump.city}` : ''} sells ${gradeLabel(pump)}. ${pump.confidenceLabel}, last verified ${pump.lastVerified}. Directions, hours and amenities on E0 Finder.`
+  const description = `${pump.name} at ${pump.address}${pump.city ? `, ${pump.city}` : ''} reports ${gradeLabel(pump)}. ${pump.confidenceLabel}, ${verifiedPhrase(pump).toLowerCase()}. Directions, hours and amenities on E0 Finder.`
   const url = `${siteConfig.siteUrl}${pumpPath(pump)}`
   return {
     title,
@@ -81,14 +81,11 @@ export default async function PumpPage({ params }: { params: Promise<{ id: strin
     geo: { '@type': 'GeoCoordinates', latitude: pump.latitude, longitude: pump.longitude },
     ...(pump.phone ? { telephone: pump.phone } : {}),
     ...(pump.isOpen24Hours ? { openingHours: 'Mo-Su 00:00-24:00' } : {}),
-    ...(pump.rating > 0 && pump.reviewCount > 0
-      ? { aggregateRating: { '@type': 'AggregateRating', ratingValue: pump.rating, reviewCount: pump.reviewCount } }
-      : {}),
     amenityFeature: pump.amenities.map((a) => ({ '@type': 'LocationFeatureSpecification', name: a, value: true })),
     additionalProperty: [
       { '@type': 'PropertyValue', name: 'Reported fuel grade', value: pump.fuelGrade },
       { '@type': 'PropertyValue', name: 'Data confidence', value: pump.confidenceLabel },
-      { '@type': 'PropertyValue', name: 'Last verification date', value: pump.lastVerified },
+      { '@type': 'PropertyValue', name: pump.confidence === 'community' || pump.confidence === 'official' ? 'Last verification date' : 'Last updated', value: pump.lastVerified },
     ],
   }
   const breadcrumbSchema = {
@@ -96,8 +93,9 @@ export default async function PumpPage({ params }: { params: Promise<{ id: strin
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteConfig.siteUrl}/` },
-      ...(city ? [{ '@type': 'ListItem', position: 2, name: city.name, item: `${siteConfig.siteUrl}/city/${city.slug}` }] : []),
-      { '@type': 'ListItem', position: city ? 3 : 2, name: pump.name, item: url },
+      { '@type': 'ListItem', position: 2, name: 'Cities', item: `${siteConfig.siteUrl}/city` },
+      ...(city ? [{ '@type': 'ListItem', position: 3, name: city.name, item: `${siteConfig.siteUrl}/city/${city.slug}` }] : []),
+      { '@type': 'ListItem', position: city ? 4 : 3, name: pump.name, item: url },
     ],
   }
 
@@ -133,9 +131,9 @@ export default async function PumpPage({ params }: { params: Promise<{ id: strin
 
           {/* Direct answer block */}
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {pump.name} is a {pump.brand} petrol pump at {pump.address}
+            {pump.name} is a petrol pump run by {pump.brand} at {pump.address}
             {pump.city ? `, ${pump.city}` : ''}
-            {pump.state ? `, ${pump.state}` : ''} that sells <strong className="text-foreground">{gradeLabel(pump)}</strong>. This listing comes from {pump.confidenceLabel.toLowerCase()} and was last verified on {pump.lastVerified}. Stock changes daily, so confirm the grade at the pump before filling.
+            {pump.state ? `, ${pump.state}` : ''}. It reports <strong className="text-foreground">{gradeLabel(pump)}</strong>. Source: {pump.confidenceLabel}. {verifiedPhrase(pump)}. Stock changes daily, so confirm the grade at the pump before filling.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">

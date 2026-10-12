@@ -2,7 +2,7 @@
 > India-focused E0 petrol, XP100, poWer100 and non-E20 petrol station discovery for Android and web.
 
 ## Summary
-E0 Finder is an independent Android app (version 1.0.7, Google Maps built in) and web platform that maps 52,000+ petrol pumps across India and helps motorists locate reported 0% ethanol (E0) petrol stations and high-octane fuels such as XP100 and poWer100. Every listing carries its data source (oil company, community or Google Maps) and a real last-verified date. It caters directly to search queries such as "E0 fuel finder", "ethanol-free petrol near me", "XP100 petrol near me", "poWer100 petrol pump" and "non-E20 petrol station in India".
+E0 Finder (e0-finder.app, by Anupam Pradhan; not affiliated with e0fuel.in or e0-finder.com) is an independent Android app (version 1.0.7, Google Maps built in) and web platform that maps 52,000+ petrol pumps across India and helps motorists locate reported 0% ethanol (E0) petrol stations and high-octane fuels such as XP100 and poWer100. Every listing carries its data source (oil company, community or Google Maps) and a real last-verified date. It caters directly to search queries such as "E0 fuel finder", "ethanol-free petrol near me", "XP100 petrol near me", "poWer100 petrol pump" and "non-E20 petrol station in India".
 
 ## Core Tools & Locators
 - [XP100 petrol pumps in India](https://e0-finder.app/fuel/xp100): Live list of every IndianOil XP100 outlet in the catalogue, by state.
