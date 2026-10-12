@@ -11,6 +11,18 @@ import {
 import { statesData } from '@/lib/state-data'
 import { siteConfig } from '@/lib/site-config'
 import type { Metadata } from 'next'
+import { fetchStateStats, fetchStateTotals, type CityStats } from '@/lib/supabase-stations'
+
+// Pump totals come from the live catalogue; refresh daily.
+export const revalidate = 86400
+
+const inr = (n: number) => n.toLocaleString('en-IN')
+
+function stateSummary(name: string, stats: CityStats | null, fallback: number, cityCount: number): string {
+  const cities = `${cityCount} ${cityCount === 1 ? 'city' : 'cities'}`
+  if (!stats) return `${fallback}+ pumps selling ethanol-free premium (XP100 / poWer100 / Speed 100) across ${cities} in ${name}, India. Unofficial — confirm at the pump.`
+  return `${inr(stats.total)} petrol pumps mapped in ${name}, India: ${stats.e0Confirmed} report 0% ethanol and ${stats.premium} sell XP100 / poWer100. City guides for ${cities}. Unofficial — confirm at the pump.`
+}
 
 export function generateStaticParams() {
   return statesData.map((state) => ({
@@ -30,7 +42,8 @@ export async function generateMetadata({
   const cityCount = state.cities.length
   const url = `${siteConfig.siteUrl}/state/${state.slug}`
   const title = `Find ethanol-free (E0) petrol in ${state.name}`
-  const description = `${state.totalPumps}+ pumps selling ethanol-free premium (XP100 / poWer100 / Speed 100) across ${cityCount} ${cityCount === 1 ? 'city' : 'cities'} in ${state.name}, India. Unofficial — confirm at the pump.`
+  const stats = await fetchStateStats([state.name])
+  const description = stateSummary(state.name, stats, state.totalPumps, cityCount)
 
   return {
     title,
@@ -80,10 +93,13 @@ export default async function StatePage({
   if (!state) {
     notFound()
   }
+  const stats = await fetchStateStats([state.name])
+  const pumpsMapped = stats ? inr(stats.total) : `${state.totalPumps}+`
 
   const url = `${siteConfig.siteUrl}/state/${state.slug}`
   const cityCount = state.cities.length
   const otherStates = statesData.filter((s) => s.slug !== state.slug).slice(0, 6)
+  const otherTotals = await fetchStateTotals(otherStates)
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -175,15 +191,17 @@ export default async function StatePage({
           </h1>
 
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {state.totalPumps}+ pumps selling ethanol-free premium across {cityCount} {cityCount === 1 ? 'city' : 'cities'} in {state.name}.
+            {stats
+              ? `${pumpsMapped} petrol pumps mapped in ${state.name}: ${stats.e0Confirmed} report 0% ethanol and ${stats.premium} sell XP100 / poWer100.`
+              : `${pumpsMapped} pumps reported across ${cityCount} ${cityCount === 1 ? 'city' : 'cities'} in ${state.name}.`}{' '}
             Availability is never guaranteed — confirm at the pump.
           </p>
 
           {/* Stats */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl">
             <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Total Pumps</span>
-              <strong className="block text-2xl font-black text-primary mt-1">{state.totalPumps}+</strong>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Pumps Mapped</span>
+              <strong className="block text-2xl font-black text-primary mt-1">{pumpsMapped}</strong>
             </div>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Cities Covered</span>
@@ -245,7 +263,7 @@ export default async function StatePage({
                   className="group rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 shadow-xs"
                 >
                   <strong className="block text-sm font-bold group-hover:text-primary transition-colors">{s.name}</strong>
-                  <span className="text-xs text-muted-foreground mt-0.5 block">{s.totalPumps}+ pumps</span>
+                  <span className="text-xs text-muted-foreground mt-0.5 block">{otherTotals[s.slug] ? `${otherTotals[s.slug].toLocaleString('en-IN')} pumps mapped` : `${s.totalPumps}+ pumps`}</span>
                 </Link>
               ))}
             </div>

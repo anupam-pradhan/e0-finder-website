@@ -252,3 +252,31 @@ export async function fetchCityHighlights(names: string[], limit = 9): Promise<L
     return []
   }
 }
+
+/** Per-state totals (matches the catalogue's `state` column, e.g. "Delhi" also hits "Delhi (NCT)"). */
+export async function fetchStateStats(names: string[]): Promise<CityStats | null> {
+  try {
+    const clean = names.map((n) => n.replace(/[%*,()]/g, '').trim()).filter(Boolean)
+    const or = `(${clean.map((n) => `state.ilike.*${n}*`).join(',')})`
+    const [total, e0Confirmed, xp100, power100] = await Promise.all([
+      count({ or }),
+      count({ or, is_e0_confirmed: 'eq.true' }),
+      count({ or, fuel_grade: 'ilike.*xp100*' }),
+      count({ or, fuel_grade: 'ilike.*power100*' }),
+    ])
+    return total > 0 ? { total, e0Confirmed, xp100, power100, premium: xp100 + power100 } : null
+  } catch {
+    return null
+  }
+}
+
+/** Pumps-mapped totals keyed by state slug, for state lists. Missing states fall back to the caller's number. */
+export async function fetchStateTotals(states: { slug: string; name: string }[]): Promise<Record<string, number>> {
+  const entries = await Promise.all(
+    states.map(async (st) => {
+      const stats = await fetchStateStats([st.name])
+      return [st.slug, stats?.total ?? 0] as const
+    }),
+  )
+  return Object.fromEntries(entries.filter(([, n]) => n > 0))
+}

@@ -18,14 +18,25 @@ import {
 import { citiesData } from '@/lib/city-data'
 import { statesData } from '@/lib/state-data'
 import { siteConfig } from '@/lib/site-config'
+import { fetchNetworkStats } from '@/lib/supabase-stations'
 import type { Metadata } from 'next'
 
-const totalPumps = statesData.reduce((sum, s) => sum + s.totalPumps, 0)
-const totalCities = statesData.reduce((sum, s) => sum + s.cities.length, 0)
+// Pump totals come from the live catalogue; refresh daily.
+export const revalidate = 86400
 
-export const metadata: Metadata = {
+const totalCities = statesData.reduce((sum, s) => sum + s.cities.length, 0)
+const fallbackPumps = siteConfig.catalogueSize
+
+async function pumpsMapped(): Promise<string> {
+  const stats = await fetchNetworkStats()
+  return stats ? stats.total.toLocaleString('en-IN') : fallbackPumps
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const totalPumps = await pumpsMapped()
+  return {
   title: 'What Is E0 Petrol? — Complete Guide to Ethanol-Free Fuel in India [2026]',
-  description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel — the cleanest petrol available in India. Learn why E0 matters, how ethanol damages engines, where to find ${totalPumps}+ E0 pumps, and which vehicles need it.`,
+  description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel — the cleanest petrol available in India. Learn why E0 matters, how ethanol damages engines, where to find E0 among ${totalPumps} mapped pumps, and which vehicles need it.`,
   keywords: [
     'what is E0 petrol',
     'E0 fuel meaning',
@@ -47,7 +58,7 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: '/what-is-e0-petrol',
     title: 'What Is E0 Petrol? — Complete Guide to Ethanol-Free Fuel in India',
-    description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel. ${totalPumps}+ pumps mapped across ${totalCities} cities. Learn why E0 matters for your vehicle.`,
+    description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel. ${totalPumps} pumps mapped across ${totalCities} cities. Learn why E0 matters for your vehicle.`,
     images: [
       {
         url: '/playstore_feature_graphic.png',
@@ -60,9 +71,10 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'What Is E0 Petrol? — Complete Guide to Ethanol-Free Fuel in India',
-    description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel. ${totalPumps}+ pumps mapped.`,
+    description: `E0 petrol is 0% ethanol, pure hydrocarbon fuel. ${totalPumps} pumps mapped.`,
     images: ['/playstore_feature_graphic.png'],
   },
+  }
 }
 
 const breadcrumbSchema = {
@@ -100,8 +112,9 @@ const articleSchema = {
   mainEntityOfPage: `${siteConfig.siteUrl}/what-is-e0-petrol`,
 }
 
-export default function WhatIsE0PetrolPage() {
+export default async function WhatIsE0PetrolPage() {
   const topCities = citiesData.slice(0, 6)
+  const totalPumps = await pumpsMapped()
 
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -170,7 +183,7 @@ export default function WhatIsE0PetrolPage() {
             <Clock size={14} />
             <span>Last updated: {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
             <span className="mx-1">·</span>
-            <span>{totalPumps}+ pumps mapped across India</span>
+            <span>{totalPumps} pumps mapped across India</span>
           </div>
 
           {/* E-E-A-T Author & Reviewer Byline */}
@@ -418,7 +431,7 @@ export default function WhatIsE0PetrolPage() {
             <MapPin size={22} className="text-primary" /> Where to Find E0 Petrol in India
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">
-            E0 Finder has mapped <strong className="text-foreground">{totalPumps}+ ethanol-free petrol pumps</strong> across <strong className="text-foreground">{totalCities} cities</strong> in India. Browse by city:
+            E0 Finder has mapped <strong className="text-foreground">{totalPumps} petrol pumps</strong> across India, with city guides for <strong className="text-foreground">{totalCities} cities</strong>. Pumps that report 0% ethanol or XP100 / poWer100 are flagged in every list. Browse by city:
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {topCities.map((city) => (

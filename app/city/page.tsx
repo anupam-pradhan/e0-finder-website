@@ -7,13 +7,24 @@ import { statesData } from '@/lib/state-data'
 import { siteConfig } from '@/lib/site-config'
 import type { Metadata } from 'next'
 
-const totalPumps = statesData.reduce((sum, s) => sum + s.totalPumps, 0)
+import { fetchNetworkStats, fetchStateTotals } from '@/lib/supabase-stations'
+
+// Pump totals come from the live catalogue; refresh daily.
+export const revalidate = 86400
+
+const fallbackPumps = statesData.reduce((sum, s) => sum + s.totalPumps, 0)
+async function pumpsMapped(): Promise<string> {
+  const stats = await fetchNetworkStats()
+  return stats ? stats.total.toLocaleString('en-IN') : `${fallbackPumps}+`
+}
 const totalCities = statesData.reduce((sum, s) => sum + s.cities.length, 0)
 const totalStates = statesData.length
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const totalPumps = await pumpsMapped()
+  return {
   title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory [2026]`,
-  description: `${totalPumps}+ verified ethanol-free (E0) petrol pumps across ${totalCities} cities in ${totalStates} states. Find IOCL XP100 and HPCL poWer100 stations near you with live community reports.`,
+  description: `${totalPumps} petrol pumps mapped across ${totalCities} cities in ${totalStates} states. Find IOCL XP100 and HPCL poWer100 stations near you with live community reports.`,
   keywords: [
     'E0 petrol pumps India',
     'ethanol free petrol cities India',
@@ -32,7 +43,7 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: '/city',
     title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory`,
-    description: `${totalPumps}+ ethanol-free petrol pumps mapped across ${totalCities} cities in ${totalStates} states. Browse by state to find pumps near you.`,
+    description: `${totalPumps} petrol pumps mapped across ${totalCities} cities in ${totalStates} states. Browse by state to find pumps near you.`,
     images: [
       {
         url: '/playstore_feature_graphic.png',
@@ -45,9 +56,10 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `${totalCities}+ Indian Cities with E0 Petrol Pumps — XP100 & poWer100 Directory`,
-    description: `${totalPumps}+ ethanol-free petrol pumps mapped across ${totalCities} cities in ${totalStates} states.`,
+    description: `${totalPumps} petrol pumps mapped across ${totalCities} cities in ${totalStates} states.`,
     images: ['/playstore_feature_graphic.png'],
   },
+  }
 }
 
 const breadcrumbSchema = {
@@ -59,7 +71,9 @@ const breadcrumbSchema = {
   ],
 }
 
-export default function CitiesIndexPage() {
+export default async function CitiesIndexPage() {
+  const totalPumps = await pumpsMapped()
+  const stateTotals = await fetchStateTotals(statesData)
   const now = new Date()
   const lastUpdated = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
 
@@ -128,7 +142,7 @@ export default function CitiesIndexPage() {
 
           {/* Answer Block for AEO / AI search extractability */}
           <p className="mt-4 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-            India has {totalPumps}+ verified 0% ethanol petrol stations (XP100, poWer100 &amp; Speed 100) mapped across {totalCities} cities in {totalStates} states. All pump locations include density test records, user-reported availability, and navigation coordinates.
+            E0 Finder maps {totalPumps} petrol pumps across India, with city guides for {totalCities} cities in {totalStates} states. Pumps that report 0% ethanol (E0) or sell XP100, poWer100 and Speed 100 are flagged first, and every listing shows its data source and last-verified date.
           </p>
 
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground">
@@ -148,7 +162,7 @@ export default function CitiesIndexPage() {
                   className="group flex items-center gap-3"
                 >
                   <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-xs font-black text-primary">
-                    {state.totalPumps}
+                    {stateTotals[state.slug] ? stateTotals[state.slug].toLocaleString('en-IN') : state.totalPumps}
                   </span>
                   <h2 className="text-lg font-black text-foreground group-hover:text-primary transition-colors">
                     {state.name}
