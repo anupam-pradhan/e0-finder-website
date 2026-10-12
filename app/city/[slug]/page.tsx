@@ -19,6 +19,7 @@ import {
 import { citiesData } from '@/lib/city-data'
 import { siteConfig } from '@/lib/site-config'
 import { fetchCityHighlights, fetchCityStats, type CityStats } from '@/lib/supabase-stations'
+import { PumpCard } from '@/components/pump-card'
 import type { Metadata } from 'next'
 
 // Live counts come from the Supabase catalogue; refresh once a day.
@@ -396,31 +397,14 @@ export default async function CityPage({
           </p>
           <ol className="mt-6 grid gap-4 md:grid-cols-3">
             {highlights.map((stn) => (
-              <li key={stn.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs">
-                <div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${stn.isE0Confirmed ? 'bg-emerald-500/10 text-emerald-700' : 'bg-muted text-muted-foreground'}`}>
-                      {stn.isE0Confirmed ? 'E0 reported' : stn.fuelGrade}
-                    </span>
-                    {stn.isCOCO && <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-600">COCO</span>}
-                  </div>
-                  <h3 className="mt-3 text-base font-bold text-foreground">{stn.name}</h3>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{stn.address}</p>
-                </div>
-                <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-[11px] text-muted-foreground">
-                  <span>{stn.confidenceLabel} · {stn.lastVerified}</span>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${stn.latitude},${stn.longitude}`}
-                    target="_blank"
-                    rel="noreferrer nofollow"
-                    className="inline-flex items-center gap-1 font-bold text-primary hover:underline"
-                  >
-                    Directions <Navigation size={12} />
-                  </a>
-                </div>
-              </li>
+              <PumpCard key={stn.id} pump={stn} />
             ))}
           </ol>
+          <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link href="/fuel/xp100" className="text-primary hover:underline">All XP100 pumps in India</Link>
+            <Link href="/fuel/power100" className="text-primary hover:underline">All poWer100 pumps</Link>
+            <Link href="/fuel/ethanol-free" className="text-primary hover:underline">All E0 pumps</Link>
+          </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href={`/find?q=${encodeURIComponent(city.name)}`} className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90">
               Search all {pumpsMapped} pumps in {city.name} <ChevronRight size={16} />

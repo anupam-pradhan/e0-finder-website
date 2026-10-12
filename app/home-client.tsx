@@ -1584,6 +1584,13 @@ export default function Page({
               </div>
             ))}
           </div>
+          <nav aria-label="Browse by fuel grade" className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
+            <span className="text-muted-foreground">Browse by fuel grade:</span>
+            <Link href="/fuel/xp100" className="rounded-xl border border-border bg-card px-3 py-1.5 text-primary hover:border-primary/50">IndianOil XP100 pumps</Link>
+            <Link href="/fuel/power100" className="rounded-xl border border-border bg-card px-3 py-1.5 text-primary hover:border-primary/50">HPCL poWer100 pumps</Link>
+            <Link href="/fuel/speed-97" className="rounded-xl border border-border bg-card px-3 py-1.5 text-primary hover:border-primary/50">BPCL Speed 97 pumps</Link>
+            <Link href="/fuel/ethanol-free" className="rounded-xl border border-border bg-card px-3 py-1.5 text-primary hover:border-primary/50">All 0% ethanol pumps</Link>
+          </nav>
         </div>
       </section>
 

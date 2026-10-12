@@ -3,10 +3,24 @@ import { blogPosts } from '@/lib/blog-data'
 import { citiesData } from '@/lib/city-data'
 import { statesData } from '@/lib/state-data'
 import { siteConfig } from '@/lib/site-config'
+import { fetchFeaturedPumps, fuelGradePages, pumpPath } from '@/lib/supabase-stations'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.siteUrl
   const lastModified = new Date()
+  const featured = await fetchFeaturedPumps()
+  const fuelPages: MetadataRoute.Sitemap = Object.keys(fuelGradePages).map((grade) => ({
+    url: `${baseUrl}/fuel/${grade}`,
+    lastModified,
+    changeFrequency: 'daily',
+    priority: 0.9,
+  }))
+  const pumpPages: MetadataRoute.Sitemap = featured.map((p) => ({
+    url: `${baseUrl}${pumpPath(p)}`,
+    lastModified: p.updatedAt ? new Date(p.updatedAt) : lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }))
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -121,5 +135,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }))
 
-  return [...staticPages, ...statePages, ...cityPages, ...blogPages]
+  return [
+    ...fuelPages,
+    ...pumpPages,...staticPages, ...statePages, ...cityPages, ...blogPages]
 }

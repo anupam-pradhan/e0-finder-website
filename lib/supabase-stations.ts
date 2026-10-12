@@ -280,3 +280,100 @@ export async function fetchStateTotals(states: { slug: string; name: string }[])
   )
   return Object.fromEntries(entries.filter(([, n]) => n > 0))
 }
+
+// ---------------------------------------------------------------------------
+// Featured pumps: every outlet that reports 0% ethanol or a premium grade.
+// These are the only pumps that get their own indexable page.
+// ---------------------------------------------------------------------------
+
+const FEATURED_FILTER =
+  '(is_e0_confirmed.eq.true,fuel_grade.ilike.*xp100*,fuel_grade.ilike.*power100*,fuel_grade.ilike.*speed 97*,fuel_grade.ilike.*speed 100*)'
+
+export type FuelGradeKey = 'xp100' | 'power100' | 'speed-97' | 'ethanol-free'
+
+export const fuelGradePages: Record<
+  FuelGradeKey,
+  { name: string; brand: string; title: string; h1: string; intro: string; matches: (s: LiveStation) => boolean }
+> = {
+  xp100: {
+    name: 'XP100',
+    brand: 'IndianOil',
+    title: 'XP100 Petrol Pumps in India — Live List by State (Near Me)',
+    h1: 'All XP100 petrol pumps in India',
+    intro:
+      'IndianOil XP100 is a 100-octane premium petrol that IndianOil sells without ethanol. This list shows every XP100 outlet in the E0 Finder catalogue, grouped by state, with directions and the date each listing was last verified.',
+    matches: (s) => /xp100/i.test(s.fuelGrade),
+  },
+  power100: {
+    name: 'poWer100',
+    brand: 'HPCL',
+    title: 'HPCL poWer100 Petrol Pumps in India — Live List by State (Near Me)',
+    h1: 'All HPCL poWer100 petrol pumps in India',
+    intro:
+      'HPCL poWer100 is a 100-octane premium petrol. HPCL lists some outlets as 0% ethanol and others as low ethanol (up to 4.5%); each pump below shows which. Grouped by state with directions and last-verified dates.',
+    matches: (s) => /power100/i.test(s.fuelGrade),
+  },
+  'speed-97': {
+    name: 'Speed 97',
+    brand: 'BPCL',
+    title: 'BPCL Speed 97 Petrol Pumps in India — Live List by State (Near Me)',
+    h1: 'All BPCL Speed 97 petrol pumps in India',
+    intro:
+      'BPCL Speed 97 is a 97-octane premium petrol reported as ethanol-free at the outlets listed here. Grouped by state with directions and last-verified dates.',
+    matches: (s) => /speed ?97|speed ?100/i.test(s.fuelGrade),
+  },
+  'ethanol-free': {
+    name: 'ethanol-free (E0)',
+    brand: 'All brands',
+    title: 'Ethanol-Free (E0) Petrol Pumps in India — Live List by State (Near Me)',
+    h1: 'All petrol pumps reporting 0% ethanol (E0) petrol in India',
+    intro:
+      'Every pump in the E0 Finder catalogue that reports 0% ethanol petrol, across IndianOil, HPCL and BPCL. Grouped by state with directions and last-verified dates. Stock changes daily, so confirm at the pump.',
+    matches: (s) => s.isE0Confirmed,
+  },
+}
+
+/** All pumps that report E0 or a premium grade (currently a few dozen), refreshed daily. */
+export async function fetchFeaturedPumps(): Promise<LiveStation[]> {
+  try {
+    const params = new URLSearchParams({
+      select: STATION_COLUMNS,
+      is_active: 'eq.true',
+      or: FEATURED_FILTER,
+      order: 'is_e0_confirmed.desc,state.asc,city.asc,name.asc',
+      limit: '500',
+    })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/stations?${params}`, { headers: headers(), next: { revalidate: DAY_SECONDS } })
+    if (!res.ok) return []
+    const rows = (await res.json()) as Record<string, unknown>[]
+    return rows.map(toLiveStation).filter((s) => s.latitude && s.longitude)
+  } catch {
+    return []
+  }
+}
+
+/** One pump by catalogue id. Returns null when missing or inactive. */
+export async function fetchPumpById(id: string): Promise<LiveStation | null> {
+  try {
+    const params = new URLSearchParams({ select: STATION_COLUMNS, id: `eq.${id}`, is_active: 'eq.true', limit: '1' })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/stations?${params}`, { headers: headers(), next: { revalidate: DAY_SECONDS } })
+    if (!res.ok) return null
+    const rows = (await res.json()) as Record<string, unknown>[]
+    return rows.length ? toLiveStation(rows[0]) : null
+  } catch {
+    return null
+  }
+}
+
+/** True when a pump qualifies for its own indexable page. */
+export function isFeaturedPump(s: LiveStation): boolean {
+  return s.isE0Confirmed || /xp100|power100|speed ?97|speed ?100/i.test(s.fuelGrade)
+}
+
+export function pumpPath(s: { id: string }): string {
+  return `/pump/${encodeURIComponent(s.id)}`
+}
+
+export function directionsUrl(s: { latitude: number; longitude: number }): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${s.latitude},${s.longitude}`
+}
